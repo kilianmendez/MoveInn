@@ -53,3 +53,4 @@ La plataforma permitirá:
 
 ## 🗂️ Esquema E/R de la Base de Datos  
 A continuación, se muestra el esquema de la base de datos en formato Entidad-Relación (E/R):  
+![Esquema E/R](images/modeloEntidadRelaccion.png)
