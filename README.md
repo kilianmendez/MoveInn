@@ -41,7 +41,8 @@ La plataforma permitirá:
 - **Perfiles de estudiantes:**
  Cada usuario contará con un perfil personal donde podrá compartir información sobre sí mismo, facilitando la conexión con otros estudiantes con intereses similares.
 
-- **Amistad entre estudiantes.**
+- **Amistad entre estudiantes:**
+ Los amigos tendrán la posibilidad de chatear entre sí, evitando así el intercambio de información sensible, como los números de teléfono, hasta que ambas partes decidan confiar mutuamente.
 
 
 ## 🛠️ Tecnologías Utilizadas  
