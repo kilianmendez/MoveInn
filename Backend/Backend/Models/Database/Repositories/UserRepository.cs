@@ -37,11 +37,15 @@ namespace Backend.Models.Database.Repositories
         public async Task<bool> IsLoginCorrect(string mail, string password)
         {
             User? existedUser = await GetByMailAsync(mail);
-            if (existedUser == null) return false;
+            if (existedUser == null)
+            {
+                return false;
+            }
 
             string hashedPassword = AuthService.HashPassword(password);
             return existedUser.Password == hashedPassword;
         }
+
 
     }
 }

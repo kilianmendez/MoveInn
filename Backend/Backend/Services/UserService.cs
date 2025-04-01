@@ -15,27 +15,26 @@ namespace Backend.Services
             _unitOfWork = unitOfWork;
         }
 
-
-                    /*<------------->GET<------------->*/
-
-
+        /*<------------->GET<------------->*/
         public async Task<User?> GetUserByIdAsync(Guid id)
         {
             return await _unitOfWork.UserRepository.GetUserDataByIdAsync(id);
         }
+
         public async Task<User?> GetUserByMailAsync(string mail)
         {
             return await _unitOfWork.UserRepository.GetByMailAsync(mail);
         }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             IEnumerable<User> users = await _unitOfWork.UserRepository.GetAllAsync();
             return users;
         }
+
         public Task<bool> IsLoginCorrect(string mail, string password)
         {
-            string hashedPassword = AuthService.HashPassword(password);
-            return _unitOfWork.UserRepository.IsLoginCorrect(mail.ToLowerInvariant(), hashedPassword);
+            return _unitOfWork.UserRepository.IsLoginCorrect(mail.ToLowerInvariant(), password);
         }
 
         /*<------------->POST<------------->*/

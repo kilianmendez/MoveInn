@@ -19,7 +19,7 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        //Añadimos la configuracion en AppSettings
+        //Aï¿½adimos la configuracion en AppSettings
         builder.Services.Configure<Settings>(builder.Configuration.GetSection(Settings.SECTION_NAME));
         // Add services to the container.
 
