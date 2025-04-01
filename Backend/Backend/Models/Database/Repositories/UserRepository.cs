@@ -33,12 +33,15 @@ namespace Backend.Models.Database.Repositories
             return await GetQueryable()
             .Where(user => user.Mail == mail).SingleOrDefaultAsync();
         }
-        public Task<bool> IsLoginCorrect(string mail, string password)
-        {
-            string hashedPassword = AuthService.HashPassword(password);
-            return _unitOfWork.UserRepository.IsLoginCorrect(mail.ToLowerInvariant(), hashedPassword);
-        }
 
+        public async Task<bool> IsLoginCorrect(string mail, string password)
+        {
+            User? existedUser = await GetByMailAsync(mail);
+            if (existedUser == null) return false;
+
+            string hashedPassword = AuthService.HashPassword(password);
+            return existedUser.Password == hashedPassword;
+        }
 
     }
 }
