@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Backend.Models.Database.Entities;
+using Backend.Models.Database.Enum;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,7 @@ namespace Backend.Controllers
             return Ok(user);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [HttpDelete("Delete")]
         public async Task<ActionResult<User>> DeleteUserByIdAsync(Guid id)
         {
@@ -53,7 +54,7 @@ namespace Backend.Controllers
         //    return Ok(updatedUser);
         //}
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = nameof(Role.Administrator))]
         [HttpGet("All")]
         public async Task<ActionResult> GetAllAsync()
         {

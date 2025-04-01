@@ -28,7 +28,6 @@ namespace Backend.Services
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
-            //No muestres la password
 
             IEnumerable<User> users = await _unitOfWork.UserRepository.GetAllAsync();
             return users;
@@ -103,6 +102,7 @@ namespace Backend.Services
             await _unitOfWork.UserRepository.DeleteAsync(user);
 
             return await _unitOfWork.SaveAsync();
+        }
 
         /*<------------->IMAGES<------------->*/
         public async Task<string> StoreImageAsync(IFormFile file, string modelName)

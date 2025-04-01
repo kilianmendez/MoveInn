@@ -41,7 +41,6 @@ namespace Backend.Models.Database.Repositories
             {
                 return false;
             }
-
             string hashedPassword = AuthService.HashPassword(password);
             return existedUser.Password == hashedPassword;
         }
