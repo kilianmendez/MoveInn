@@ -39,6 +39,8 @@ namespace Backend.Services
             return _unitOfWork.UserRepository.IsLoginCorrect(mail.ToLowerInvariant(), password);
         }
 
+
+
         /*<------------->POST<------------->*/
         public async Task<User> InsertAsync(User user)
         {
@@ -47,10 +49,8 @@ namespace Backend.Services
 
             return user;
         }
-            public async Task<User> InsertByMailAsync(RegisterRequest userRequest)
-            {
-
-
+        public async Task<User> InsertByMailAsync(RegisterRequest userRequest)
+        {
             User newUser = new User
             {
                 Id = Guid.NewGuid(),
@@ -61,7 +61,6 @@ namespace Backend.Services
                 Phone = userRequest.Phone,
                 Role = Role.User,
                 Biography = userRequest.Biography,
-                AvatarUrl = userRequest.AvatarUrl,
                 School = userRequest.School,
                 Degree = userRequest.Degree,
                 Nationality = userRequest.Nationality,
@@ -72,8 +71,23 @@ namespace Backend.Services
                 }).ToList()
             };
 
-             return await InsertAsync(newUser);
+            if (userRequest.File != null)
+            {
+                try
+                {
+                    newUser.AvatarUrl = await StoreImageAsync(userRequest.File, userRequest.Name);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al guardar la imagen: " + ex.Message);
+                }
             }
+            else
+            {
+                newUser.AvatarUrl = Path.Combine("images", "default.png").Replace("\\", "/");
+            }
+            return await InsertAsync(newUser);
+        }
 
 
 
@@ -89,6 +103,30 @@ namespace Backend.Services
             await _unitOfWork.UserRepository.DeleteAsync(user);
 
             return await _unitOfWork.SaveAsync();
+
+        /*<------------->IMAGES<------------->*/
+        public async Task<string> StoreImageAsync(IFormFile file, string modelName)
+        {
+            var validImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+
+            if (!validImageTypes.Contains(file.ContentType))
+            {
+                throw new ArgumentException("El archivo no es un formato de imagen válido.");
+            }
+
+            string fileExtension = Path.GetExtension(file.FileName);
+            string fileName = modelName + fileExtension;
+
+            string imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
+            string filePath = Path.Combine(imagesFolder, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return Path.Combine("images", fileName).Replace("\\", "/");
         }
     }
 }

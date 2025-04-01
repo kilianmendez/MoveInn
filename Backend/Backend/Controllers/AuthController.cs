@@ -39,7 +39,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<ActionResult> Register([FromBody] RegisterRequest userRequest)
+        public async Task<ActionResult> Register([FromForm] RegisterRequest userRequest)
         {
             if (userRequest == null) return BadRequest(new { Message = "Los datos de usuario son inválidos." });
             if (await _userService.GetUserByMailAsync(userRequest.Mail) != null)
