@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
+using System.ComponentModel.DataAnnotations;
 
-namespace Backend.Models.Database.Entities
+namespace Backend.Models.Dtos
 {
-    public class User
+    public class UserDto
     {
         [Key]
         public Guid Id { get; set; }
@@ -18,7 +16,6 @@ namespace Backend.Models.Database.Entities
         [EmailAddress]
         public required string Mail { get; set; }
 
-        public required string Password { get; set; }
 
         public required Role Role { get; set; } = Role.User;
 
@@ -33,5 +30,6 @@ namespace Backend.Models.Database.Entities
         public string Phone { get; set; }
 
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
+        public string Password { get; internal set; }
     }
 }

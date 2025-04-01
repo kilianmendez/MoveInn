@@ -3,6 +3,7 @@ using Backend.Models.Database;
 using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
 using Backend.Models.Dtos;
+using Backend.Models.Mappers;
 
 namespace Backend.Services
 {
@@ -16,21 +17,22 @@ namespace Backend.Services
         }
 
         /*<------------->GET<------------->*/
-        public async Task<User?> GetUserByIdAsync(Guid id)
+        public async Task<UserDto?> GetUserByIdAsync(Guid id)
         {
-            return await _unitOfWork.UserRepository.GetUserDataByIdAsync(id);
+            User? user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(id);
+            return user != null ? UserMapper.ToDto(user) : null;
         }
 
-        public async Task<User?> GetUserByMailAsync(string mail)
+        public async Task<UserDto?> GetUserByMailAsync(string mail)
         {
-            return await _unitOfWork.UserRepository.GetByMailAsync(mail);
+            User? user = await _unitOfWork.UserRepository.GetByMailAsync(mail);
+            return user != null ? UserMapper.ToDto(user) : null;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<UserDto>> GetAllAsync()
         {
-
             IEnumerable<User> users = await _unitOfWork.UserRepository.GetAllAsync();
-            return users;
+            return users.Select(user => UserMapper.ToDto(user));
         }
 
         public Task<bool> IsLoginCorrect(string mail, string password)
@@ -91,6 +93,75 @@ namespace Backend.Services
 
 
         /*<------------->UPDATE<------------->*/
+
+        public async Task<User?> UpdateUserAsync(Guid id, UpdateUserRequest request)
+        {
+            User? user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            if (request.Mail != null)
+            {
+                user.Mail = request.Mail.ToLowerInvariant();
+            }
+            if (request.Name != null)
+            {
+                user.Name = request.Name;
+            }
+            if (request.LastName != null)
+            {
+                user.LastName = request.LastName;
+            }
+            if (request.Biography != null)
+            {
+                user.Biography = request.Biography;
+            }
+            if (request.School != null)
+            {
+                user.School = request.School;
+            }
+            if (request.Degree != null)
+            {
+                user.Degree = request.Degree;
+            }
+            if (request.Nationality != null)
+            {
+                user.Nationality = request.Nationality;
+            }
+            if (request.Phone != null)
+            {
+                user.Phone = request.Phone;
+            }
+            if (request.SocialMedias != null && request.SocialMedias.Any())
+            {
+                user.SocialMedias = request.SocialMedias;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request.Password))
+            {
+                user.Password = AuthService.HashPassword(request.Password);
+            }
+
+            if (request.File != null)
+            {
+                try
+                {
+                    string imageName = request.Name ?? user.Name;
+                    user.AvatarUrl = await StoreImageAsync(request.File, imageName);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error al guardar la imagen: " + ex.Message);
+                }
+            }
+
+            await _unitOfWork.UserRepository.UpdateAsync(user);
+            bool saved = await _unitOfWork.SaveAsync();
+            return saved ? user : null;
+        }
+
 
 
 
