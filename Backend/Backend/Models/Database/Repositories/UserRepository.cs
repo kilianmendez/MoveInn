@@ -14,6 +14,7 @@ namespace Backend.Models.Database.Repositories
         public async Task<User?> GetUserDataByIdAsync(Guid id)
         {
             return await GetQueryable().Where(user => user.Id == id)
+                .Include(u => u.Accommodations)
                 .Include(user => user.SocialMedias)
                 .SingleOrDefaultAsync();
         }

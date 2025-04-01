@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
 using Backend.Models.Database.Repositories;
+using Backend.Models.Interfaces;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
@@ -33,14 +34,16 @@ public class Program
         builder.Services.AddScoped<DataContext>();
         builder.Services.AddScoped<UserRepository>();
         builder.Services.AddScoped<UnitOfWork>();
+        builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
 
 
 
 
         // Servicios
-
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<IAccommodationService, AccommodationService>();
+
 
 
         //Mappers

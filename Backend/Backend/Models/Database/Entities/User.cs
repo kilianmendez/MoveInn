@@ -31,7 +31,7 @@ namespace Backend.Models.Database.Entities
 
         [Phone]
         public required string Phone { get; set; }
-
+        public ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
     }
 }

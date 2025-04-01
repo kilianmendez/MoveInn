@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore;
+using Backend.Models.Interfaces;
 
 namespace Backend.Models.Database.Repositories
 {
