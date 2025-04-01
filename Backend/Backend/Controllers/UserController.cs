@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Backend.Models.Database.Entities;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -18,13 +19,46 @@ namespace Backend.Controllers
             _userService = userService;
         }
 
+        [Authorize]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<User>> GetUserByIdAsync(Guid id)
+        {
+            var user = await _userService.GetUserByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { Message = "Usuario no encontrado" });
+            }
+            return Ok(user);
+        }
 
-        //[Authorize(Roles = "admin")]
-        [HttpGet("Get_Users")]
+        [Authorize(Roles = "admin")]
+        [HttpDelete("Delete")]
+        public async Task<ActionResult<User>> DeleteUserByIdAsync(Guid id)
+        {
+            var user = await _userService.DeleteAsyncUserById(id);
+            if (user == null)
+            {
+                return NotFound(new { Message = "Usuario no encontrado" });
+            }
+            return Ok(user);
+        }
+        //[HttpPut("Update")]
+        //public async Task<ActionResult<User>> UpdateUserAsync(User user)
+        //{
+        //    var updatedUser = await _userService.UpdateAsync(user);
+        //    if (updatedUser == null)
+        //    {
+        //        return NotFound(new { Message = "Usuario no encontrado" });
+        //    }
+        //    return Ok(updatedUser);
+        //}
+
+        [Authorize(Roles = "admin")]
+        [HttpGet("All")]
         public async Task<ActionResult> GetAllAsync()
         {
-            //Claim userClaimId = User.FindFirst("id");
-            //if (userClaimId == null) return Unauthorized(new { Message = "Debe iniciar sesión para llevar a cabo esta acción" });
+            Claim? userClaimId = User.FindFirst("id");
+            if (userClaimId == null) return Unauthorized(new { Message = "Debe iniciar sesión para llevar a cabo esta acción" });
 
             return Ok(await _userService.GetAllAsync());
         }

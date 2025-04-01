@@ -28,6 +28,8 @@ namespace Backend.Services
 
         public async Task<IEnumerable<User>> GetAllAsync()
         {
+            //No muestres la password
+
             IEnumerable<User> users = await _unitOfWork.UserRepository.GetAllAsync();
             return users;
         }
@@ -81,5 +83,12 @@ namespace Backend.Services
 
 
         /*<------------->DELETE<------------->*/
+        public async Task<bool> DeleteAsyncUserById(Guid id)
+        {
+            User user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+            await _unitOfWork.UserRepository.DeleteAsync(user);
+
+            return await _unitOfWork.SaveAsync();
+        }
     }
 }

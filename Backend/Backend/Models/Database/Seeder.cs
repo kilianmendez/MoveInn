@@ -42,7 +42,7 @@ namespace Backend.Models.Database
                     Biography = "Biografía de Yasir",
                     Phone = "111111111",
                     AvatarUrl = "default-avatar-url", // Add this line
-                    Role = Role.User,
+                    Role = Role.Administrator,
                     School = "Escuela de Yasir", // Add this line
                     Degree = "Grado de Yasir", // Add this line
                     Nationality = "Nacionalidad de Yasir", // Add this line
@@ -62,7 +62,7 @@ namespace Backend.Models.Database
                     Biography = "Biografía de Christian",
                     Phone = "222222222",
                     AvatarUrl = "default-avatar-url", // Add this line
-                    Role = Role.User,
+                    Role = Role.Administrator,
                     School = "Escuela de Christian", // Add this line
                     Degree = "Grado de Christian", // Add this line
                     Nationality = "Nacionalidad de Christian", // Add this line
@@ -82,7 +82,7 @@ namespace Backend.Models.Database
                     Biography = "Biografía de Kilian",
                     Phone = "333333333",
                     AvatarUrl = "default-avatar-url", // Add this line
-                    Role = Role.User,
+                    Role = Role.Administrator,
                     School = "Escuela de Kilian", // Add this line
                     Degree = "Grado de Kilian", // Add this line
                     Nationality = "Nacionalidad de Kilian", // Add this line
