@@ -33,5 +33,7 @@ namespace Backend.Models.Database.Entities
         public string Phone { get; set; }
 
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
+        public List<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+
     }
 }
