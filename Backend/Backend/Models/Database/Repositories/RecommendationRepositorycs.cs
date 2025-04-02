@@ -13,12 +13,16 @@ namespace Backend.Models.Database.Repositories
 
         public async Task<Recommendation?> GetByIdAsync(Guid id)
         {
-            return await _context.Set<Recommendation>().FindAsync(id);
+            return await _context.Set<Recommendation>()
+                .Include(r => r.RecommendationImages)
+                .FirstOrDefaultAsync(r => r.Id == id);
         }
 
         public async Task<IEnumerable<Recommendation>> GetAllAsync()
         {
-            return await _context.Set<Recommendation>().ToListAsync();
+            return await _context.Set<Recommendation>()
+                .Include(r => r.RecommendationImages)
+                .ToListAsync();
         }
 
         public async Task InsertAsync(Recommendation recommendation)

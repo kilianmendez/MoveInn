@@ -21,6 +21,25 @@ namespace Backend.Services
             {
                 recommendation.UserId = userId;
             }
+
+            if (request.Files != null && request.Files.Any())
+            {
+                if (request.Files.Count > 5)
+                {
+                    throw new Exception("Solo se permiten hasta 5 imágenes por recomendación.");
+                }
+                foreach (var file in request.Files)
+                {
+                    string imageUrl = await StoreImageAsync(file, recommendation.Title);
+                    recommendation.RecommendationImages.Add(new Image
+                    {
+                        Id = Guid.NewGuid(),
+                        Url = imageUrl,
+                        RecommendationId = recommendation.Id
+                    });
+                }
+            }
+
             await _unitOfWork.RecommendationRepository.InsertAsync(recommendation);
             await _unitOfWork.SaveAsync();
             return RecommendationMapper.ToDto(recommendation);
@@ -48,12 +67,37 @@ namespace Backend.Services
             return saved ? RecommendationMapper.ToDto(recommendation) : null;
         }
 
-        public async Task<bool> DeleteRecommendationAsync(Guid id)
+        public async Task<string> StoreImageAsync(IFormFile file, string fileNamePrefix)
         {
-            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
-            if (recommendation == null) return false;
-            await _unitOfWork.RecommendationRepository.DeleteAsync(recommendation);
-            return await _unitOfWork.SaveAsync();
+            var validImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
+            if (!validImageTypes.Contains(file.ContentType))
+            {
+                throw new ArgumentException("El archivo no es un formato de imagen válido.");
+            }
+
+            string fileExtension = Path.GetExtension(file.FileName);
+            string fileName = $"{fileNamePrefix}_{Guid.NewGuid()}{fileExtension}";
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "recommendations");
+            if (!Directory.Exists(folderPath))
+            {
+                Directory.CreateDirectory(folderPath);
+            }
+            string filePath = Path.Combine(folderPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return Path.Combine("recommendations", fileName).Replace("\\", "/");
         }
+
+    public async Task<bool> DeleteRecommendationAsync(Guid id)
+    {
+        var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
+        if (recommendation == null) return false;
+        await _unitOfWork.RecommendationRepository.DeleteAsync(recommendation);
+        return await _unitOfWork.SaveAsync();
     }
+}
 }

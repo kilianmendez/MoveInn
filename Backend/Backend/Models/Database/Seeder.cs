@@ -30,7 +30,7 @@ namespace Backend.Models.Database
 
         public async Task Seed()
         {
-        var users = new List<User>
+            var users = new List<User>
                  {
                 new User
                 {
@@ -93,9 +93,43 @@ namespace Backend.Models.Database
                     }
                     }
                 };
+            var recommendation1 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Restaurante La Buena Mesa",
+                Description = "Excelente comida local y ambiente familiar.",
+                Category = Category.Restaurant,
+                Location = "Calle Principal 123",
+                Rating = Rating.Five,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    // Supongamos que ya tienes estas imágenes en wwwroot/recommendations
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/restaurant1_1.jpg" },
+                }
+            };
+
+            var recommendation2 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Museo de Arte Moderno",
+                Description = "Exposiciones temporales y colecciones permanentes impresionantes.",
+                Category = Category.Museum,
+                Location = "Avenida Cultural 456",
+                Rating = Backend.Models.Database.Enum.Rating.Four,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/museum1_1.jpg" },
+                }
+            };
 
             _dataContext.Users.AddRange(users);
+            _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
+            await _dataContext.SaveChangesAsync();
         }
 
     }
+
+
 }

@@ -18,7 +18,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<RecommendationDto>> CreateRecommendation([FromBody] RecommendationCreateRequest request)
+        public async Task<ActionResult<RecommendationDto>> CreateRecommendation([FromForm] RecommendationCreateRequest request)
         {
             // Obtener el id del usuario de los claims (opcional)
             Guid? userId = null;
@@ -34,6 +34,7 @@ namespace Backend.Controllers
 
             return CreatedAtAction(nameof(GetRecommendationById), new { id = result.Id }, result);
         }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<RecommendationDto>> GetRecommendationById(Guid id)
@@ -52,7 +53,7 @@ namespace Backend.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<RecommendationDto>> UpdateRecommendation(Guid id, [FromBody] RecommendationUpdateRequest request)
+        public async Task<ActionResult<RecommendationDto>> UpdateRecommendation(Guid id, [FromForm]RecommendationUpdateRequest request)
         {
             var updated = await _recommendationService.UpdateRecommendationAsync(id, request);
             if (updated == null)

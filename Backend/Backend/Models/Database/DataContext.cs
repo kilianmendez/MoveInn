@@ -10,6 +10,7 @@ public class DataContext : DbContext
 
     public DbSet<User> Users { get; set; }
     public DbSet<Recommendation> Recommendations { get; set; }
+    public DbSet<Image> Images { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.LogTo(Console.WriteLine);

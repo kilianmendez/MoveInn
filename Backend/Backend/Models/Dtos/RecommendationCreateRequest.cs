@@ -13,5 +13,7 @@ namespace Backend.Models.Dtos
 
         public string? Location { get; set; }
         public Rating? Rating { get; set; }
+        public List<IFormFile>? Files { get; set; }
+
     }
 }

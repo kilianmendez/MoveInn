@@ -9,5 +9,7 @@ namespace Backend.Models.Dtos
         public Category? Category { get; set; }
         public string? Location { get; set; }
         public Rating? Rating { get; set; }
+        public List<IFormFile>? Files { get; set; }
+
     }
 }
