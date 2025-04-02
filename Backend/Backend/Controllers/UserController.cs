@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
+using Backend.Models.Dtos;
+using Backend.Models.Mappers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +16,6 @@ namespace Backend.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
-
         public UserController(UserService userService)
         {
             _userService = userService;
@@ -43,16 +44,17 @@ namespace Backend.Controllers
             }
             return Ok(user);
         }
-        //[HttpPut("Update")]
-        //public async Task<ActionResult<User>> UpdateUserAsync(User user)
-        //{
-        //    var updatedUser = await _userService.UpdateAsync(user);
-        //    if (updatedUser == null)
-        //    {
-        //        return NotFound(new { Message = "Usuario no encontrado" });
-        //    }
-        //    return Ok(updatedUser);
-        //}
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<UserDto>> UpdateUser(Guid id, [FromForm] UpdateUserRequest request)
+        {
+            var updatedUser = await _userService.UpdateUserAsync(id, request);
+            if (updatedUser == null)
+            {
+                return NotFound("Usuario no encontrado o no se pudo actualizar.");
+            }
+            return Ok(UserMapper.ToDto(updatedUser));
+        }
 
         [Authorize(Roles = nameof(Role.Administrator))]
         [HttpGet("All")]

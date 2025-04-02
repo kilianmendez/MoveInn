@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Backend.Models.Database;
 using Backend.Models.Database.Repositories;
 using Backend.Models.Interfaces;
+using Backend.Models.Mappers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
@@ -33,6 +34,7 @@ public class Program
         //Contextos
         builder.Services.AddScoped<DataContext>();
         builder.Services.AddScoped<UserRepository>();
+        builder.Services.AddScoped<RecommendationRepository>();
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
 
@@ -44,9 +46,8 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
 
+        builder.Services.AddScoped<RecommendationService>();
 
-
-        //Mappers
 
 
         //Swagger

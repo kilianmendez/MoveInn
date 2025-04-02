@@ -6,12 +6,12 @@ namespace Backend.Models.Database
     {
         private readonly DataContext _dataContext;
         private UserRepository _userRepository = null!;
-
+        private RecommendationRepository _recommendationRepository = null!;
 
 
 
         public UserRepository UserRepository => _userRepository ??= new UserRepository(_dataContext);
-
+        public RecommendationRepository RecommendationRepository => _recommendationRepository ??= new RecommendationRepository(_dataContext);
 
         public UnitOfWork(DataContext dataContext)
         {
