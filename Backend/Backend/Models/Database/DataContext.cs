@@ -9,6 +9,8 @@ public class DataContext : DbContext
     private const string DATABASE_PATH = "MoveInnDB.db";
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Accommodation> Accommodations { get; set; }
+
     public DbSet<Recommendation> Recommendations { get; set; }
     public DbSet<Image> Images { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

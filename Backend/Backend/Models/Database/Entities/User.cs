@@ -30,8 +30,8 @@ namespace Backend.Models.Database.Entities
         public string Nationality { get; set; }
 
         [Phone]
-        public string Phone { get; set; }
-
+        public required string Phone { get; set; }
+        public ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
         public List<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
 
