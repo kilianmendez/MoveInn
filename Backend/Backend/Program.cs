@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
 using Backend.Models.Database.Repositories;
+using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
 using Backend.Models.Mappers;
 using Backend.Services;
@@ -40,12 +41,10 @@ public class Program
 
 
 
-
         // Servicios
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
-
         builder.Services.AddScoped<RecommendationService>();
 
         builder.Services.AddHttpClient("CountriesNow", client =>
@@ -54,6 +53,7 @@ public class Program
             client.DefaultRequestHeaders.Add("Accept", "application/json");
         });
         builder.Services.AddScoped<CountriesNowService>();
+        builder.Services.AddScoped<SmartSearchService>();
 
 
         //Swagger

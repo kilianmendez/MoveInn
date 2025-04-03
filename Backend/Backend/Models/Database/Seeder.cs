@@ -100,12 +100,13 @@ namespace Backend.Models.Database
                 Title = "Restaurante La Buena Mesa",
                 Description = "Excelente comida local y ambiente familiar.",
                 Category = Category.Restaurant,
-                Location = "Calle Principal 123",
+                Address = "Calle Principal 123",
+                City = "Málaga",
+                Country = "Spain",
                 Rating = Rating.Five,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
-                    // Supongamos que ya tienes estas imágenes en wwwroot/recommendations
                     new Image { Id = Guid.NewGuid(), Url = "recommendations/restaurant1_1.jpg" },
                 }
             };
@@ -116,7 +117,9 @@ namespace Backend.Models.Database
                 Title = "Museo de Arte Moderno",
                 Description = "Exposiciones temporales y colecciones permanentes impresionantes.",
                 Category = Category.Museum,
-                Location = "Avenida Cultural 456",
+                Address = "Calle Anormal 123",
+                City = "Sevilla",
+                Country = "Spain",
                 Rating = Backend.Models.Database.Enum.Rating.Four,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
@@ -125,12 +128,79 @@ namespace Backend.Models.Database
                 }
             };
 
+            var accommodations = new List<Accommodation>
+            {
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Apartamento céntrico en Madrid",
+                    Description = "Cómodo apartamento en el corazón de Madrid",
+                    Address = "Calle Gran Vía 123",
+                    City = "Madrid",
+                    Country = "España",
+                    PricePerMonth = 1200.00m,
+                    NumberOfRooms = 2,
+                    Bathrooms = 1,
+                    SquareMeters = 75,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 6, 1),
+                    AvailableTo = new DateTime(2025, 12, 25),
+                    OwnerId = users[0].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/madrid1.jpg" }
+                    }
+                },
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Estudio en París",
+                    Description = "Acogedor estudio cerca de la Torre Eiffel",
+                    Address = "Rue de la Paix 45",
+                    City = "París",
+                    Country = "Francia",
+                    PricePerMonth = 1500.00m,
+                    NumberOfRooms = 1,
+                    Bathrooms = 1,
+                    SquareMeters = 40,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 6, 1),
+                    AvailableTo = new DateTime(2025, 12, 31),
+                    OwnerId = users[1].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/paris1.jpg" }
+                    }
+                },
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Casa rural en Barcelona",
+                    Description = "Amplia casa con vistas a la montaña",
+                    Address = "Camí de les Vinyes 789",
+                    City = "Barcelona",
+                    Country = "España",
+                    PricePerMonth = 1800.00m,
+                    NumberOfRooms = 3,
+                    Bathrooms = 2,
+                    SquareMeters = 120,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 1, 1),
+                    AvailableTo = new DateTime(2025, 5, 31),
+                    OwnerId = users[2].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/barcelona1.jpg" }
+                    }
+                }
+            };
+
             _dataContext.Users.AddRange(users);
             _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
+            _dataContext.Accommodations.AddRange(accommodations);
             await _dataContext.SaveChangesAsync();
         }
 
     }
-
 
 }

@@ -5,6 +5,8 @@ namespace Backend.Models.Interfaces;
 
 public interface IAccommodationService
 {
-    Task<Accommodation> CreateAccommodationAsync(Accommodation accommodation);
+    Task<AccommodationDTO> CreateAccommodationAsync(AccommodationCreateDTO accommodation);
     Task<IEnumerable<AccommodationDTO>> GetAllAccommodationsAsync();
+    Task<IEnumerable<string>> GetAllCountriesAsync();
+    Task<IEnumerable<string>> GetCitiesByCountryAsync(string country);
 }

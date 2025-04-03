@@ -1,6 +1,5 @@
 ﻿using Backend.Models.Database;
 using Backend.Models.Database.Entities;
-using Backend.Models.Database.Enum;
 using Backend.Models.Dtos;
 using Backend.Models.Mappers;
 
@@ -14,38 +13,6 @@ namespace Backend.Services
         {
             _unitOfWork = unitOfWork;
         }
-
-        /*<------------->GET<------------->*/
-        public async Task<RecommendationDto?> GetRecommendationByIdAsync(Guid id)
-        {
-            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
-            return recommendation != null ? RecommendationMapper.ToDto(recommendation) : null;
-        }
-
-        public async Task<IEnumerable<RecommendationDto>> GetAllRecommendationsAsync()
-        {
-            var recommendations = await _unitOfWork.RecommendationRepository.GetAllAsync();
-            return recommendations.Select(r => RecommendationMapper.ToDto(r));
-        }
-        public async Task<IEnumerable<RecommendationDto>> GetRecommendationsSortedByRatingAsync(bool ascending = true)
-        {
-            var recommendations = await _unitOfWork.RecommendationRepository.GetAllAsync();
-
-            var sorted = ascending
-                ? recommendations.OrderBy(r => r.Rating.HasValue ? (int)r.Rating.Value : int.MaxValue)
-                : recommendations.OrderByDescending(r => r.Rating.HasValue ? (int)r.Rating.Value : int.MinValue);
-            return sorted.Select(r => RecommendationMapper.ToDto(r));
-        }
-
-        public async Task<IEnumerable<RecommendationDto>> GetRecommendationsByCategoryAsync(Category category)
-        {
-            var recommendations = await _unitOfWork.RecommendationRepository.GetAllAsync();
-            var filtered = recommendations.Where(r => r.Category == category);
-            return filtered.Select(r => RecommendationMapper.ToDto(r));
-        }
-
-
-        /*<------------->POST<------------->*/
 
         public async Task<RecommendationDto?> CreateRecommendationAsync(RecommendationCreateRequest request, Guid? userId = null)
         {
@@ -77,6 +44,39 @@ namespace Backend.Services
             await _unitOfWork.SaveAsync();
             return RecommendationMapper.ToDto(recommendation);
         }
+
+        public async Task<RecommendationDto?> GetRecommendationByIdAsync(Guid id)
+        {
+            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
+            return recommendation != null ? RecommendationMapper.ToDto(recommendation) : null;
+        }
+
+        public async Task<IEnumerable<RecommendationDto>> GetAllRecommendationsAsync()
+        {
+            var recommendations = await _unitOfWork.RecommendationRepository.GetAllAsync();
+            return recommendations.Select(r => RecommendationMapper.ToDto(r));
+        }
+
+        public async Task<IEnumerable<string>> GetAllCountriesAsync()
+        {
+            return await _unitOfWork.RecommendationRepository.GetAllCountriesAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
+        {
+            return await _unitOfWork.RecommendationRepository.GetCitiesByCountryAsync(country);
+        }
+
+        public async Task<RecommendationDto?> UpdateRecommendationAsync(Guid id, RecommendationUpdateRequest request)
+        {
+            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
+            if (recommendation == null) return null;
+            RecommendationMapper.UpdateEntity(recommendation, request);
+            await _unitOfWork.RecommendationRepository.UpdateAsync(recommendation);
+            bool saved = await _unitOfWork.SaveAsync();
+            return saved ? RecommendationMapper.ToDto(recommendation) : null;
+        }
+
         public async Task<string> StoreImageAsync(IFormFile file, string fileNamePrefix)
         {
             var validImageTypes = new[] { "image/jpeg", "image/png", "image/gif", "image/webp" };
@@ -102,21 +102,6 @@ namespace Backend.Services
             return Path.Combine("recommendations", fileName).Replace("\\", "/");
         }
 
-        /*<------------->UPDATE<------------->*/
-
-        public async Task<RecommendationDto?> UpdateRecommendationAsync(Guid id, RecommendationUpdateRequest request)
-        {
-            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
-            if (recommendation == null) return null;
-            RecommendationMapper.UpdateEntity(recommendation, request);
-            await _unitOfWork.RecommendationRepository.UpdateAsync(recommendation);
-            bool saved = await _unitOfWork.SaveAsync();
-            return saved ? RecommendationMapper.ToDto(recommendation) : null;
-        }
-
-
-        /*<------------->DELETE<------------->*/
-
         public async Task<bool> DeleteRecommendationAsync(Guid id)
         {
             var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
@@ -124,8 +109,5 @@ namespace Backend.Services
             await _unitOfWork.RecommendationRepository.DeleteAsync(recommendation);
             return await _unitOfWork.SaveAsync();
         }
-
-
-
     }
 }

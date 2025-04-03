@@ -1,4 +1,6 @@
-﻿namespace Backend.Models.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Backend.Models.Dtos;
 public class AccommodationDTO
 {
     public Guid Id { get; set; }
@@ -13,4 +15,10 @@ public class AccommodationDTO
     public int SquareMeters { get; set; }
     public bool HasWifi { get; set; }
     public Guid OwnerId { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime AvailableFrom { get; set; }
+
+    [DataType(DataType.Date)]
+    public DateTime AvailableTo { get; set; }
 }

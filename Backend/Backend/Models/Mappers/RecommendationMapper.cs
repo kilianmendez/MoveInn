@@ -2,52 +2,59 @@
 using Backend.Models.Dtos;
 using Backend.Models.Database.Enum;
 
-namespace Backend.Models.Mappers
+namespace Backend.Models.Mappers;
+
+public static class RecommendationMapper
 {
-    public static class RecommendationMapper
+    public static RecommendationDto ToDto(Recommendation recommendation)
     {
-        public static RecommendationDto ToDto(Recommendation recommendation)
-        {
-            if (recommendation == null) return null;
+        if (recommendation == null) return null;
 
-            return new RecommendationDto
-            {
-                Id = recommendation.Id,
-                Title = recommendation.Title,
-                Description = recommendation.Description,
-                Category = recommendation.Category,
-                Location = recommendation.Location,
-                Rating = recommendation.Rating,
-                CreatedAt = recommendation.CreatedAt
-            };
-        }
-
-        public static Recommendation ToEntity(RecommendationCreateRequest request)
+        return new RecommendationDto
         {
-            return new Recommendation
-            {
-                Id = Guid.NewGuid(),
-                Title = request.Title,
-                Description = request.Description,
-                Category = request.Category,
-                Location = request.Location,
-                Rating = request.Rating,
-                CreatedAt = DateTime.UtcNow
-            };
-        }
+            Id = recommendation.Id,
+            Title = recommendation.Title,
+            Description = recommendation.Description,
+            Category = recommendation.Category,
+            Address = recommendation.Address,
+            City = recommendation.City,
+            Country = recommendation.Country,
+            Rating = recommendation.Rating,
+            CreatedAt = recommendation.CreatedAt
+        };
+    }
 
-        public static void UpdateEntity(Recommendation recommendation, RecommendationUpdateRequest request)
+    public static Recommendation ToEntity(RecommendationCreateRequest request)
+    {
+        return new Recommendation
         {
-            if (request.Title != null)
-                recommendation.Title = request.Title;
-            if (request.Description != null)
-                recommendation.Description = request.Description;
-            if (request.Category != null)
-                recommendation.Category = request.Category;
-            if (request.Location != null)
-                recommendation.Location = request.Location;
-            if (request.Rating.HasValue)
-                recommendation.Rating = request.Rating;
-        }
+            Id = Guid.NewGuid(),
+            Title = request.Title,
+            Description = request.Description,
+            Category = request.Category,
+            Address = request.Address,
+            City = request.City,
+            Country = request.Country,
+            Rating = request.Rating,
+            CreatedAt = DateTime.UtcNow
+        };
+    }
+
+    public static void UpdateEntity(Recommendation recommendation, RecommendationUpdateRequest request)
+    {
+        if (request.Title != null)
+            recommendation.Title = request.Title;
+        if (request.Description != null)
+            recommendation.Description = request.Description;
+        if (request.Category != null)
+            recommendation.Category = request.Category;
+        if (request.Address != null)
+            recommendation.Address = request.Address;
+        if (request.City != null)
+            recommendation.City = request.City;
+        if (request.Country != null)
+            recommendation.Country = request.Country;
+        if (request.Rating.HasValue)
+            recommendation.Rating = request.Rating;
     }
 }

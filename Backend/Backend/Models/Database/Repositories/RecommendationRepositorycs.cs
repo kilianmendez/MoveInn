@@ -25,6 +25,24 @@ namespace Backend.Models.Database.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<string>> GetAllCountriesAsync()
+        {
+            return await _context.Recommendations
+                .Where(a => !string.IsNullOrEmpty(a.Country))
+                .Select(a => a.Country)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
+        {
+            return await _context.Recommendations
+                .Where(a => a.Country == country && !string.IsNullOrEmpty(a.City))
+                .Select(a => a.City)
+                .Distinct()
+                .ToListAsync();
+        }
+
         public async Task InsertAsync(Recommendation recommendation)
         {
             await _context.Set<Recommendation>().AddAsync(recommendation);
