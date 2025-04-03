@@ -11,6 +11,7 @@ namespace Backend.Models.Database
     {
         private readonly DataContext _dataContext;
 
+
         public Seeder(DataContext dataContext)
         {
             _dataContext = dataContext;

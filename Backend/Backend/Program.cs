@@ -48,6 +48,12 @@ public class Program
 
         builder.Services.AddScoped<RecommendationService>();
 
+        builder.Services.AddHttpClient("CountriesNow", client =>
+        {
+            client.BaseAddress = new Uri("https://countriesnow.space/api/v0.1/");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
+        builder.Services.AddScoped<CountriesNowService>();
 
 
         //Swagger
