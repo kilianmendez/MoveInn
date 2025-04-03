@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UserController : ControllerBase
@@ -21,7 +21,7 @@ namespace Backend.Controllers
             _userService = userService;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUserByIdAsync(Guid id)
         {
@@ -33,7 +33,7 @@ namespace Backend.Controllers
             return Ok(user);
         }
 
-        [Authorize(Roles = nameof(Role.Administrator))]
+        //[Authorize(Roles = nameof(Role.Administrator))]
         [HttpDelete("Delete")]
         public async Task<ActionResult<User>> DeleteUserByIdAsync(Guid id)
         {
@@ -56,12 +56,12 @@ namespace Backend.Controllers
             return Ok(UserMapper.ToDto(updatedUser));
         }
 
-        [Authorize(Roles = nameof(Role.Administrator))]
+        //[Authorize(Roles = nameof(Role.Administrator))]
         [HttpGet("All")]
         public async Task<ActionResult> GetAllAsync()
         {
-            Claim? userClaimId = User.FindFirst("id");
-            if (userClaimId == null) return Unauthorized(new { Message = "Debe iniciar sesión para llevar a cabo esta acción" });
+            //Claim? userClaimId = User.FindFirst("id");
+            //if (userClaimId == null) return Unauthorized(new { Message = "Debe iniciar sesión para llevar a cabo esta acción" });
 
             return Ok(await _userService.GetAllAsync());
         }

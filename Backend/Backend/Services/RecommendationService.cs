@@ -57,6 +57,16 @@ namespace Backend.Services
             return recommendations.Select(r => RecommendationMapper.ToDto(r));
         }
 
+        public async Task<IEnumerable<string>> GetAllCountriesAsync()
+        {
+            return await _unitOfWork.RecommendationRepository.GetAllCountriesAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
+        {
+            return await _unitOfWork.RecommendationRepository.GetCitiesByCountryAsync(country);
+        }
+
         public async Task<RecommendationDto?> UpdateRecommendationAsync(Guid id, RecommendationUpdateRequest request)
         {
             var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
@@ -92,12 +102,12 @@ namespace Backend.Services
             return Path.Combine("recommendations", fileName).Replace("\\", "/");
         }
 
-    public async Task<bool> DeleteRecommendationAsync(Guid id)
-    {
-        var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
-        if (recommendation == null) return false;
-        await _unitOfWork.RecommendationRepository.DeleteAsync(recommendation);
-        return await _unitOfWork.SaveAsync();
+        public async Task<bool> DeleteRecommendationAsync(Guid id)
+        {
+            var recommendation = await _unitOfWork.RecommendationRepository.GetByIdAsync(id);
+            if (recommendation == null) return false;
+            await _unitOfWork.RecommendationRepository.DeleteAsync(recommendation);
+            return await _unitOfWork.SaveAsync();
+        }
     }
-}
 }

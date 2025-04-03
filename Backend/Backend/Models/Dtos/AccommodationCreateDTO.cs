@@ -13,5 +13,8 @@ public class AccommodationCreateDTO
     public int SquareMeters { get; set; }
     public bool HasWifi { get; set; }
     public Guid OwnerId { get; set; }
+    public DateTime AvailableFrom { get; set; }
+    public DateTime AvailableTo { get; set; }
+    public List<IFormFile> Images { get; set; }
 }
 

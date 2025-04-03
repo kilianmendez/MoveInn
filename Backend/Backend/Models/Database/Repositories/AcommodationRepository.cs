@@ -1,5 +1,7 @@
 ﻿using Backend.Models.Database.Entities;
+using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
+using Backend.Models.Mappers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Models.Database.Repositories;
@@ -18,6 +20,23 @@ public class AccommodationRepository : IAccommodationRepository
     }
     public async Task<IEnumerable<Accommodation>> GetAllAsync()
     {
-        return await _context.Accommodations.Include(a => a.Owner).ToListAsync();
+        return await _context.Accommodations.Include(a => a.OwnerId).ToListAsync();
+    }
+    public async Task<IEnumerable<string>> GetAllCountriesAsync()
+    {
+        return await _context.Accommodations
+            .Where(a => !string.IsNullOrEmpty(a.Country))
+            .Select(a => a.Country)
+            .Distinct()
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
+    {
+        return await _context.Accommodations
+            .Where(a => a.Country == country && !string.IsNullOrEmpty(a.City))
+            .Select(a => a.City)
+            .Distinct()
+            .ToListAsync();
     }
 }
