@@ -7,12 +7,14 @@ namespace Backend.Models.Database
         private readonly DataContext _dataContext;
         private UserRepository _userRepository = null!;
         private RecommendationRepository _recommendationRepository = null!;
-
+        private AccommodationRepository _accommodationRepository = null!;
+        private ReservationRepository _reservationRepository = null!;
 
 
         public UserRepository UserRepository => _userRepository ??= new UserRepository(_dataContext);
         public RecommendationRepository RecommendationRepository => _recommendationRepository ??= new RecommendationRepository(_dataContext);
-
+        public AccommodationRepository AccommodationRepository => _accommodationRepository ??= new AccommodationRepository(_dataContext);
+        public ReservationRepository ReservationRepository => _reservationRepository ??= new ReservationRepository(_dataContext);
         public UnitOfWork(DataContext dataContext)
         {
             _dataContext = dataContext;

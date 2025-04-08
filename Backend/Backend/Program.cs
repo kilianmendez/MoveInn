@@ -1,12 +1,14 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
+using Backend.Models.Database.Entities;
 using Backend.Models.Database.Repositories;
 using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
 using Backend.Models.Mappers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -38,7 +40,7 @@ public class Program
         builder.Services.AddScoped<RecommendationRepository>();
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
-
+        builder.Services.AddScoped<ReservationRepository>();
 
 
         // Servicios
@@ -46,7 +48,7 @@ public class Program
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
         builder.Services.AddScoped<RecommendationService>();
-
+        builder.Services.AddScoped<ReservationService>();
         builder.Services.AddHttpClient("CountriesNow", client =>
         {
             client.BaseAddress = new Uri("https://countriesnow.space/api/v0.1/");
