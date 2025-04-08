@@ -27,7 +27,7 @@ public class AccommodationsController : ControllerBase
 
     [HttpPost("CreateAccommodation")]
     public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDTO dto)
-    {
+    { 
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);

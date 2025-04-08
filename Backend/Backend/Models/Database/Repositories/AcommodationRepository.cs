@@ -24,17 +24,12 @@ public class AccommodationRepository : IAccommodationRepository
             .Include(r => r.AccomodationImages)
             .FirstOrDefaultAsync(r => r.Id == accommodationId);
     }
+
     public async Task<IEnumerable<Accommodation>> GetAllAsync()
     {
         return await _context.Accommodations.Include(a => a.OwnerId).ToListAsync();
     }
 
-    public async Task<Accommodation> GetByIdAsync(Guid id)
-    {
-        return await _context.Accommodations
-            .Include(a => a.AccomodationImages)
-            .FirstOrDefaultAsync(a => a.Id == id);
-    }
     public async Task<IEnumerable<string>> GetAllCountriesAsync()
     {
         return await _context.Accommodations

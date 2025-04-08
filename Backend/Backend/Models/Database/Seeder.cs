@@ -194,10 +194,88 @@ namespace Backend.Models.Database
                     }
                 }
             };
+            var reservations = new List<Reservation>
+            {
+                new Reservation
+                {
+                    Id = Guid.NewGuid(),
+                    StartDate = new DateTime(2025, 07, 01),
+                    EndDate = new DateTime(2025, 07, 10),
+                    TotalPrice = 1200.00m,
+                    Status = ReservationStatus.Pending,
+                    UserId = users[0].Id,
+                    AccommodationId = accommodations[0].Id
+                },
+                new Reservation
+                {
+                    Id = Guid.NewGuid(),
+                    StartDate = new DateTime(2025, 08, 01),
+                    EndDate = new DateTime(2025, 08, 05),
+                    TotalPrice = 1500.00m,
+                    Status = ReservationStatus.Confirmed,
+                    UserId = users[1].Id,
+                    AccommodationId = accommodations[1].Id
+                },
+                new Reservation
+                {
+                    Id = Guid.NewGuid(),
+                    StartDate = new DateTime(2025, 09, 01),
+                    EndDate = new DateTime(2025, 09, 03),
+                    TotalPrice = 1800.00m,
+                    Status = ReservationStatus.Cancelled,
+                    UserId = users[2].Id,
+                    AccommodationId = accommodations[2].Id
+                },
+                new Reservation
+                {
+                    Id = Guid.NewGuid(),
+                    StartDate = new DateTime(2025, 06, 01),
+                    EndDate = new DateTime(2025, 06, 15),
+                    TotalPrice = 2000.00m,
+                    Status = ReservationStatus.Completed,
+                    UserId = users[0].Id,
+                    AccommodationId = accommodations[1].Id
+                }
+            };
+            var reviews = new List<Review>
+            {
+                new Review
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Excelente experiencia",
+                    Content = "El alojamiento superó mis expectativas y la atención fue impecable.",
+                    Rating = Rating.Five,
+                    CreatedAt = DateTime.UtcNow,
+                    ReservationId = reservations[3].Id, 
+                    UserId = reservations[3].UserId
+                },
+                new Review
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Buena, pero puede mejorar",
+                    Content = "Aunque el lugar es bonito, la limpieza y algunos servicios deben mejorar.",
+                    Rating = Rating.Three,
+                    CreatedAt = DateTime.UtcNow,
+                    ReservationId = reservations[0].Id,
+                    UserId = reservations[0].UserId
+                },
+                new Review
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "No se cumplió lo prometido",
+                    Content = "Tuve inconvenientes con la reserva y la comunicación no fue clara.",
+                    Rating = Rating.Two,
+                    CreatedAt = DateTime.UtcNow,
+                    ReservationId = reservations[2].Id,
+                    UserId = reservations[2].UserId
+                }
+            };
 
             _dataContext.Users.AddRange(users);
             _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
             _dataContext.Accommodations.AddRange(accommodations);
+            _dataContext.Reservations.AddRange(reservations);
+            _dataContext.Reviews.AddRange(reviews);
             await _dataContext.SaveChangesAsync();
         }
 

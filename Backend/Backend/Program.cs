@@ -1,14 +1,10 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
-using Backend.Models.Database.Entities;
 using Backend.Models.Database.Repositories;
-using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
-using Backend.Models.Mappers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -41,6 +37,7 @@ public class Program
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         builder.Services.AddScoped<ReservationRepository>();
+        builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 
         // Servicios
@@ -56,6 +53,7 @@ public class Program
         });
         builder.Services.AddScoped<CountriesNowService>();
         builder.Services.AddScoped<SmartSearchService>();
+        builder.Services.AddScoped<IReviewService, ReviewService>();
 
 
         //Swagger
@@ -78,9 +76,7 @@ public class Program
         builder.Services.AddAuthentication()
         .AddJwtBearer(options =>
         {
-            //Accedemos a la clase settings donde esta el get de JwtKey (Donde se encuentra nuestra clave)
             Settings settings = builder.Configuration.GetSection(Settings.SECTION_NAME).Get<Settings>()!;
-            //nuestra clave se guarda en la variable key
             string key = Environment.GetEnvironmentVariable("JWT_KEY");
 
             options.TokenValidationParameters = new TokenValidationParameters
