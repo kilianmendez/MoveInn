@@ -14,6 +14,8 @@ public class DataContext : DbContext
     public DbSet<Recommendation> Recommendations { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<ImageAccommodation> ImageAccommodations { get; set; }
+    public DbSet<SocialMediaLink> SocialMediaLinks { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.LogTo(Console.WriteLine);

@@ -15,6 +15,7 @@ namespace Backend.Models.Database.Entities
         [ForeignKey("User")]
         public Guid UserId { get; set; }
         public User User { get; set; }
+
         [ForeignKey("Accommodation")]
         public Guid AccommodationId { get; set; }
         public Accommodation Accommodation { get; set; }
