@@ -18,6 +18,12 @@ public class AccommodationRepository : IAccommodationRepository
     {
         await _context.Accommodations.AddAsync(accommodation);
     }
+    public async Task<Accommodation> GetByIdAsync(Guid accommodationId)
+    {
+        return await _context.Set<Accommodation>()
+            .Include(r => r.AccomodationImages)
+            .FirstOrDefaultAsync(r => r.Id == accommodationId);
+    }
     public async Task<IEnumerable<Accommodation>> GetAllAsync()
     {
         return await _context.Accommodations.Include(a => a.OwnerId).ToListAsync();
