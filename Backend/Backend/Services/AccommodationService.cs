@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Database.Entities;
+using Backend.Models.Database.Repositories;
 using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
 using Backend.Models.Mappers;
@@ -29,7 +30,7 @@ public class AccommodationService : IAccommodationService
         accommodation.Id = Guid.NewGuid();
 
         await _repository.InsertAsync(accommodation);
-        await _context.SaveChangesAsync(); 
+        await _context.SaveChangesAsync();
 
         if (accommodationDto.Images != null && accommodationDto.Images.Any())
         {
@@ -55,6 +56,49 @@ public class AccommodationService : IAccommodationService
 
         return AccommodationMapper.ToDto(accommodation);
     }
+
+    public async Task<bool> UpdateAccommodationAsync(Guid accommodationId, AccommodationUpdateDTO updateDto, Guid currentUserId)
+    {
+        var existingAccommodation = await _repository.GetByIdAsync(accommodationId);
+        if (existingAccommodation == null)
+        {
+            return false;
+        }
+
+        if (existingAccommodation.OwnerId != currentUserId)
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(updateDto.Title))
+            existingAccommodation.Title = updateDto.Title;
+        if (!string.IsNullOrWhiteSpace(updateDto.Description))
+            existingAccommodation.Description = updateDto.Description;
+        if (!string.IsNullOrWhiteSpace(updateDto.Address))
+            existingAccommodation.Address = updateDto.Address;
+        if (!string.IsNullOrWhiteSpace(updateDto.City))
+            existingAccommodation.City = updateDto.City;
+        if (!string.IsNullOrWhiteSpace(updateDto.Country))
+            existingAccommodation.Country = updateDto.Country;
+        if (updateDto.PricePerMonth.HasValue)
+            existingAccommodation.PricePerMonth = updateDto.PricePerMonth.Value;
+        if (updateDto.NumberOfRooms.HasValue)
+            existingAccommodation.NumberOfRooms = updateDto.NumberOfRooms.Value;
+        if (updateDto.Bathrooms.HasValue)
+            existingAccommodation.Bathrooms = updateDto.Bathrooms.Value;
+        if (updateDto.SquareMeters.HasValue)
+            existingAccommodation.SquareMeters = updateDto.SquareMeters.Value;
+        if (updateDto.HasWifi.HasValue)
+            existingAccommodation.HasWifi = updateDto.HasWifi.Value;
+        if (updateDto.AvailableFrom.HasValue)
+            existingAccommodation.AvailableFrom = updateDto.AvailableFrom.Value;
+        if (updateDto.AvailableTo.HasValue)
+            existingAccommodation.AvailableTo = updateDto.AvailableTo.Value;
+
+        await _repository.UpdateAsync(existingAccommodation);
+        return true;
+    }
+
 
     public async Task<IEnumerable<AccommodationDTO>> GetAllAccommodationsAsync()
     {

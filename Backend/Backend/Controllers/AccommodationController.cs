@@ -5,6 +5,8 @@ using Backend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Security.Claims;
 
 namespace Backend.Controllers;
 
@@ -141,6 +143,19 @@ public class AccommodationsController : ControllerBase
         {
             return StatusCode(500, "Internal server error: " + ex.Message);
         }
+    }
+
+    [HttpPut("{id}/{ownerId}")]
+    public async Task<IActionResult> Update(Guid id, Guid ownerId, [FromBody] AccommodationUpdateDTO updateDto)
+    {
+        var result = await _accommodationService.UpdateAccommodationAsync(id, updateDto, ownerId);
+
+        if (!result)
+        {
+            return Ok(new { message = "No se ha encontrado el alojamiento, o no eres el propietario del alojamiento" });
+        }
+
+        return Ok(new { message = "¡Alojamiento actualizado correctamente!" });
     }
 
     [HttpGet("{id}")]

@@ -22,6 +22,13 @@ public class AccommodationRepository : IAccommodationRepository
     {
         return await _context.Accommodations.Include(a => a.OwnerId).ToListAsync();
     }
+
+    public async Task<Accommodation> GetByIdAsync(Guid id)
+    {
+        return await _context.Accommodations
+            .Include(a => a.AccomodationImages)
+            .FirstOrDefaultAsync(a => a.Id == id);
+    }
     public async Task<IEnumerable<string>> GetAllCountriesAsync()
     {
         return await _context.Accommodations
@@ -38,5 +45,11 @@ public class AccommodationRepository : IAccommodationRepository
             .Select(a => a.City)
             .Distinct()
             .ToListAsync();
+    }
+
+    public async Task UpdateAsync(Accommodation accommodation)
+    {
+        _context.Accommodations.Update(accommodation);
+        await _context.SaveChangesAsync();
     }
 }
