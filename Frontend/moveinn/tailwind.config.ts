@@ -10,47 +10,34 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-poppins)", "sans-serif"],
+        sans: ["Inter", "sans-serif"],
       },
       colors: {
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: "oklch(var(--background))", /*Gris muy claro casi blanco para el fondo*/
+        foreground: "oklch(var(--foreground))", /*blanco puro*/
+        text: "oklch(var(--text))", /*Azul oscuro de textos principales*/
+        textSecondary: "oklch(var(--text-secondary))", /*Gris claro de textos secundarios*/
+
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "oklch(var(--primary))", /*Azul*/
+          dark: "oklch(var(--primary-dark))", /*Azul oscuro*/
         },
         secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          DEFAULT: "oklch(var(--secondary))", /*Verde claro*/
+          greenblue: "oklch(var(--secondary-greenblue))", /*Verde turquesa*/
         },
         accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+          DEFAULT: "oklch(var(--accent))", /*Amarillo*/
+          light: "oklch(var(--accent-light))", /*Amarillo claro*/
+          dark: "oklch(var(--accent-dark))", /*Amarillo oscuro*/
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
-        },
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
-        },
+        negativeRed: "oklch(var(--negative-red))", /*Rojo dislike*/
+        positiveGreen: "oklch(var(--positive-green))", /*Verde like*/
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        sm: "var(--radius-sm)", /*5px*/
+        md: "var(--radius-md)", /*10px*/
+        lg: "var(--radius-lg)", /*20px*/
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
