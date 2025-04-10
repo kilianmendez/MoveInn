@@ -18,7 +18,6 @@ namespace Backend.Models.Mappers
                 AccommodationId = reservation.AccommodationId,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
-                TotalPrice = reservation.TotalPrice,
                 Status = reservation.Status
 
             };
