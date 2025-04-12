@@ -17,6 +17,7 @@ public class DataContext : DbContext
     public DbSet<SocialMediaLink> SocialMediaLinks { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Follow> Follows { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.LogTo(Console.WriteLine);

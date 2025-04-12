@@ -4,6 +4,7 @@ using Backend.Models.Database;
 using Backend.Models.Database.Repositories;
 using Backend.Models.Interfaces;
 using Backend.Services;
+using Backend.WebSockets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
@@ -55,6 +56,11 @@ public class Program
         builder.Services.AddScoped<SmartSearchService>();
         builder.Services.AddScoped<IReviewService, ReviewService>();
 
+        // WebSocket
+        builder.Services.AddSingleton<WebsocketHandler>();
+        builder.Services.AddSingleton<IFollowRepository, FollowRepository>();
+        builder.Services.AddSingleton<IFollowService, FollowService>();
+        builder.Services.AddSingleton<INotificationService, NotificationService>();
 
         //Swagger
         builder.Services.AddEndpointsApiExplorer();
@@ -105,11 +111,14 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-        app.UseCors();
         app.UseAuthentication();
-        app.UseHttpsRedirection();
+        app.UseWebSockets();
 
+        app.UseHttpsRedirection();
         app.UseAuthorization();
+
+        //app.UseMiddleware<middleware>();
+        app.UseCors();
 
         app.UseStaticFiles(new StaticFileOptions
         {
