@@ -10,13 +10,13 @@ namespace Backend.Models.Database
         private RecommendationRepository _recommendationRepository = null!;
         private AccommodationRepository _accommodationRepository = null!;
         private ReservationRepository _reservationRepository = null!;
-        
-        private FollowRepository _followRepository = null!;
+        private ForumRepository _forumRepository = null!;
 
         public UserRepository UserRepository => _userRepository ??= new UserRepository(_dataContext);
         public RecommendationRepository RecommendationRepository => _recommendationRepository ??= new RecommendationRepository(_dataContext);
         public AccommodationRepository AccommodationRepository => _accommodationRepository ??= new AccommodationRepository(_dataContext);
         public ReservationRepository ReservationRepository => _reservationRepository ??= new ReservationRepository(_dataContext);
+        public ForumRepository ForumRepository => _forumRepository ??= new ForumRepository(_dataContext);
 
         public UnitOfWork(DataContext dataContext)
         {

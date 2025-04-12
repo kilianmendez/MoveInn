@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
+using Backend.Models.Database.Entities;
 using Backend.Models.Database.Repositories;
 using Backend.Models.Interfaces;
 using Backend.Services;
@@ -44,7 +45,7 @@ public class Program
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         builder.Services.AddScoped<ReservationRepository>();
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-
+        builder.Services.AddScoped<IForumService, ForumService>();
 
         // Servicios
         builder.Services.AddScoped<AuthService>();
@@ -59,7 +60,8 @@ public class Program
         });
         builder.Services.AddScoped<CountriesNowService>();
         builder.Services.AddScoped<SmartSearchService>();
-        builder.Services.AddScoped<IReviewService, ReviewService>();
+        builder.Services.AddScoped<IReviewService, Services.ReviewService>();
+        builder.Services.AddScoped<IForumService, ForumService>();
 
         // WebSocket
         builder.Services.AddSingleton<WebsocketHandler>();
