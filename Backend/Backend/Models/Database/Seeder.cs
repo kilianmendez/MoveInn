@@ -2,8 +2,6 @@
 using Backend.Models.Database.Enum;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Backend.Models.Database
 {
