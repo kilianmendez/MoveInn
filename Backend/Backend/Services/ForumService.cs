@@ -35,23 +35,68 @@ public class ForumService : IForumService
 
         foreach (var forum in forums)
         {
+            var forumDto = ForumMapper.ToDto(forum);
             var user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(forum.CreatedBy);
 
-            forumDTOs.Add(new ForumDTO
+            if (user != null)
             {
-                Id = forum.Id,
-                Title = forum.Title,
-                Description = forum.Description,
-                Country = forum.Country,
-                Category = forum.Category,
-                CreatedAt = forum.CreatedAt,
-                CreatorId = user.Id,
-                CreatorName = user.Name,
-                CreatorAvatar = user.AvatarUrl
-            });
+                forumDto.CreatorId = user.Id;
+                forumDto.CreatorName = user.Name;
+                forumDto.CreatorAvatar = user.AvatarUrl;
+            }
+            else
+            {
+                forumDto.CreatorName = "Usuario desconocido";
+                forumDto.CreatorAvatar = "default-avatar.png";
+            }
+
+            forumDTOs.Add(forumDto);
         }
 
         return forumDTOs;
     }
+
+    public async Task<bool> CreateThreadAsync(CreateForumThreadDTO threadDto)
+    {
+        try
+        {
+            ForumThread threadEntity = ForumMapper.ToEntity(threadDto);
+            await _unitOfWork.ForumRepository.CreateThreadAsync(threadEntity);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error al crear el hilo", ex);
+        }
+    }
+
+    public async Task<IEnumerable<ForumThreadDTO>> GetThreadsByForumIdAsync(Guid forumId)
+    {
+        var threads = await _unitOfWork.ForumRepository.GetThreadsByForumIdAsync(forumId);
+        var threadDtos = threads.Select(thread => ForumMapper.ToDto(thread)).ToList();
+        return threadDtos;
+    }
+
+    public async Task<bool> CreateMessageAsync(CreateForumMessageDTO messageDto)
+    {
+        try
+        {
+            ForumMessages messageEntity = ForumMapper.ToEntity(messageDto);
+            await _unitOfWork.ForumRepository.CreateMessageAsync(messageEntity);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error al crear el mensaje", ex);
+        }
+    }
+
+    public async Task<IEnumerable<ForumMessageDTO>> GetMessagesByThreadIdAsync(Guid threadId)
+    {
+        var messages = await _unitOfWork.ForumRepository.GetMessagesByThreadIdAsync(threadId);
+        var messageDtos = messages.Select(ForumMapper.ToDto).ToList();
+        return messageDtos;
+    }
+
 }
 

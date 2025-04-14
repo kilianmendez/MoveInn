@@ -17,7 +17,6 @@ namespace Backend.Models.Database
 
         public async Task SeedAsync()
         {
-            // Evitamos sembrar si ya existen usuarios
             if (await _dataContext.Users.AnyAsync())
             {
                 return;
@@ -35,16 +34,16 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Yasir",
-                    LastName = "Bel Maalem", // Puedes ajustar el apellido
+                    LastName = "Bel Maalem", 
                     Mail = "yasir@gmail.com",
                     Password = AuthService.HashPassword("passwordYasir"),
                     Biography = "Biografía de Yasir",
                     Phone = "111111111",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Yasir", // Add this line
-                    Degree = "Grado de Yasir", // Add this line
-                    Nationality = "Nacionalidad de Yasir", // Add this line
+                    School = "Escuela de Yasir", 
+                    Degree = "Grado de Yasir", 
+                    Nationality = "Nacionalidad de Yasir", 
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeYasir" },
@@ -55,16 +54,16 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Christian",
-                    LastName = "Rodriguez", // Puedes ajustar el apellido
+                    LastName = "Rodriguez", 
                     Mail = "christian@gmail.com",
                     Password = AuthService.HashPassword("passwordChristian"),
                     Biography = "Biografía de Christian",
                     Phone = "222222222",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Christian", // Add this line
-                    Degree = "Grado de Christian", // Add this line
-                    Nationality = "Nacionalidad de Christian", // Add this line
+                    School = "Escuela de Christian", 
+                    Degree = "Grado de Christian", 
+                    Nationality = "Nacionalidad de Christian",
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
@@ -75,16 +74,16 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Kilian",
-                    LastName = "Méndez", // Puedes ajustar el apellido
+                    LastName = "Méndez",
                     Mail = "kilian@gmail.com",
                     Password = AuthService.HashPassword("passwordKilian"),
                     Biography = "Biografía de Kilian",
                     Phone = "333333333",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    AvatarUrl = "default-avatar-url", 
                     Role = Role.Administrator,
-                    School = "Escuela de Kilian", // Add this line
-                    Degree = "Grado de Kilian", // Add this line
-                    Nationality = "Nacionalidad de Kilian", // Add this line
+                    School = "Escuela de Kilian", 
+                    Degree = "Grado de Kilian", 
+                    Nationality = "Nacionalidad de Kilian", 
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeKilian" },
@@ -268,12 +267,117 @@ namespace Backend.Models.Database
                     UserId = reservations[2].UserId
                 }
             };
+            var forum = new Forum
+            {
+                Id = Guid.NewGuid(),
+                Title = "Foro de Prueba",
+                Description = "Este es un foro para pruebas.",
+                Country = "Spain",
+                Category = ForumCategory.Otro,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[0].Id,
+                Threads = new List<ForumThread>()
+            };
+
+            var thread1 = new ForumThread
+            {
+                Id = Guid.NewGuid(),
+                ForumId = forum.Id,
+                Title = "Hilo simple",
+                Content = "Este hilo tiene mensajes directos al hilo.",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[1].Id,
+                Posts = new List<ForumMessages>()
+            };
+
+            var message1_thread1 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread1.Id,
+                Content = "Mensaje 1 en hilo simple",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[2].Id,
+                ParentMessageId = null
+            };
+
+            var message2_thread1 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread1.Id,
+                Content = "Mensaje 2 en hilo simple",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[0].Id,
+                ParentMessageId = null
+            };
+
+            thread1.Posts.Add(message1_thread1);
+            thread1.Posts.Add(message2_thread1);
+
+            var thread2 = new ForumThread
+            {
+                Id = Guid.NewGuid(),
+                ForumId = forum.Id,
+                Title = "Hilo con respuestas anidadas",
+                Content = "Este hilo tiene mensajes y respuestas anidadas.",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[1].Id,
+                Posts = new List<ForumMessages>()
+            };
+
+            var messageA_thread2 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread2.Id,
+                Content = "Mensaje A en hilo con respuestas anidadas",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[2].Id,
+                ParentMessageId = null
+            };
+
+            var messageB_thread2 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread2.Id,
+                Content = "Mensaje B en hilo con respuestas anidadas",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[0].Id,
+                ParentMessageId = null
+            };
+
+            var messageC_thread2 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread2.Id,
+                Content = "Mensaje C, respuesta a mensaje B",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[2].Id,
+                ParentMessageId = messageB_thread2.Id
+            };
+
+            var messageD_thread2 = new ForumMessages
+            {
+                Id = Guid.NewGuid(),
+                ThreadId = thread2.Id,
+                Content = "Mensaje D, respuesta a mensaje A",
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[1].Id,
+                ParentMessageId = messageA_thread2.Id
+            };
+
+            thread2.Posts.Add(messageA_thread2);
+            thread2.Posts.Add(messageB_thread2);
+            thread2.Posts.Add(messageC_thread2);
+            thread2.Posts.Add(messageD_thread2);
+
+            forum.Threads.Add(thread1);
+            forum.Threads.Add(thread2);
 
             _dataContext.Users.AddRange(users);
             _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
             _dataContext.Accommodations.AddRange(accommodations);
             _dataContext.Reservations.AddRange(reservations);
             _dataContext.Reviews.AddRange(reviews);
+            _dataContext.Forum.Add(forum);
             await _dataContext.SaveChangesAsync();
         }
 

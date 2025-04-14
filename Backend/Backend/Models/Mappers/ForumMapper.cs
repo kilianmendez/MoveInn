@@ -39,4 +39,66 @@ public class ForumMapper
             CreatorAvatar = "URL del Avatar"
         };
     }
+
+    public static ForumThread ToEntity(CreateForumThreadDTO dto)
+    {
+        if (dto == null) return null!;
+
+        return new ForumThread
+        {
+            Id = Guid.NewGuid(),
+            ForumId = dto.ForumId,
+            Title = dto.Title,
+            Content = dto.Content,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = dto.CreatedBy
+
+        };
+    }
+
+    public static ForumThreadDTO ToDto(ForumThread thread)
+    {
+        if (thread == null) return null!;
+
+        return new ForumThreadDTO
+        {
+            Id = thread.Id,
+            ForumId = thread.ForumId,
+            Title = thread.Title,
+            Content = thread.Content,
+            CreatedAt = thread.CreatedAt,
+            CreatedBy = thread.CreatedBy
+        };
+    }
+
+    public static ForumMessages ToEntity(CreateForumMessageDTO dto)
+    {
+        if (dto == null) return null!;
+
+        return new ForumMessages
+        {
+            Id = Guid.NewGuid(),
+            ThreadId = dto.ThreadId,
+            Content = dto.Content,
+            CreatedAt = DateTime.UtcNow,
+            CreatedBy = dto.CreatedBy,
+            ParentMessageId = dto.ParentMessageId
+        };
+    }
+
+    public static ForumMessageDTO ToDto(ForumMessages message)
+    {
+        if (message == null) return null!;
+
+        return new ForumMessageDTO
+        {
+            Id = message.Id,
+            ThreadId = message.ThreadId,
+            Content = message.Content,
+            CreatedAt = message.CreatedAt,
+            CreatedBy = message.CreatedBy,
+            ParentMessageId = message.ParentMessageId
+        };
+    }
 }
+

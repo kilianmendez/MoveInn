@@ -11,5 +11,11 @@ public class ForumMessages
     public DateTime CreatedAt { get; set; }
     public Guid CreatedBy { get; set; }
 
+    public Guid? ParentMessageId { get; set; }
+
     public ForumThread Thread { get; set; } = null!;
+    
+    public ForumMessages? ParentMessage { get; set; }
+    
+    public ICollection<ForumMessages> Replies { get; set; } = new List<ForumMessages>();
 }

@@ -5,5 +5,11 @@ namespace Backend.Models.Interfaces;
 public interface IForumRepository
 {
     Task CreateReviewAsync(Forum forum);
+    Task CreateThreadAsync(ForumThread forumThread);
+    Task<IEnumerable<ForumThread>> GetThreadsByForumIdAsync(Guid forumId);
+    Task<ForumThread?> GetThreadByIdAsync(Guid threadId);
+    Task CreateMessageAsync(ForumMessages message);
+    Task<IEnumerable<ForumMessages>> GetMessagesByThreadIdAsync(Guid threadId);
+    Task<ForumMessages?> GetMessageByIdAsync(Guid messageId);
     Task<IEnumerable<Forum>> GetAllForumsAsync();
 }
