@@ -46,13 +46,13 @@ export function NotificationItem({ type, content, time, read }: NotificationItem
     const { icon, bgColor, gradientFrom } = getIconAndColor()
 
     return (
-        <div className={`flex items-start gap-3 p-2 rounded-lg bg-gradient-to-r ${gradientFrom} to-white`}>
-        <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0`}>{icon}</div>
-        <div className="flex-1">
-            <p className={`text-sm ${read ? "text-gray-600" : "text-[#0E1E40] font-medium"}`}>{content}</p>
-            <p className="text-xs text-gray-400 mt-1">{time}</p>
-        </div>
-        {!read && <div className="w-2 h-2 rounded-full bg-[#4C69DD] mt-2"></div>}
+        <div className={`flex items-start gap-3 p-2 rounded-[var(--radius-lg)] bg-gradient-to-r ${gradientFrom} to-white`}>
+            <div className={`w-8 h-8 rounded-full ${bgColor} flex items-center justify-center flex-shrink-0`}>{icon}</div>
+                <div className="flex-1">
+                    <p className={`text-sm ${read ? "text-gray-600" : "text-[#0E1E40] font-medium"}`}>{content}</p>
+                    <p className="text-xs text-gray-400 mt-1">{time}</p>
+                </div>
+            {!read && <div className="w-2 h-2 rounded-full bg-[#4C69DD] mt-2"></div>}
         </div>
     )
 }

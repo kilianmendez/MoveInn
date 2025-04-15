@@ -16,7 +16,7 @@ const config: Config = {
         background: "oklch(var(--background))", /*Gris muy claro casi blanco para el fondo*/
         foreground: "oklch(var(--foreground))", /*blanco puro*/
         text: "oklch(var(--text))", /*Azul oscuro de textos principales*/
-        textSecondary: "oklch(var(--text-secondary))", /*Gris claro de textos secundarios*/
+        "text-secondary": "oklch(var(--text-secondary))", /*Gris claro de textos secundarios*/
 
         primary: {
           DEFAULT: "oklch(var(--primary))", /*Azul*/
@@ -31,8 +31,8 @@ const config: Config = {
           light: "oklch(var(--accent-light))", /*Amarillo claro*/
           dark: "oklch(var(--accent-dark))", /*Amarillo oscuro*/
         },
-        negativeRed: "oklch(var(--negative-red))", /*Rojo dislike*/
-        positiveGreen: "oklch(var(--positive-green))", /*Verde like*/
+        "negative-red": "oklch(var(--negative-red))", /*Rojo dislike*/
+        "positive-green": "oklch(var(--positive-green))", /*Verde like*/
       },
       borderRadius: {
         sm: "var(--radius-sm)", /*5px*/

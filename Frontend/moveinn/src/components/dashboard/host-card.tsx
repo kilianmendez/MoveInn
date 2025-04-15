@@ -18,11 +18,11 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
 
     // Generate a gradient based on online status
     const getStatusGradient = () => {
-        return lastActive === "Online now" ? "bg-gradient-to-r from-[#B7F8C8]/30 to-white" : "bg-white"
+        return lastActive === "Online" ? "bg-gradient-to-r from-[#B7F8C8]/30 to-white" : "bg-white"
     }
 
     return (
-        <div className={`flex items-start gap-3 p-3 rounded-lg ${getStatusGradient()}`}>
+        <div className={`flex items-start gap-3 p-3 rounded-[var(--radius-lg)] ${getStatusGradient()}`}>
         <Avatar className="h-10 w-10 border-2 border-[#B7F8C8]">
             <AvatarImage src="/placeholder.svg?height=40&width=40" alt={name} />
             <AvatarFallback className="bg-[#4C69DD] text-white">{initials}</AvatarFallback>
@@ -32,7 +32,7 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
             <div className="flex items-center justify-between">
             <h3 className="font-medium text-[#0E1E40]">{name}</h3>
             <span
-                className={`text-xs px-2 py-0.5 rounded-full ${lastActive === "Online now" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                className={`text-xs px-2 py-0.5 rounded-full ${lastActive === "Online" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
             >
                 {lastActive}
             </span>
@@ -58,7 +58,7 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
             ))}
             </div>
 
-            <Button variant="ghost" size="sm" className="h-7 text-[#4C69DD] hover:bg-[#4C69DD]/10 p-0">
+            <Button variant="ghost" size="sm" className="h-7 text-[#4C69DD] hover:bg-[#4C69DD]/10 p-1">
             Send message
             </Button>
         </div>

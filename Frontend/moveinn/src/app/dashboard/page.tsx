@@ -9,6 +9,7 @@ import {
     ChevronRightIcon,
     GlobeIcon,
     TrendingUpIcon,
+    UsersIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,33 +33,31 @@ export default function DashboardPage() {
 
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, Sarah!</h1>
-                    <p className="text-white/80 mb-4">Your Erasmus journey in Barcelona is going great!</p>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, <span className="text-4xl text-accent">Sarah!</span></h1>
+                    <p className="text-white/80 mb-4">Bet your Erasmus journey in Barcelona is going great!</p>
                     <div className="flex items-center space-x-4">
-                    <div>
-                        <p className="text-sm text-white/70">Profile completion</p>
-                        <div className="flex items-center mt-1">
-                        {/* <Progress value={75} className="h-2 w-32 bg-white/20" indicatorClassName="bg-[#B7F8C8]" /> */}
-                        <span className="ml-2 text-sm font-medium">75%</span>
-                        </div>
-                    </div>
+                    
                     <div className="h-10 border-l border-white/20"></div>
                     <div>
                         <p className="text-sm text-white/70">Days in Barcelona</p>
-                        <p className="text-xl font-bold">42</p>
+                        <p className="text-4xl font-bold text-primary">42</p>
                     </div>
                     </div>
                 </div>
                 
-                <div className="mt-6 md:mt-0 flex flex-col md:flex-row items-start md:items-center space-y-3 md:space-y-0 md:space-x-3">
+                <div className="mt-6 md:mt-0 flex flex-col items-start gap-2 space-y-3 md:space-y-0 md:space-x-3">
                     <Button className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold">
-                    <PlusCircleIcon className="mr-2 h-4 w-4" />
-                    Create Event
-                </Button>
-                <Button variant="outline" className="bg-transparent border-primary-dark text-primary-dark hover:bg-white/10">
-                    <MapPinIcon className="mr-2 h-4 w-4" />
-                    Explore The City
-                </Button>
+                        <PlusCircleIcon className="mr-2 h-4 w-4" />
+                        Create Event
+                    </Button>
+                    <Button variant="outline" className="bg-white/10 border-none text-white hover:bg-white/10">
+                        <MapPinIcon className="mr-2 h-4 w-4" />
+                        Explore The City
+                    </Button>
+                    <Button variant="outline" className="bg-white/10 border-none text-white hover:bg-white/10">
+                        <UsersIcon className="mr-2 h-4 w-4" />
+                        Make New Friends
+                    </Button>
                 </div>
                 </div>
             </div>
@@ -128,14 +127,14 @@ export default function DashboardPage() {
             {/* Left Column */}
             <div className="lg:col-span-2 space-y-8">
                 {/* Upcoming Events */}
-                <Card className="border-none shadow-sm">
+                <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Upcoming Events</CardTitle>
                     <CardDescription>Events you&apos;ve joined or might be interested in</CardDescription>
                     </div>
-                    <Button variant="ghost" className="text-[#4C69DD]">
-                    View all <ChevronRightIcon className="ml-1 h-4 w-4" />
+                    <Button variant="ghost" className="text-primary">
+                    View all <ChevronRightIcon className="ml-1 h-4 w-4"/>
                     </Button>
                 </CardHeader>
                 <CardContent>
@@ -167,7 +166,7 @@ export default function DashboardPage() {
                     </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full bg-foreground border-primary-dark text-primary-dark hover:bg-primary hover:text-white">
                     <PlusCircleIcon className="mr-2 h-4 w-4" />
                     Create New Event
                     </Button>
@@ -175,11 +174,11 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Your Groups */}
-                <Card className="border-none shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <Card className="border-none shadow-sm bg-foreground">
+                <CardHeader className="flex flex-row items-center justify-between pb-2 text-text">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Your Groups</CardTitle>
-                    <CardDescription>Residence groups and communities you&apos;re part of</CardDescription>
+                    <CardDescription className="text-text-secondary">Residence groups and communities you&apos;re part of</CardDescription>
                     </div>
                     <Button variant="ghost" className="text-[#4C69DD]">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4" />
@@ -220,7 +219,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Local Recommendations */}
-                <Card className="border-none shadow-sm">
+                <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Local Recommendations</CardTitle>
@@ -272,7 +271,7 @@ export default function DashboardPage() {
             {/* Right Column */}
             <div className="space-y-8">
                 {/* Notifications */}
-                <Card className="border-none shadow-sm">
+                <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Notifications</CardTitle>
@@ -324,7 +323,7 @@ export default function DashboardPage() {
                 </Card>
 
                 {/* Your Hosts */}
-                <Card className="border-none shadow-sm">
+                <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Your Hosts</CardTitle>
@@ -340,7 +339,7 @@ export default function DashboardPage() {
                         name="Maria Rodriguez"
                         university="Universitat de Barcelona"
                         languages={["Spanish", "English", "Catalan"]}
-                        lastActive="Online now"
+                        lastActive="Online"
                     />
                     <HostCard
                         name="Jordi Puig"

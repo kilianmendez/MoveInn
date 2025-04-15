@@ -41,7 +41,7 @@ export function EventCard({ title, date, location, attendees, category, joined }
 
     return (
         <div
-        className={`flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-lg border border-gray-100 hover:border-gray-200 bg-gradient-to-r ${getCategoryColor()} transition-all hover:shadow-md`}
+        className={`flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-[var(--radius-lg)] border border-gray-100 hover:border-gray-200 bg-gradient-to-r ${getCategoryColor()} transition-all hover:shadow-md`}
         >
         <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${getCategoryIconColor()}`}>
             <CalendarIcon className="h-6 w-6" />
@@ -53,12 +53,12 @@ export function EventCard({ title, date, location, attendees, category, joined }
             <Badge
                 className={
                 joined
-                    ? "bg-[#B7F8C8] text-[#0E1E40]"
+                    ? "bg-secondary text-[#0E1E40]"
                     : category.toLowerCase() === "social"
-                    ? "bg-[#B7F8C8]/70 text-[#0E1E40]"
+                    ? "bg-secondary text-[#0E1E40]"
                     : category.toLowerCase() === "trip"
                         ? "bg-[#4C69DD] text-white"
-                        : "bg-[#62C3BA] text-[#0E1E40]"
+                        : "bg-secondary-greenblue text-[#0E1E40]"
                 }
             >
                 {joined ? "Joined" : category}

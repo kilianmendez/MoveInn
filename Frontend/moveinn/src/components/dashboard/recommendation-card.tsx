@@ -51,7 +51,7 @@ export function RecommendationCard({
 
     return (
         <div
-        className={`p-4 rounded-lg border border-gray-100 hover:border-gray-200 bg-gradient-to-br ${getCategoryColor()} transition-all hover:shadow-md`}
+        className={`p-4 rounded-[var(--radius-lg)] border border-gray-100 hover:border-gray-200 bg-gradient-to-br ${getCategoryColor()} transition-all hover:shadow-md`}
         >
         <div className="flex justify-between items-start mb-2">
             <h3 className="font-medium text-[#0E1E40]">{name}</h3>
