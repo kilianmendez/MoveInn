@@ -9,11 +9,11 @@ public class RegisterRequest
       public required string Mail {get; set;}
       public required string Password {get; set;}
       public required string Name {get; set;}
-      public string LastName {get; set;}
-      public string Biography { get; set; }
-      public string School { get; set; }
-      public string Degree { get; set; }
-      public string Nationality { get; set; }
+      public string? LastName {get; set;}
+      public string? Biography { get; set; }
+      public string? School { get; set; }
+      public string? Degree { get; set; }
+      public string? Nationality { get; set; }
       public IFormFile? File { get; set; }
 
 
