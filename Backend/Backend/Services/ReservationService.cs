@@ -17,10 +17,19 @@ namespace Backend.Services
         public async Task<ReservationDto?> CreateReservationAsync(ReservationCreateRequest request)
         {
             var accomodation = await _unitOfWork.AccommodationRepository.GetByIdAsync(request.AccommodationId);
-
             if (accomodation == null)
             {
                 throw new Exception("Alojamiento no encontrado.");
+            }
+
+            var existingReservations = await _unitOfWork.ReservationRepository
+                .GetReservationsByAccommodationIdAsync(request.AccommodationId);
+
+
+            bool solapado = existingReservations.Any(r => r.StartDate < request.EndDate && r.EndDate > request.StartDate);
+            if (solapado)
+            {
+                throw new Exception("El alojamiento ya está reservado en el periodo seleccionado.");
             }
 
             TimeSpan duration = request.EndDate - request.StartDate;
@@ -34,7 +43,6 @@ namespace Backend.Services
             await _unitOfWork.SaveAsync();
             return ReservationMapper.ToDto(reservation);
         }
-
 
         public async Task<ReservationDto?> GetReservationByIdAsync(Guid id)
         {
