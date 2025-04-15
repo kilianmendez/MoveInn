@@ -18,8 +18,9 @@ import { NotificationItem } from "@/components/dashboard/notification-item"
 import { RecommendationCard } from "@/components/dashboard/recommendation-card"
 import { GroupCard } from "@/components/dashboard/group-card"
 import { HostCard } from "@/components/dashboard/host-card"
-
+import { useAuth } from "@/context/authcontext"
 export default function DashboardPage() {
+    const { user } = useAuth()
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
         <div className="container mx-auto">
@@ -32,7 +33,7 @@ export default function DashboardPage() {
 
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, Sarah!</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back,{user?.name} !</h1>
                     <p className="text-white/80 mb-4">Your Erasmus journey in Barcelona is going great!</p>
                     <div className="flex items-center space-x-4">
                     <div>

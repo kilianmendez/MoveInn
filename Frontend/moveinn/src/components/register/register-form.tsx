@@ -1,44 +1,40 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Eye, EyeOff, User, Mail, Lock, Smartphone } from "lucide-react"
-import { useAuth, RegisterData } from "@/context/authcontext"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, User, Mail, Lock, Smartphone } from "lucide-react";
+import { useAuth, RegisterData } from "@/context/authcontext";
 
 export default function RegisterForm() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [passwordMatch, setPasswordMatch] = useState(true)
-  const [remember, setRemember] = useState(false)
-  const router = useRouter()
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
+  const [remember, setRemember] = useState(false);
+  const router = useRouter();
 
-  const { register, isLoading, error, clearError } = useAuth()
+  const { register, isLoading, error } = useAuth();
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword)
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword)
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    clearError()
+    e.preventDefault();
+    clearError();
 
-    const formData = new FormData(e.currentTarget)
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get("name") as string;
+    const mail = formData.get("mail") as string;
+    const password = formData.get("password") as string;
+    const confirmPassword = formData.get("confirmPassword") as string;
+    const phone = formData.get("phone") as string;
 
-    // Recolectar los campos visibles
-    const name = formData.get("name") as string       // Nombre (obligatorio)
-    const mail = formData.get("mail") as string       // Email (obligatorio)
-    const password = formData.get("password") as string
-    const confirmPassword = formData.get("confirmPassword") as string
-    const phone = formData.get("phone") as string
-
-    // Validar contraseñas
     if (password !== confirmPassword) {
-      setPasswordMatch(false)
-      return
+      setPasswordMatch(false);
+      return;
     }
-    setPasswordMatch(true)
+    setPasswordMatch(true);
 
-    // Los campos obligatorios adicionales serán enviados aunque sean vacíos (inputs ocultos los incluyen)
     const dataToSend: RegisterData = {
       mail,
       password,
@@ -51,13 +47,13 @@ export default function RegisterForm() {
       phone,
       file: (formData.get("file") as File) || null,
       socialMedias: JSON.parse(formData.get("socialMedias") as string || "[]"),
-    }
+    };
 
-    const success = await register(dataToSend, remember)
+    const success = await register(dataToSend, remember);
     if (success) {
-      router.push("/dashboard")
+      router.push("/dashboard");
     }
-  }
+  };
 
   return (
     <div className="w-full max-w-md">
@@ -90,7 +86,7 @@ export default function RegisterForm() {
         )}
 
         <form className="space-y-4" onSubmit={handleRegister}>
-          {/* Nombre visible */}
+          {/* Nombre */}
           <div className="space-y-2">
             <label htmlFor="name" className="block text-sm font-medium text-text-secondary">
               Name
@@ -200,7 +196,7 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          {/* Hidden inputs para enviar campos adicionales aunque sean vacíos */}
+          {/* Hidden inputs para campos adicionales */}
           <input type="hidden" name="lastName" value="" />
           <input type="hidden" name="biography" value="" />
           <input type="hidden" name="school" value="" />
