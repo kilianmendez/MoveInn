@@ -9,3 +9,4 @@ export const API_AUTH_REGISTER = `${API_AUTH}/Register`;
 
 const API_USER = `${API_BASE_URL}/User`;
 export const API_GET_USER = (id) => `${API_USER}/${id}`;
+

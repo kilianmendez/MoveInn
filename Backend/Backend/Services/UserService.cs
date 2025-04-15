@@ -58,39 +58,12 @@ namespace Backend.Services
                 Mail = userRequest.Mail.ToLowerInvariant(),
                 Password = AuthService.HashPassword(userRequest.Password),
                 Name = userRequest.Name,
-                LastName = userRequest.LastName,
                 Phone = userRequest.Phone,
-                Role = Role.User,
-                Biography = userRequest.Biography,
-                School = userRequest.School,
-                Degree = userRequest.Degree,
-                Nationality = userRequest.Nationality,
-                SocialMedias = userRequest.SocialMedias.Select(sm => new SocialMediaLink
-                {
-                    SocialMedia = sm.SocialMedia,
-                    Url = sm.Url
-                }).ToList()
+                Role = Role.User
             };
 
-            if (userRequest.File != null)
-            {
-                try
-                {
-                    newUser.AvatarUrl = await StoreImageAsync(userRequest.File, userRequest.Name);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error al guardar la imagen: " + ex.Message);
-                }
-            }
-            else
-            {
-                newUser.AvatarUrl = Path.Combine("images", "default.png").Replace("\\", "/");
-            }
             return await InsertAsync(newUser);
         }
-
-
 
         /*<------------->UPDATE<------------->*/
 

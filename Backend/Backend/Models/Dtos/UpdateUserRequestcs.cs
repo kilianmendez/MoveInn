@@ -18,10 +18,13 @@ namespace Backend.Models.Dtos
         public string? Biography { get; set; }
 
         public string? School { get; set; }
+        public string? City { get; set; }
 
         public string? Degree { get; set; }
 
         public string? Nationality { get; set; }
+        public DateOnly ErasmusDate { get; set; }
+
 
         [Phone]
         public string? Phone { get; set; }

@@ -19,9 +19,11 @@ namespace Backend.Models.Mappers
                 Biography = user.Biography,
                 AvatarUrl = user.AvatarUrl,
                 School = user.School,
+                City = user.City,
                 Degree = user.Degree,
                 Nationality = user.Nationality,
                 Phone = user.Phone,
+                ErasmusDate = (int)(DateTime.Now - user.ErasmusDate.ToDateTime(TimeOnly.MinValue)).TotalDays,
                 SocialMedias = user.SocialMedias
             };
         }
@@ -40,10 +42,12 @@ namespace Backend.Models.Mappers
                 Biography = dto.Biography,
                 AvatarUrl = dto.AvatarUrl,
                 School = dto.School,
+                City = dto.City,
                 Degree = dto.Degree,
                 Nationality = dto.Nationality,
                 Phone = dto.Phone,
                 SocialMedias = dto.SocialMedias,
+                ErasmusDate = DateOnly.FromDateTime(DateTime.Now).AddDays(-dto.ErasmusDate),
                 Password = password // Recuerda asignar la contraseña si es necesario
             };
         }

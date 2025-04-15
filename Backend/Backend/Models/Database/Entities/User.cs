@@ -26,8 +26,10 @@ namespace Backend.Models.Database.Entities
         public string? AvatarUrl { get; set; }
 
         public string? School { get; set; }
+        public string? City { get; set; }
         public string? Degree { get; set; }
         public string? Nationality { get; set; }
+        public DateOnly ErasmusDate {get; set;}
 
         [Phone]
         public required string Phone { get; set; }
