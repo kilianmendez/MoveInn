@@ -1,10 +1,28 @@
 // /src/context/authcontext.tsx
 "use client";
 
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+  JSX,
+} from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode";
-import { API_AUTH_LOGIN, API_AUTH_REGISTER, API_GET_USER } from "@/utils/endpoints/config";
+import { jwtDecode } from "jwt-decode"; // IMPORT CORREGIDO, exportación por defecto
+import {
+  API_GET_USER,
+  API_AUTH_LOGIN,
+  API_AUTH_REGISTER,
+} from "@/utils/endpoints/config";
+import { useRouter } from "next/navigation";
+
+interface DecodedToken {
+  id: string;
+  email: string;
+  name: string;
+}
 
 export interface User {
   id: string;
@@ -16,74 +34,57 @@ export interface User {
   school?: string;
   degree?: string;
   nationality?: string;
-  university?: string;  
-  socialMedias?: string[]; 
+  university?: string;
+  socialMedias?: string[];
   profilePicture?: string;
-  // etc.
-}
-
-export interface RegisterData {
-  mail: string;
-  password: string;
-  name: string;
-  lastName?: string | null;
-  biography?: string | null;
-  school?: string | null;
-  degree?: string | null;
-  nationality?: string | null;
-  phone: string ;
-  file?: File | null;
-  socialMedias?: string[] | null;
+  [key: string]: any;
 }
 
 interface AuthContextType {
-  user: User | null;
   token: string | null;
+  user: User | null;
   isAuthenticated: boolean;
-  isLoading: boolean;
-  error: string | null;
-  login: (mail: string, password: string, remember: boolean) => Promise<boolean>;
+  login: (mail: string, password: string, rememberMe: boolean) => Promise<void>;
   register: (
-    data: RegisterData,
-    remember: boolean
-  ) => Promise<boolean>;
+    nickname: string,
+    mail: string,
+    password: string,
+    avatarUrl: string
+  ) => Promise<void>;
   logout: () => void;
-  clearError: () => void;
+  error: string | null; 
+  isLoading: boolean; 
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  token: null,
-  isAuthenticated: false,
-  isLoading: false,
-  error: null,
-  login: async () => false,
-  register: async () => false,
-  logout: () => {},
-  clearError: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element => {
   const [token, setToken] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null); // Estado para errores
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para loading
+  const router = useRouter();
 
-  // Cargar el token si existiera
-  useEffect(() => {
-    const storedToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
-    if (storedToken) {
-      setToken(storedToken);
-      updateUserFromToken(storedToken);
+  const extractUserId = (accessToken: string): string | null => {
+    try {
+      const decoded = jwtDecode<DecodedToken>(accessToken);
+      return decoded.id || null;
+    } catch (error) {
+      console.error("Error decodificando token:", error);
+      return null;
     }
-  }, []);
+  };
 
   const updateUserFromToken = async (accessToken: string) => {
+    setIsLoading(true);
+    setError(null);
     try {
-      const decoded: any = jwtDecode(accessToken);
-      const userId = decoded?.sub;
-      if (!userId) throw new Error("Token inválido: Falta 'sub' para el id");
-
+      const userId = extractUserId(accessToken);
+      if (!userId) throw new Error("Token inválido: falta 'sub'");
       const response = await axios.get(API_GET_USER(userId), {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
@@ -92,96 +93,95 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         throw new Error(`Error al obtener usuario: ${response.status}`);
       }
-    } catch (err) {
-      console.error("Error updating user data:", err);
+    } catch (error) {
+      console.error("Error actualizando datos del usuario:", error);
+      setError(error instanceof Error ? error.message : "Error desconocido");
       setUser(null);
       setToken(null);
       localStorage.removeItem("accessToken");
       sessionStorage.removeItem("accessToken");
-    }
-  };
-
-  // Login (JSON)
-  const login = async (mail: string, password: string, remember: boolean): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await axios.post(API_AUTH_LOGIN, { mail, password });
-      const accessToken = response.data;
-      if (!accessToken) throw new Error("No se recibió 'accessToken' en la respuesta");
-
-      if (remember) {
-        localStorage.setItem("accessToken", accessToken);
-      } else {
-        sessionStorage.setItem("accessToken", accessToken);
-      }
-      setToken(accessToken);
-      await updateUserFromToken(accessToken);
-      return true;
-    } catch (err: any) {
-      console.error("Error de login:", err);
-      setError(err.response?.data?.message || err.message || "Error de inicio de sesión.");
-      return false;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (data: RegisterData, remember: boolean): Promise<boolean> => {
+  useEffect(() => {
+    const storedToken =
+      localStorage.getItem("accessToken") ||
+      sessionStorage.getItem("accessToken");
+    if (storedToken) {
+      setToken(storedToken);
+      updateUserFromToken(storedToken);
+    }
+  }, []);
+
+  const login = async (
+    mail: string,
+    password: string,
+    rememberMe: boolean
+  ): Promise<void> => {
     setIsLoading(true);
     setError(null);
     try {
-      const formData = new FormData();
-      formData.append("Mail", data.mail ?? "");
-      formData.append("Password", data.password ?? "");
-      formData.append("Name", data.name ?? "");
-      formData.append("LastName", data.lastName ?? "");
-      formData.append("Biography", data.biography ?? "");
-      formData.append("School", data.school ?? "");
-      formData.append("Degree", data.degree ?? "");
-      formData.append("Nationality", data.nationality ?? "");
-      formData.append("Phone", data.phone ?? "");
+      const response = await axios.post(
+        API_AUTH_LOGIN,
+        { mail, password },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+      const { accessToken } = response.data;
+      if (!accessToken)
+        throw new Error("No se recibió accessToken en la respuesta");
 
-      if (data.socialMedias) {
-        formData.append("SocialMedias", JSON.stringify(data.socialMedias));
-      } else {
-        formData.append("SocialMedias", JSON.stringify([]));
-      }
-
-      // File (si tu endpoint lo espera con la clave "File")
-      if (data.file) {
-        formData.append("File", data.file);
-      } else {
-        // A veces, si no hay archivo, conviene mandar un string vacío
-        formData.append("File", "");
-      }
-      for (const key of formData.keys()) {
-        console.log(`FormData key: ${key}, value:`, formData.getAll(key));
-      }
-      const response = await axios.post(API_AUTH_REGISTER, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      const accessToken = response.data;
-      if (!accessToken) throw new Error("No se recibió 'AccessToken' en la respuesta");
-
-      // Guardamos el token
-      if (remember) {
+      if (rememberMe) {
         localStorage.setItem("accessToken", accessToken);
       } else {
         sessionStorage.setItem("accessToken", accessToken);
       }
       setToken(accessToken);
-
-      // Actualizamos el usuario
       await updateUserFromToken(accessToken);
-      return true;
-    } catch (err: any) {
-      console.error("Error de registro:", err);
-      // Imprimir el body de error del backend
-      console.error("Detalles del error:", err.response?.data);
-      setError(err.response?.data?.message || err.message || "Error de registro.");
-      return false;
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error en login:", error);
+      setError(error instanceof Error ? error.message : "Error desconocido");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (
+    nickname: string,
+    mail: string,
+    password: string,
+    avatarUrl: string
+  ): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const body = {
+        mail,
+        nickname,
+        password,
+        avatarUrl,
+        role: "User",
+      };
+      const response = await axios.post(API_AUTH_REGISTER, body, {
+        headers: { "Content-Type": "application/json" },
+      });
+      const accessToken = response.data;
+      if (!accessToken)
+        throw new Error("No se recibió accessToken en la respuesta");
+
+      localStorage.setItem("accessToken", accessToken);
+      setToken(accessToken);
+      await updateUserFromToken(accessToken);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Error en registro:", error);
+      setError(error instanceof Error ? error.message : "Error desconocido");
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -192,24 +192,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     sessionStorage.removeItem("accessToken");
     setUser(null);
     setToken(null);
-    window.location.href = "/login";
+    router.push("/");
   };
 
-  const clearError = () => setError(null);
+  const isAuthenticated = Boolean(user);
 
-  const value: AuthContextType = {
-    user,
-    token,
-    isAuthenticated: !!user,
-    isLoading,
-    error,
-    login,
-    register,
-    logout,
-    clearError,
-  };
+  return (
+    <AuthContext.Provider
+      value={{
+        token,
+        user,
+        isAuthenticated,
+        login,
+        register,
+        logout,
+        isLoading,
+        error
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};
