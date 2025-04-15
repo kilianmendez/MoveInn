@@ -126,7 +126,7 @@ export default function Home() {
       </section>
 
       {/* Feature Showcase Section */}
-      <section className="py-16 px-4 md:px-8">
+      <section className="py-16 px-4 md:px-8 bg-foreground">
         <div className="container mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#0E1E40]">Explore Our Features</h2>
@@ -135,27 +135,27 @@ export default function Home() {
             </p>
           </div>
 
-          <Tabs defaultValue="groups" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-8 bg-[#E7ECF0]/30 p-1 rounded-lg">
-              <TabsTrigger value="groups" className="data-[state=active]:bg-white">
+          <Tabs defaultValue="groups" className="w-full text-primary-dark">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-8 bg-[#E7ECF0]/30 p-1 rounded-lg text-primary-dark">
+              <TabsTrigger value="groups" className="data-[state=active]:bg-white text-primary-dark">
                 Residence Groups
               </TabsTrigger>
-              <TabsTrigger value="hosts" className="data-[state=active]:bg-white">
+              <TabsTrigger value="hosts" className="data-[state=active]:bg-white text-primary-dark">
                 Host Program
               </TabsTrigger>
-              <TabsTrigger value="events" className="data-[state=active]:bg-white">
+              <TabsTrigger value="events" className="data-[state=active]:bg-white text-primary-dark">
                 Events
               </TabsTrigger>
-              <TabsTrigger value="chat" className="data-[state=active]:bg-white">
+              <TabsTrigger value="chat" className="data-[state=active]:bg-white text-primary-dark">
                 Host Chat
               </TabsTrigger>
-              <TabsTrigger value="forums" className="data-[state=active]:bg-white">
+              <TabsTrigger value="forums" className="data-[state=active]:bg-white text-primary-dark">
                 Forums
               </TabsTrigger>
-              <TabsTrigger value="recommendations" className="data-[state=active]:bg-white">
+              <TabsTrigger value="recommendations" className="data-[state=active]:bg-white text-primary-dark">
                 Recommendations
               </TabsTrigger>
-              <TabsTrigger value="profiles" className="data-[state=active]:bg-white">
+              <TabsTrigger value="profiles" className="data-[state=active]:bg-white text-primary-dark">
                 Student Profiles
               </TabsTrigger>
             </TabsList>

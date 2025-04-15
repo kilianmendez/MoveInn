@@ -24,12 +24,12 @@ export function Navbar() {
             </nav>
 
             <div className="flex items-center space-x-4">
-            <Link href="/auth">
+            <Link href="/login">
                 <Button variant="outline" className="border-[#4C69DD] text-[#4C69DD] hover:bg-[#4C69DD]/10">
                 Log In
                 </Button>
             </Link>
-            <Link href="/auth?tab=register" className="hidden md:inline-flex">
+            <Link href="/register" className="hidden md:inline-flex">
                 <Button className="bg-[#4C69DD] text-white hover:bg-[#4C69DD]/90">Sign Up</Button>
             </Link>
             </div>

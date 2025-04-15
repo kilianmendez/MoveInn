@@ -20,7 +20,13 @@ import { RecommendationCard } from "@/components/dashboard/recommendation-card"
 import { GroupCard } from "@/components/dashboard/group-card"
 import { HostCard } from "@/components/dashboard/host-card"
 
+import { useAuth } from "@/context/authcontext"
+
 export default function DashboardPage() {
+    const { user } = useAuth()
+
+    console.log("User data:", user)
+
     return (
         <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
         <div className="container mx-auto">

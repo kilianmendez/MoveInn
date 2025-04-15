@@ -61,7 +61,7 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-0 py-0">
         {/* Header */}
         <section className="mb-8">
           <div className="relative bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white overflow-hidden">
