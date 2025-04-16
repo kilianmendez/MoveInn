@@ -39,12 +39,14 @@ export default function DashboardPage() {
 
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, <span className="text-4xl text-accent">Sarah!</span></h1>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, <span className="text-4xl text-accent">{user?.name}</span></h1>
+                    {/* Cambiar a futuro Ciudad de Erasmus */}
                     <p className="text-white/80 mb-4">Bet your Erasmus journey in Barcelona is going great!</p>
                     <div className="flex items-center space-x-4">
                     
                     <div className="h-10 border-l border-white/20"></div>
                     <div>
+                        {/* Cambiar a futuro Ciudad de Erasmus y dias */}
                         <p className="text-sm text-white/70">Days in Barcelona</p>
                         <p className="text-4xl font-bold text-primary">42</p>
                     </div>
