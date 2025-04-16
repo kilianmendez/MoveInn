@@ -38,7 +38,8 @@ public static class RecommendationMapper
             City = request.City,
             Country = request.Country,
             Rating = request.Rating,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            UserId = request.UserId
         };
     }
 
