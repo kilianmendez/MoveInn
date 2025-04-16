@@ -13,6 +13,8 @@ namespace Backend.Models.Dtos
 
         public string Address { get; set; }
         public string City { get; set; }
+
+        public Guid UserId { get; set; }
         public string Country { get; set; }
         public Rating? Rating { get; set; }
         public List<IFormFile>? Files { get; set; }
