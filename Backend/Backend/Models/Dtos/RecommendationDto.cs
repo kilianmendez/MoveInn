@@ -1,4 +1,5 @@
-﻿using Backend.Models.Database.Enum;
+﻿using Backend.Models.Database.Entities;
+using Backend.Models.Database.Enum;
 
 namespace Backend.Models.Dtos
 {
@@ -13,5 +14,10 @@ namespace Backend.Models.Dtos
         public string Country { get; set; }
         public Rating? Rating { get; set; }
         public DateTime CreatedAt { get; set; }
+        public Guid UserId { get; set; }
+        public ICollection<Image> RecommendationImages { get; set; } = new List<Image>();
+        public ICollection<String> Tags { get; set; } = new List<String>();
+
+
     }
 }
