@@ -24,7 +24,7 @@ namespace Backend.Models.Database.Entities
         public Rating? Rating { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
+        public ICollection<String> Tags { get; set; } = new List<String>();
         public ICollection<Image> RecommendationImages { get; set; } = new List<Image>();
 
         [ForeignKey("UserId")]

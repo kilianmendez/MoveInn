@@ -20,10 +20,12 @@ public static class RecommendationMapper
             City = recommendation.City,
             Country = recommendation.Country,
             Rating = recommendation.Rating,
-            CreatedAt = recommendation.CreatedAt
+            CreatedAt = recommendation.CreatedAt,
+            RecommendationImages = recommendation.RecommendationImages,
+            Tags = recommendation.Tags,
+            UserId = recommendation.UserId ?? Guid.Empty
         };
     }
-
     public static Recommendation ToEntity(RecommendationCreateRequest request)
     {
         return new Recommendation

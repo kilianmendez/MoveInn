@@ -3,55 +3,46 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, User, Mail, Lock, Smartphone } from "lucide-react";
-import { useAuth, RegisterData } from "@/context/authcontext";
+import { Eye, EyeOff, User, Mail, Lock, Phone } from "lucide-react";
+import { useAuth } from "@/context/authcontext";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState(true);
-  const [remember, setRemember] = useState(false);
   const router = useRouter();
-
   const { register, isLoading, error } = useAuth();
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
-  const toggleConfirmPasswordVisibility = () => setShowConfirmPassword(!showConfirmPassword);
+  const toggleConfirmPasswordVisibility = () =>
+    setShowConfirmPassword(!showConfirmPassword);
 
   const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    clearError();
 
     const formData = new FormData(e.currentTarget);
     const name = formData.get("name") as string;
     const mail = formData.get("mail") as string;
+    const phone = formData.get("phone") as string;
     const password = formData.get("password") as string;
     const confirmPassword = formData.get("confirmPassword") as string;
-    const phone = formData.get("phone") as string;
 
     if (password !== confirmPassword) {
       setPasswordMatch(false);
       return;
     }
+    console.log("Registering user:", { name, mail, password, phone});
     setPasswordMatch(true);
 
-    const dataToSend: RegisterData = {
-      mail,
-      password,
-      name,
-      lastName: formData.get("lastName") as string || "",
-      biography: formData.get("biography") as string || "",
-      school: formData.get("school") as string || "",
-      degree: formData.get("degree") as string || "",
-      nationality: formData.get("nationality") as string || "",
-      phone,
-      file: (formData.get("file") as File) || null,
-      socialMedias: JSON.parse(formData.get("socialMedias") as string || "[]"),
-    };
-
-    const success = await register(dataToSend, remember);
-    if (success) {
+    try {
+      if (phone !== null) {
+        await register(name, mail, password, phone);
+      } else {
+        console.error("Phone number is required and must be a valid number.");
+      }
       router.push("/dashboard");
+    } catch (err) {
+      console.error("Error en registro:", err);
     }
   };
 
@@ -68,7 +59,9 @@ export default function RegisterForm() {
       </div>
 
       <div className="bg-white rounded-lg p-6 shadow-sm">
-        <h2 className="font-semibold text-text text-lg mb-1">Create your account</h2>
+        <h2 className="font-semibold text-text text-lg mb-1">
+          Create your account
+        </h2>
         <p className="text-sm text-gray-600 mb-6">
           Join the MoveInn community and start your Erasmus journey
         </p>
@@ -86,9 +79,12 @@ export default function RegisterForm() {
         )}
 
         <form className="space-y-4" onSubmit={handleRegister}>
-          {/* Nombre */}
+          {/* Name */}
           <div className="space-y-2">
-            <label htmlFor="name" className="block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-text-secondary"
+            >
               Name
             </label>
             <div className="relative">
@@ -99,16 +95,39 @@ export default function RegisterForm() {
                 id="name"
                 name="name"
                 type="text"
-                placeholder="Tyron"
+                placeholder="John Doe"
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text-secondary"
                 required
               />
             </div>
           </div>
 
-          {/* Email */}
           <div className="space-y-2">
-            <label htmlFor="mail" className="block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="phone"
+              className="block text-sm font-medium text-text-secondary"
+            >
+              Phone
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Phone className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                id="phone"
+                name="phone"
+                type="phone"
+                placeholder="655555555"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text-secondary"
+                required
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="mail"
+              className="block text-sm font-medium text-text-secondary"
+            >
               Email
             </label>
             <div className="relative">
@@ -126,32 +145,18 @@ export default function RegisterForm() {
             </div>
           </div>
 
-          {/* Teléfono */}
-          <div className="space-y-2">
-            <label htmlFor="phone" className="block text-sm font-medium text-text-secondary">
-              Phone Number
-            </label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Smartphone className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                placeholder="+1234567890"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text-secondary"
-                required
-              />
-            </div>
-          </div>
-
           {/* Password */}
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-text-secondary"
+            >
               Password
             </label>
             <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ">
+                <Lock className="h-5 w-5 text-gray-400" />
+              </div>
               <input
                 id="password"
                 name="password"
@@ -166,17 +171,26 @@ export default function RegisterForm() {
                 onClick={togglePasswordVisibility}
                 className="absolute inset-y-0 right-2 flex items-center text-gray-500"
               >
-                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
           </div>
 
-          {/* Confirm Password */}
           <div className="space-y-2">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-text-secondary">
+            <label
+              htmlFor="confirmPassword"
+              className="block text-sm font-medium text-text-secondary"
+            >
               Confirm Password
             </label>
             <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Lock className="h-5 w-5 text-gray-400" />
+              </div>
               <input
                 id="confirmPassword"
                 name="confirmPassword"
@@ -186,38 +200,19 @@ export default function RegisterForm() {
                 required
                 minLength={8}
               />
+
               <button
                 type="button"
                 onClick={toggleConfirmPasswordVisibility}
                 className="absolute inset-y-0 right-2 flex items-center text-gray-500"
               >
-                {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
               </button>
             </div>
-          </div>
-
-          {/* Hidden inputs para campos adicionales */}
-          <input type="hidden" name="lastName" value="" />
-          <input type="hidden" name="biography" value="" />
-          <input type="hidden" name="school" value="" />
-          <input type="hidden" name="degree" value="" />
-          <input type="hidden" name="nationality" value="" />
-          <input type="hidden" name="socialMedias" value="[]" />
-          <input type="hidden" name="file" value="" />
-
-          {/* Remember me (opcional) */}
-          <div className="flex items-center">
-            <input
-              id="remember"
-              name="remember"
-              type="checkbox"
-              checked={remember}
-              onChange={(e) => setRemember(e.target.checked)}
-              className="h-4 w-4 border-gray-300 rounded"
-            />
-            <label htmlFor="remember" className="ml-2 text-sm text-gray-700">
-              Remember me
-            </label>
           </div>
 
           <button
@@ -231,7 +226,10 @@ export default function RegisterForm() {
 
         <div className="mt-4 text-center text-sm text-gray-600">
           Already have an account?{" "}
-          <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center">
+          <Link
+            href="/login"
+            className="text-blue-600 hover:text-blue-700 font-medium inline-flex items-center"
+          >
             Login
           </Link>
         </div>

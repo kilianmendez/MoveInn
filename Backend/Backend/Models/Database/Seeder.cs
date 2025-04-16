@@ -35,16 +35,18 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Yasir",
-                    LastName = "Bel Maalem", // Puedes ajustar el apellido
+                    LastName = "Bel Maalem", 
                     Mail = "yasir@gmail.com",
                     Password = AuthService.HashPassword("passwordYasir"),
-                    Biography = "Biografía de Yasir",
-                    Phone = "111111111",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    Biography = "Living the Life",
+                    Phone = "631387444",
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Yasir", // Add this line
-                    Degree = "Grado de Yasir", // Add this line
-                    Nationality = "Nacionalidad de Yasir", // Add this line
+                    School = "CPIFP Alan Turing",
+                    Degree = "Web Aplication Development", 
+                    City = "Izmir",
+                    Nationality = "Morroco",
+                    ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeYasir" },

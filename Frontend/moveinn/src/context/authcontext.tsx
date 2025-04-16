@@ -1,4 +1,3 @@
-// /src/context/authcontext.tsx
 "use client";
 
 import {
@@ -10,7 +9,7 @@ import {
   JSX,
 } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // IMPORT CORREGIDO, exportación por defecto
+import { jwtDecode } from "jwt-decode";
 import {
   API_GET_USER,
   API_AUTH_LOGIN,
@@ -29,14 +28,6 @@ export interface User {
   mail: string;
   name: string;
   phone: string;
-  lastName?: string;
-  biography?: string;
-  school?: string;
-  degree?: string;
-  nationality?: string;
-  university?: string;
-  socialMedias?: string[];
-  profilePicture?: string;
   [key: string]: any;
 }
 
@@ -46,18 +37,19 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (mail: string, password: string, rememberMe: boolean) => Promise<void>;
   register: (
-    nickname: string,
+    name: string,
     mail: string,
     password: string,
-    avatarUrl: string
+    phone: string
   ) => Promise<void>;
   logout: () => void;
-  error: string | null; 
-  isLoading: boolean; 
+  error: string | null;
+  isLoading: boolean;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
 export const AuthProvider = ({
   children,
 }: {
@@ -65,8 +57,8 @@ export const AuthProvider = ({
 }): JSX.Element => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null); // Estado para errores
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para loading
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const extractUserId = (accessToken: string): string | null => {
@@ -75,6 +67,7 @@ export const AuthProvider = ({
       return decoded.id || null;
     } catch (error) {
       console.error("Error decodificando token:", error);
+      setError("Error decodificando token");
       return null;
     }
   };
@@ -93,9 +86,13 @@ export const AuthProvider = ({
       } else {
         throw new Error(`Error al obtener usuario: ${response.status}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error actualizando datos del usuario:", error);
-      setError(error instanceof Error ? error.message : "Error desconocido");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Error actualizando datos del usuario"
+      );
       setUser(null);
       setToken(null);
       localStorage.removeItem("accessToken");
@@ -142,50 +139,56 @@ export const AuthProvider = ({
       setToken(accessToken);
       await updateUserFromToken(accessToken);
       router.push("/dashboard");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error en login:", error);
-      setError(error instanceof Error ? error.message : "Error desconocido");
+      setError(
+        error.response?.data?.message ||
+          error.message ||
+          "Error de inicio de sesión."
+      );
       throw error;
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (
-    nickname: string,
-    mail: string,
-    password: string,
-    avatarUrl: string
-  ): Promise<void> => {
+  const register = async (name: string, mail: string, password: string , phone: string) => {
     setIsLoading(true);
     setError(null);
+  
     try {
-      const body = {
+      const payload = {
         mail,
-        nickname,
         password,
-        avatarUrl,
-        role: "User",
+        name,
+        phone: phone,
       };
-      const response = await axios.post(API_AUTH_REGISTER, body, {
+  
+      const response = await axios.post(API_AUTH_REGISTER, payload,         {
         headers: { "Content-Type": "application/json" },
       });
-      const accessToken = response.data;
-      if (!accessToken)
-        throw new Error("No se recibió accessToken en la respuesta");
 
+      const {accessToken}  = response.data;
       localStorage.setItem("accessToken", accessToken);
       setToken(accessToken);
-      await updateUserFromToken(accessToken);
+  
+      const decoded: DecodedToken = jwtDecode(accessToken);
+      setUser({
+        id: decoded.id,
+        mail: decoded.email,
+        name: decoded.name,
+        phone: phone.toString(),
+      });
+  
       router.push("/dashboard");
-    } catch (error) {
-      console.error("Error en registro:", error);
-      setError(error instanceof Error ? error.message : "Error desconocido");
-      throw error;
+    } catch (err: any) {
+      setError(err.response?.data || "Error en el registro");
+      console.error("Error en registro:", err);
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   const logout = () => {
     localStorage.removeItem("accessToken");
@@ -206,8 +209,8 @@ export const AuthProvider = ({
         login,
         register,
         logout,
+        error,
         isLoading,
-        error
       }}
     >
       {children}
@@ -215,10 +218,11 @@ export const AuthProvider = ({
   );
 };
 
-export const useAuth = (): AuthContextType => {
+export const useAuth = (): AuthContextType & {
+  error: string | null;
+  isLoading: boolean;
+} => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };

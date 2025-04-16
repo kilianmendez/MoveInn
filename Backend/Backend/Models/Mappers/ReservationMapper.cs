@@ -19,7 +19,6 @@ namespace Backend.Models.Mappers
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
                 Status = reservation.Status
-
             };
         }
         public static Reservation ToEntity(ReservationCreateRequest request)
@@ -31,7 +30,9 @@ namespace Backend.Models.Mappers
                 AccommodationId = request.AccommodationId,
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
-                Status = ReservationStatus.Pending
+                Status = ReservationStatus.Pending,
+                
+              
             };
         }
         public static void UpdateEntity(Reservation reservation, ReservationUpdateRequest request)
