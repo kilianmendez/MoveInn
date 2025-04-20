@@ -21,8 +21,8 @@ public static class RecommendationMapper
             Country = recommendation.Country,
             Rating = recommendation.Rating,
             CreatedAt = recommendation.CreatedAt,
-            RecommendationImages = recommendation.RecommendationImages,
             Tags = recommendation.Tags,
+            RecommendationImages = recommendation.RecommendationImages,
             UserId = recommendation.UserId ?? Guid.Empty
         };
     }
@@ -39,6 +39,7 @@ public static class RecommendationMapper
             Country = request.Country,
             Rating = request.Rating,
             CreatedAt = DateTime.UtcNow,
+            Tags = request.Tags,
             UserId = request.UserId
         };
     }

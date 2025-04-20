@@ -20,5 +20,6 @@ namespace Backend.Models.Dtos
         public Rating? Rating { get; set; }
         public List<IFormFile>? Files { get; set; }
 
+
     }
 }
