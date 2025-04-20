@@ -14,7 +14,7 @@ import {
   SettingsIcon,
   HelpCircleIcon,
   GlobeIcon,
-  XIcon,
+  SofaIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -25,7 +25,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
 
   const mainNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
-    { label: "Groups", href: "/dashboard/groups", icon: Users2Icon },
+    { label: "Housing", href: "/dashboard/housing", icon: SofaIcon },
     { label: "Events", href: "/dashboard/events", icon: CalendarIcon },
     { label: "Messages", href: "/dashboard/messages", icon: MessageCircleIcon, badge: 12 },
     { label: "Forums", href: "/dashboard/forums", icon: BookmarkIcon },

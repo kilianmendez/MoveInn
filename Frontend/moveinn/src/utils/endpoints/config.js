@@ -1,4 +1,4 @@
-const API_BASE = "localhost:7023"; 
+export const API_BASE = "localhost:7023"; 
 
 export const API_BASE_URL = `https://${API_BASE}/api`;
 export const API_BASE_SOCKET_URL = `wss://${API_BASE}`;
@@ -12,3 +12,4 @@ export const API_GET_USER = (id) => `${API_USER}/${id}`;
 
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
+export const API_GET_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
