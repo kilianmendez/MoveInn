@@ -83,7 +83,7 @@ export function DetailedRecommendationCard({
       case "museum":
         return "bg-[#4C69DD] text-white"
       case "outdoors":
-        return "bg-[#62C3BA] text-[#0E1E40]"
+        return "bg-secondary-greenblue text-primary-dark"
       case "leisurezone":
         return "bg-amber-400 text-amber-900"
       case "study":
@@ -96,7 +96,7 @@ export function DetailedRecommendationCard({
   }
 
   return (
-    <Card className="overflow-hidden gap-0 border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground py-0">
+    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">
       <div className="relative h-48 w-full">
         <Image
           src={`https://${API_BASE}/` + recommendation.recommendationImages[0].url}
@@ -120,7 +120,7 @@ export function DetailedRecommendationCard({
         </div>
       </div>
 
-      <CardContent className={`p-4 bg-gradient-to-br ${getCategoryColor()}`}>
+      <CardContent className={`p-4 bg-gradient-to-br ${getCategoryColor()} flex-grow`}>
         <h3 className="font-semibold text-lg text-[#0E1E40] mb-1">{recommendation.title}</h3>
 
         <div className="flex items-start mb-3">
