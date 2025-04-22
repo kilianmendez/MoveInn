@@ -28,7 +28,6 @@ import { AcommodationCard } from "@/components/housing/acommodation-card"
 import axios from "axios"
 
 import { API_ALL_ACOMMODATIONS, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
-import { useAuth } from "@/context/authcontext"
 
 interface Acommodation {
   id: number
@@ -56,26 +55,36 @@ export default function AcommodationsPage() {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [sortField, setSortField] = useState<string | null>("")
   const [sortOrder, setSortOrder] = useState<string | null>("")
-  const [availableFrom, setAvailableFrom] = useState<string | null>("")
+  const [availableFrom, setAvailableFrom] = useState<string | null>("") 
   const [availableTo, setAvailableTo] = useState<string | null>("")
   const [country, setCountry] = useState<string | null>("")
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-  const {token, user, isAuthenticated} = useAuth()
+  
+
   const searchAcommodations = async () => {
+
+      {/*Iso Date from today*/}
+      const isoDate = new Date().toISOString()
+
+      {/*Iso Date in 15 days*/}
+      const futureDate = new Date()
+      futureDate.setDate(futureDate.getDate() + 15)
+      const isoDate2 = futureDate.toISOString()
 
     const searchParams = ({
       query: searchQuery,
       sortField: sortField,
       sortOrder: sortOrder,
-      availableFrom: availableFrom,
-      availableTo: availableTo,
+      availableFrom: isoDate,
+      availableTo: isoDate2,
       country: country,
       page: page,
       limit: limit
     });
 
     try {
+      const token = localStorage.getItem("token")
       const response = await axios.post(API_SEARCH_ACOMMODATION, searchParams, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -83,11 +92,12 @@ export default function AcommodationsPage() {
       })
   
       const data = response.data
+      const foundPlaces = data.items
   
-      console.log("Alojamientos mediante busqueda:", data)
+      console.log("Alojamientos mediante busqueda:", foundPlaces)
   
-      if (Array.isArray(data)) {
-        setAcommodations(data)
+      if (Array.isArray(foundPlaces)) {
+        setAcommodations(foundPlaces)
       } else {
         console.warn("Respuesta inesperada del backend:", data)
         setAcommodations([])
@@ -100,9 +110,10 @@ export default function AcommodationsPage() {
 
   const fetchAcommodations = async () => {
     try {
+      const token = localStorage.getItem("token") // 👈 aún no se está usando, lo dejo si lo necesitas para autenticación
       const response = await axios.get(API_ALL_ACOMMODATIONS, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // 👈 solo si la API lo requiere
         },
       })
   
