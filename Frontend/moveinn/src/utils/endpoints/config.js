@@ -12,3 +12,19 @@ export const API_GET_USER = (id) => `${API_USER}/${id}`;
 
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
+
+const API_RESERVATION = `${API_BASE_URL}/Reservation`;
+export const API_GET_RESERVATION = (id) => `${API_RESERVATION}/${id}`;
+export const API_CREATE_RESERVATION = `${API_RESERVATION}/CreateReservation`;
+export const API_UPDATE_RESERVATION = (id) => `${API_RESERVATION}/Update/${id}`;
+export const API_DELETE_RESERVATION = (id) => `${API_RESERVATION}/Delete/${id}`;
+
+const API_ACCOMMODATION = `${API_BASE_URL}/Accommodations`;
+export const API_GET_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/${id}`;
+export const API_CREATE_ACCOMMODATION = `${API_ACCOMMODATION}/CreateAccommodation`;
+export const API_UPDATE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Update/${id}`;
+export const API_DELETE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Delete/${id}`;
+
+
+const API_PAYMENT = `${API_BASE_URL}/Payment`;
+export const API_CREATE_PAYMENT = `${API_PAYMENT}/CreatePaymentIntent`;

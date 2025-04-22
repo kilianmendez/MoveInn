@@ -37,15 +37,6 @@ namespace Backend.Models.Mappers
         }
         public static void UpdateEntity(Reservation reservation, ReservationUpdateRequest request)
         {
-            if (request.StartDate.HasValue)
-                reservation.StartDate = request.StartDate.Value;
-
-            if (request.EndDate.HasValue)
-                reservation.EndDate = request.EndDate.Value;
-
-            if (request.TotalPrice.HasValue)
-                reservation.TotalPrice = request.TotalPrice.Value;
-
             if (request.Status.HasValue)
                 reservation.Status = request.Status.Value;
         }

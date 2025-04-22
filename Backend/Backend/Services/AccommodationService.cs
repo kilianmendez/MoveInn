@@ -16,7 +16,10 @@ public class AccommodationService : IAccommodationService
         _repository = repository;
         _context = context;
     }
-
+    public async Task<Accommodation> GetByIdAsync(Guid id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
     public async Task<AccommodationDTO> CreateAccommodationAsync(AccommodationCreateDTO accommodationDto)
     {
         var userExists = await _context.Users.AnyAsync(u => u.Id == accommodationDto.OwnerId);

@@ -17,7 +17,7 @@ namespace Backend.Controllers
             _reservationService = reservationService;
         }
 
-        [HttpPost]
+        [HttpPost("CreateReservation")]
         public async Task<IActionResult> CreateReservation([FromBody] ReservationCreateRequest request)
         {
             var result = await _reservationService.CreateReservationAsync(request);
@@ -35,15 +35,15 @@ namespace Backend.Controllers
             return Ok(reservation);
         }
 
-        [HttpGet]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetAllReservations()
         {
             var reservations = await _reservationService.GetAllReservationsAsync();
             return Ok(reservations);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateReservation(Guid id, [FromBody] ReservationUpdateRequest request)
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> UpdateReservation(Guid id, ReservationUpdateRequest request)
         {
             var updated = await _reservationService.UpdateReservationAsync(id, request);
             if (updated == null)
@@ -51,7 +51,7 @@ namespace Backend.Controllers
             return Ok(updated);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteReservation(Guid id)
         {
             bool deleted = await _reservationService.DeleteReservationAsync(id);

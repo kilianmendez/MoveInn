@@ -32,5 +32,7 @@ namespace Backend.Services
 
             return new PaymentIntentResponse { ClientSecret = paymentIntent.ClientSecret };
         }
+
+ 
     }
 }

@@ -58,7 +58,8 @@ export const AuthProvider = ({
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const router = useRouter();
 
   const extractUserId = (accessToken: string): string | null => {
@@ -73,16 +74,21 @@ export const AuthProvider = ({
   };
 
   const updateUserFromToken = async (accessToken: string) => {
-    setIsLoading(true);
-    setError(null);
     try {
       const userId = extractUserId(accessToken);
       if (!userId) throw new Error("Token inválido: falta 'sub'");
+      
+      console.log('Actualizando usuario con token:', { userId });
+      
       const response = await axios.get(API_GET_USER(userId), {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-      if (response.status === 200) {
+      
+      if (response.status === 200 && response.data) {
         setUser(response.data);
+        setIsAuthenticated(true);
+        setToken(accessToken);
+        console.log('Usuario actualizado correctamente:', response.data);
       } else {
         throw new Error(`Error al obtener usuario: ${response.status}`);
       }
@@ -95,22 +101,37 @@ export const AuthProvider = ({
       );
       setUser(null);
       setToken(null);
+      setIsAuthenticated(false);
       localStorage.removeItem("accessToken");
       sessionStorage.removeItem("accessToken");
-    } finally {
-      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    const storedToken =
-      localStorage.getItem("accessToken") ||
-      sessionStorage.getItem("accessToken");
-    if (storedToken) {
-      setToken(storedToken);
-      updateUserFromToken(storedToken);
-    }
+    const initializeAuth = async () => {
+      try {
+        const storedToken =
+          localStorage.getItem("accessToken") ||
+          sessionStorage.getItem("accessToken");
+        
+        console.log('Token almacenado encontrado:', !!storedToken);
+        
+        if (storedToken) {
+          await updateUserFromToken(storedToken);
+        }
+      } catch (error) {
+        console.error('Error en la inicialización de auth:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeAuth();
   }, []);
+
+  useEffect(() => {
+    setIsAuthenticated(!!user && !!token);
+  }, [user, token]);
 
   const login = async (
     mail: string,
@@ -197,8 +218,6 @@ export const AuthProvider = ({
     setToken(null);
     router.push("/");
   };
-
-  const isAuthenticated = Boolean(user);
 
   return (
     <AuthContext.Provider

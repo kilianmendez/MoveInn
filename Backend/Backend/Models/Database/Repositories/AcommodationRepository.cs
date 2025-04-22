@@ -18,6 +18,7 @@ public class AccommodationRepository : IAccommodationRepository
     {
         await _context.Accommodations.AddAsync(accommodation);
     }
+
     public async Task<Accommodation> GetByIdAsync(Guid accommodationId)
     {
         return await _context.Set<Accommodation>()
@@ -45,4 +46,6 @@ public class AccommodationRepository : IAccommodationRepository
             .Distinct()
             .ToListAsync();
     }
+
+    
 }

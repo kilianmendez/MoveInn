@@ -146,7 +146,8 @@ public class AccommodationsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<IActionResult> GetAccommodation(Guid id)
     {
-        return Ok();
+        var accomodation = await _accommodationService.GetByIdAsync(id);
+        return Ok(accomodation);
     }
 
     [HttpGet("allAccommodations")]
@@ -169,4 +170,6 @@ public class AccommodationsController : ControllerBase
         var cities = await _accommodationService.GetCitiesByCountryAsync(country);
         return Ok(cities);
     }
+
+    
 }
