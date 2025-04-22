@@ -78,7 +78,7 @@ public class AccommodationsController : ControllerBase
                 accommodations = accommodations
                     .Where(a =>
                         a.AvailableFrom != default &&
-                        a.AvailableFrom.Date >= from &&
+                        a.AvailableFrom.Date <= from &&
                         a.AvailableTo != default &&
                         a.AvailableTo.Date >= from
                     )

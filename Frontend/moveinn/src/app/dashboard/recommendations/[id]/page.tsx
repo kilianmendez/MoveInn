@@ -267,6 +267,7 @@ export default function RecommendationDetailPage() {
         </div>
       </div>
       <div>
+      <div></div>
       <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>

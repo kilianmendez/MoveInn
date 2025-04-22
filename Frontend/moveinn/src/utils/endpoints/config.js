@@ -13,3 +13,8 @@ export const API_GET_USER = (id) => `${API_USER}/${id}`;
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
 export const API_GET_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
+
+const API_ACOMMODATION = `${API_BASE_URL}/Accommodations`;
+export const API_SEARCH_ACOMMODATION = `${API_ACOMMODATION}/SearchAccommodation`;
+export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
+export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
