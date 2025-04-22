@@ -30,7 +30,6 @@ interface AcommodationCard {
 export function AcommodationCard({ acommodation }: AcommodationCard) {
   return (
     <Card className="bg-foreground border-none shadow-md hover:shadow-lg transition-all h-full flex flex-col rounded-md py-0">
-      {/* Imagen */}
       <div className="relative h-48 overflow-hidden rounded-t-md">
         <img
           src={acommodation.images?.[0] || "/placeholder.svg"}

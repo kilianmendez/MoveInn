@@ -28,6 +28,7 @@ import { AcommodationCard } from "@/components/housing/acommodation-card"
 import axios from "axios"
 
 import { API_ALL_ACOMMODATIONS, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
+import { useAuth } from "@/context/authcontext"
 
 interface Acommodation {
   id: number
@@ -60,7 +61,7 @@ export default function AcommodationsPage() {
   const [country, setCountry] = useState<string | null>("")
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-
+  const {token, user, isAuthenticated} = useAuth()
   const searchAcommodations = async () => {
 
     const searchParams = ({
@@ -75,7 +76,6 @@ export default function AcommodationsPage() {
     });
 
     try {
-      const token = localStorage.getItem("token")
       const response = await axios.post(API_SEARCH_ACOMMODATION, searchParams, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,10 +100,9 @@ export default function AcommodationsPage() {
 
   const fetchAcommodations = async () => {
     try {
-      const token = localStorage.getItem("token") // 👈 aún no se está usando, lo dejo si lo necesitas para autenticación
       const response = await axios.get(API_ALL_ACOMMODATIONS, {
         headers: {
-          Authorization: `Bearer ${token}`, // 👈 solo si la API lo requiere
+          Authorization: `Bearer ${token}`,
         },
       })
   
