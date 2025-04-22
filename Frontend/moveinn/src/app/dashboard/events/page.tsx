@@ -202,8 +202,8 @@ export default function EventsPage() {
                 <p className="text-gray-500 max-w-md mx-auto mb-6">
                   There are no events scheduled for this date that match your filters.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button onClick={clearFilters}>Clear filters</Button>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center px-4">
+                  <Button onClick={clearFilters} className="" >Clear filters</Button>
                   <Button variant="default" className="bg-secondary text-primary-dark hover:bg-secondary/80" onClick={() => setIsCreateEventOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Create an event

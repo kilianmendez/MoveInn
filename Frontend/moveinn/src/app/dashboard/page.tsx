@@ -41,14 +41,14 @@ export default function DashboardPage() {
                 <div>
                     <h1 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, <span className="text-4xl text-accent">{user?.name}</span></h1>
                     {/* Cambiar a futuro Ciudad de Erasmus */}
-                    <p className="text-white/80 mb-4">Bet your Erasmus journey in Barcelona is going great!</p>
+                    <p className="text-white/80 mb-4">Bet your Erasmus journey in {user?.city} is going great!</p>
                     <div className="flex items-center space-x-4">
                     
                     <div className="h-10 border-l border-white/20"></div>
                     <div>
                         {/* Cambiar a futuro Ciudad de Erasmus y dias */}
-                        <p className="text-sm text-white/70">Days in Barcelona</p>
-                        <p className="text-4xl font-bold text-primary">42</p>
+                        <p className="text-sm text-white/70">Days in {user?.city}</p>
+                        <p className="text-4xl font-bold text-primary">{user?.erasmusDate}</p>
                     </div>
                     </div>
                 </div>

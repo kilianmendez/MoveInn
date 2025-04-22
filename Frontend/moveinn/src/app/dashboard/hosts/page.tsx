@@ -178,9 +178,9 @@ export default function HostsPage() {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
-          <div className="space-y-6 order-2 lg:order-1 lg:col-span-1">
+          <div className="space-y-6 order-2 xl:order-1 xl:col-span-1">
             {/* Quick Stats */}
             <Card className="border-none shadow-md bg-foreground">
               <CardContent className="p-4">
@@ -323,7 +323,7 @@ export default function HostsPage() {
           </div>
 
           {/* Main Content */}
-          <div className="order-1 lg:order-2 lg:col-span-3">
+          <div className="order-1 lg:order-1 lg:col-span-3">
             {/* Active Filters */}
             {activeFilter && (
               <div className="mb-4 flex items-center">
