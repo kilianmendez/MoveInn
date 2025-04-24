@@ -57,43 +57,56 @@ export function DetailedRecommendationCard({
     ? `/uploads/${recommendation.recommendationImages[0].url}`
     : "/placeholder.svg"
 
-  const getCategoryColor = () => {
-    switch (categorySlug) {
-      case "restaurant":
-        return "from-[#B7F8C8]/30 to-white"
-      case "museum":
-        return "from-[#4C69DD]/20 to-white"
-      case "outdoors":
-        return "from-[#62C3BA]/30 to-white"
-      case "leisurezone":
-        return "from-amber-100 to-white"
-      case "study":
-        return "from-[#4C69DD]/10 to-white"
-      case "nightlife":
-        return "from-[#0E1E40]/20 to-white"
-      default:
-        return "from-gray-200 to-white"
+    const getCategoryColor = () => {
+      switch (categorySlug) {
+        case "restaurant":
+          return "from-[#B7F8C8]/30 to-white"
+        case "cafeteria":
+          return "from-pink-100 to-white"
+        case "museum":
+          return "from-[#4C69DD]/20 to-white"
+        case "leisurezone":
+          return "from-amber-100 to-white"
+        case "park":
+          return "from-green-100 to-white"
+        case "historicalsite":
+          return "from-yellow-100 to-white"
+        case "shopping":
+          return "from-purple-100 to-white"
+        case "bar":
+          return "from-[#0E1E40]/20 to-white"
+        case "other":
+          return "from-gray-200 to-white"
+        default:
+          return "from-gray-200 to-white"
+      }
     }
-  }
+    
 
-  const getCategoryBadgeColor = () => {
-    switch (categorySlug) {
-      case "restaurant":
-        return "bg-[#B7F8C8] text-[#0E1E40]"
-      case "museum":
-        return "bg-[#4C69DD] text-white"
-      case "outdoors":
-        return "bg-secondary-greenblue text-primary-dark"
-      case "leisurezone":
-        return "bg-amber-400 text-amber-900"
-      case "study":
-        return "bg-[#4C69DD]/80 text-white"
-      case "nightlife":
-        return "bg-[#0E1E40] text-white"
-      default:
-        return "bg-gray-200 text-gray-700"
+    const getCategoryBadgeColor = () => {
+      switch (categorySlug) {
+        case "restaurant":
+          return "bg-secondary text-primary-dark"
+        case "cafeteria":
+          return "bg-pink-200 text-pink-900"
+        case "museum":
+          return "bg-primary text-white"
+        case "leisurezone":
+          return "bg-amber-400 text-amber-900"
+        case "park":
+          return "bg-secondary-greenblue text-green-900"
+        case "historicalsite":
+          return "bg-yellow-200 text-yellow-900"
+        case "shopping":
+          return "bg-purple-200 text-purple-900"
+        case "bar":
+          return "bg-[#0E1E40] text-white"
+        case "other":
+          return "bg-gray-300 text-gray-800"
+        default:
+          return "bg-gray-200 text-gray-700"
+      }
     }
-  }
 
   return (
     <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">

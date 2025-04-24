@@ -10,15 +10,6 @@ import {
   MapPin,
   Star,
   Share2,
-  Clock,
-  Euro,
-  Phone,
-  Globe,
-  Calendar,
-  ExternalLink,
-  Mail,
-  User,
-  Send,
   ChevronLeft,
   Utensils,
   Coffee,
@@ -104,6 +95,32 @@ const getCategoryIcon = (categoryId: number) => {
   }
 }
 
+const getCategoryBadgeColor = (category: string) => {
+  switch (category.toLowerCase()) {
+    case "restaurant":
+      return "bg-secondary text-primary-dark"
+    case "cafeteria":
+      return "bg-pink-200 text-pink-900"
+    case "museum":
+      return "bg-primary text-white"
+    case "leisurezone":
+      return "bg-amber-400 text-amber-900"
+    case "park":
+      return "bg-secondary-greenblue text-green-900"
+    case "historicalsite":
+      return "bg-yellow-200 text-yellow-900"
+    case "shopping":
+      return "bg-purple-200 text-purple-900"
+    case "bar":
+      return "bg-[#0E1E40] text-white"
+    case "other":
+      return "bg-gray-300 text-gray-800"
+    default:
+      return "bg-gray-200 text-gray-700"
+  }
+}
+
+
 export default function RecommendationDetailPage() {
   const { id } = useParams()
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null)
@@ -162,7 +179,7 @@ export default function RecommendationDetailPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <div className="flex flex-wrap gap-2 mb-3">
-                <Badge className="bg-white/80 text-[#0E1E40]">
+                <Badge className={getCategoryBadgeColor(categoryName)}>
                   <span className="flex items-center">
                     {categoryIcon}
                     <span className="ml-1">{categoryName}</span>
