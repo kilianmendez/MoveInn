@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
 import { MapPin, ChevronLeft, ChevronRight, Star, Wifi, Calendar, BedIcon, BathIcon, SquareIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { API_BASE_URL, API_GET_ACCOMMODATION, API_GET_USER } from "@/utils/endpoints/config"
+import { BookingModal } from "@/components/booking/booking-form"
+import { API_BASE_IMAGE_URL, API_GET_ACCOMMODATION, API_GET_USER } from "@/utils/endpoints/config"
 
 interface AccommodationData {
   id: string
@@ -22,7 +23,7 @@ interface AccommodationData {
   availableFrom: string
   availableTo: string
   ownerId: string
-  accommodationImages: {
+  accomodationImages: {
     id: string
     url: string
     createdAt: string
@@ -33,8 +34,7 @@ interface AccommodationData {
 interface OwnerData {
   id: string
   name: string
-  email: string
-  memberSince: string
+  avatarUrl: string
 }
 
 export default function AccommodationDetailsPage() {
@@ -45,17 +45,23 @@ export default function AccommodationDetailsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchAccommodationData = async () => {
       setIsLoading(true)
       try {
-        const response = await fetch(API_GET_ACCOMMODATION(id as string))
+        const response = await fetch(API_GET_ACCOMMODATION(id))
         if (!response.ok) {
           throw new Error("Failed to fetch accommodation data")
         }
         const data = await response.json()
         setAccommodation(data)
+        if (data.accommodationImages?.length > 0) {
+          console.log("URL de imagen cargada:", `${API_BASE_IMAGE_URL}${data.accomodationImages?.[0]?.url}`)
+        } else {
+          console.log("No hay imágenes en accommodation.accomodationImages")
+        }
 
         if (data.ownerId) {
           try {
@@ -81,23 +87,23 @@ export default function AccommodationDetailsPage() {
   }, [id])
 
   const handlePrevImage = () => {
-    if (accommodation?.accommodationImages?.length) {
+    if (accommodation?.accomodationImages?.length) {
       setCurrentImageIndex((prevIndex) =>
-        prevIndex === 0 ? accommodation.accommodationImages.length - 1 : prevIndex - 1,
+        prevIndex === 0 ? accommodation.accomodationImages.length - 1 : prevIndex - 1,
       )
     }
   }
 
   const handleNextImage = () => {
-    if (accommodation?.accommodationImages?.length) {
+    if (accommodation?.accomodationImages?.length) {
       setCurrentImageIndex((prevIndex) =>
-        prevIndex === accommodation.accommodationImages.length - 1 ? 0 : prevIndex + 1,
+        prevIndex === accommodation.accomodationImages.length - 1 ? 0 : prevIndex + 1,
       )
     }
   }
 
   const handleBookNow = () => {
-    router.push(`/reservations/${id}`)
+    setIsBookingModalOpen(true)
   }
 
   const formatDate = (dateString: string) => {
@@ -149,15 +155,18 @@ export default function AccommodationDetailsPage() {
       </div>
 
       <div className="relative rounded-lg overflow-hidden mb-6 h-72 bg-background">
-        {accommodation.accommodationImages && accommodation.accommodationImages.length > 0 ? (
+        {accommodation.accomodationImages && accommodation.accomodationImages.length > 0 ? (
           <Image
-            src={`${API_BASE_URL}${accommodation.accommodationImages[currentImageIndex]?.url}`}
+            src={`${API_BASE_IMAGE_URL}${accommodation.accomodationImages[currentImageIndex]?.url}`}
             alt={accommodation.title}
             fill
             className="object-cover"
+            unoptimized
           />
         ) : (
-          <Image src="/placeholder.svg?height=400&width=800" alt={accommodation.title} fill className="object-cover" />
+          <div className="flex items-center justify-center h-full bg-gray-200">
+            <span className="text-gray-500">No images available</span>
+          </div>
         )}
 
         {/* Image navigation buttons */}
@@ -232,9 +241,7 @@ export default function AccommodationDetailsPage() {
                 <span className="text-3xl font-bold text-primary-dark">€{accommodation.pricePerMonth}</span>
                 <span className="text-text-secondary ml-1">/month</span>
               </div>
-              <button className="text-accent">
-                <Star className="h-5 w-5 fill-accent" />
-              </button>
+
             </div>
 
             <div className="space-y-3 mb-6">
@@ -242,14 +249,10 @@ export default function AccommodationDetailsPage() {
                 <span className="text-text-secondary">Security deposit</span>
                 <span className="font-medium text-text">€{accommodation.pricePerMonth}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-text-secondary">Service fee</span>
-                <span className="font-medium text-text">€50</span>
-              </div>
               <div className="pt-3 border-t border-background flex justify-between">
                 <span className="font-semibold text-text">Total (first month)</span>
                 <span className="font-bold text-primary-dark">
-                  €{accommodation.pricePerMonth + accommodation.pricePerMonth + 50}
+                  €{accommodation.pricePerMonth + accommodation.pricePerMonth}
                 </span>
               </div>
             </div>
@@ -270,17 +273,27 @@ export default function AccommodationDetailsPage() {
             <div className="mt-4 pt-4 border-t border-background">
               <div className="flex items-center">
                 <div className="w-12 h-12 bg-background rounded-full overflow-hidden mr-3 flex items-center justify-center">
-                  <span className="text-lg font-semibold text-primary">{owner?.name ? owner.name.charAt(0) : "O"}</span>
+                  <span className="text-lg font-semibold text-primary">
+                    {owner?.avatarUrl ? owner.name.charAt(0) : "O"}
+                  </span>
                 </div>
                 <div>
                   <p className="font-medium text-text">{owner?.name}</p>
-                  <p className="text-xs text-text-secondary">Member since 2023</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      {accommodation && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          onClose={() => setIsBookingModalOpen(false)}
+          accommodation={accommodation}
+        />
+      )}
     </div>
   )
 }

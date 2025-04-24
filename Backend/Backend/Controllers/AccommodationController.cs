@@ -171,5 +171,14 @@ public class AccommodationsController : ControllerBase
         return Ok(cities);
     }
 
-    
+    [HttpGet("UnavailableDates/{id}")]
+    public async Task<ActionResult<IEnumerable<DateTime>>> GetUnavailableDates(Guid id)
+    {
+        var accommodation = await _accommodationService.GetByIdAsync(id);
+        if (accommodation == null)
+            return NotFound($"Alojamiento {id} no encontrado.");
+
+        var blockedDates = await _accommodationService.GetUnavailableDatesAsync(id);
+        return Ok(blockedDates);
+    }
 }

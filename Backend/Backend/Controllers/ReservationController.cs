@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Backend.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservationController : ControllerBase
@@ -59,5 +59,7 @@ namespace Backend.Controllers
                 return NotFound("Reserva no encontrada.");
             return Ok("Reserva eliminada.");
         }
+
+
     }
 }

@@ -38,6 +38,7 @@ interface ReservationData {
   status: number
   createdAt: string
   updatedAt: string
+  totalPrice: number
 }
 
 const getStatusDetails = (status: number) => {
@@ -353,7 +354,8 @@ export function Reservation() {
                 <div className="border-t border-gray-200+ pt-3 flex justify-between">
                   <span className="font-bold text-gray-900">Total due now</span>
                   <span className="font-bold text-blue-600">
-                    {accommodation.pricePerMonth + accommodation.pricePerMonth}€
+                    {(reservation?.totalPrice ?? 0) + accommodation.pricePerMonth}€
+                    
                   </span>
                 </div>
               </div>

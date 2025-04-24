@@ -22,7 +22,7 @@ namespace Backend.Services
         {
             var options = new PaymentIntentCreateOptions
             {
-                Amount = request.Amount,       
+                Amount = (long?)request.Amount,       
                 Currency = request.Currency,      
                 PaymentMethodTypes = new List<string> { "card", "paypal"},
             };

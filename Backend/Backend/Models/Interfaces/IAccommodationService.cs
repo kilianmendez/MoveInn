@@ -10,5 +10,6 @@ public interface IAccommodationService
     Task<IEnumerable<string>> GetAllCountriesAsync();
     Task<IEnumerable<string>> GetCitiesByCountryAsync(string country);
     Task<Accommodation> GetByIdAsync(Guid id);
+    Task<IEnumerable<DateTime>> GetUnavailableDatesAsync(Guid accommodationId);
 
 }
