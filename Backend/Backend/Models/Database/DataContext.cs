@@ -20,6 +20,7 @@ public class DataContext : DbContext
     public DbSet<Forum> Forum { get; set; }
     public DbSet<ForumThread> ForumsThread { get; set; }
     public DbSet<ForumMessages> ForumsMessages { get; set; }
+    public DbSet<Messages> Messages { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

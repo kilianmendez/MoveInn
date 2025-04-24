@@ -3,6 +3,7 @@ using System.Net.WebSockets;
 using System.Text.Json;
 using System.Text;
 using Backend.Models.Interfaces;
+using Backend.Services;
 
 namespace Backend.WebSockets;
 
@@ -23,6 +24,9 @@ public class WebsocketHandler
         {
             _connections[userId] = webSocket;
             Console.WriteLine($"🔗 Usuario {userId} conectado");
+            var messagesService = context.RequestServices.GetRequiredService<IMessagesService>();
+            await messagesService.SendPendingMessagesAsync(userId);
+
 
             var buffer = new byte[1024 * 4];
 
@@ -67,6 +71,54 @@ public class WebsocketHandler
                                     await SendMessageToUser(userId, JsonSerializer.Serialize(errorResponseParameters));
                                 }
                                 break;
+
+                            case "send_message":
+                                if (request.TryGetValue("receiverId", out string receiverIdStr) &&
+                                    Guid.TryParse(receiverIdStr, out Guid receiverId) &&
+                                    Guid.TryParse(userId, out Guid senderIdChat) &&
+                                    request.TryGetValue("content", out string content))
+                                {
+                                    var messageService = context.RequestServices.GetRequiredService<IMessagesService>();
+                                    await messageService.SendMessageAsync(senderIdChat, receiverId, content);
+                                }
+                                else
+                                {
+                                    var errorResponseParameters = new
+                                    {
+                                        success = false,
+                                        action = "send_message",
+                                        message = "Parámetros inválidos para send_message."
+                                    };
+                                    await SendMessageToUser(userId, JsonSerializer.Serialize(errorResponseParameters));
+                                }
+                                break;
+
+                            case "mark_as_read":
+                                if (request.TryGetValue("contactId", out string contactIdMarkStr) &&
+                                    Guid.TryParse(contactIdMarkStr, out Guid contactIdMark) &&
+                                    Guid.TryParse(userId, out Guid currentUserIdMark))
+                                {
+                                    var messageService = context.RequestServices.GetRequiredService<IMessagesService>();
+                                    await messageService.MarkMessagesAsReadAsync(currentUserIdMark, contactIdMark);
+                                    var response = new
+                                    {
+                                        action = "mark_as_read",
+                                        message = "Mensajes marcados como leídos."
+                                    };
+                                    await SendMessageToUser(userId, JsonSerializer.Serialize(response));
+                                }
+                                else
+                                {
+                                    var errorResponseParameters = new
+                                    {
+                                        success = false,
+                                        action = "mark_as_read",
+                                        message = "Parámetros inválidos para mark_as_read."
+                                    };
+                                    await SendMessageToUser(userId, JsonSerializer.Serialize(errorResponseParameters));
+                                }
+                                break;
+
                             default:
                                 var errorResponse = new
                                 {

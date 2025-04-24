@@ -45,7 +45,8 @@ public class Program
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         builder.Services.AddScoped<ReservationRepository>();
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-        builder.Services.AddScoped<IForumService, ForumService>();
+        builder.Services.AddScoped<IChatRepository, ChatRepository>();
+        builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
 
         // Servicios
         builder.Services.AddScoped<AuthService>();
@@ -62,12 +63,14 @@ public class Program
         builder.Services.AddScoped<SmartSearchService>();
         builder.Services.AddScoped<IReviewService, Services.ReviewService>();
         builder.Services.AddScoped<IForumService, ForumService>();
+        builder.Services.AddScoped<IChatService, ChatService>();
 
         // WebSocket
         builder.Services.AddSingleton<WebsocketHandler>();
         builder.Services.AddSingleton<IFollowRepository, FollowRepository>();
         builder.Services.AddSingleton<IFollowService, FollowService>();
         builder.Services.AddSingleton<INotificationService, NotificationService>();
+        builder.Services.AddSingleton<IMessagesService, MessagesService>();
 
         //Swagger
         builder.Services.AddEndpointsApiExplorer();
