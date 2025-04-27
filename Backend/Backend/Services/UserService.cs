@@ -113,10 +113,13 @@ namespace Backend.Services
             {
                 user.ErasmusCountry = request.ErasmusCountry;
             }
-
+            if(request.City != null)
+            {
+                user.City = request.City;
+            }
             if(request.ErasmusDate.HasValue)
             {
-                user.ErasmusDate = (DateOnly)request.ErasmusDate;
+                user.ErasmusDate = request.ErasmusDate;
             }
             if (!string.IsNullOrWhiteSpace(request.Password))
             {

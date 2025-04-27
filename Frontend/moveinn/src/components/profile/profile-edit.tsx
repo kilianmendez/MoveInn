@@ -1,26 +1,46 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { type UserUpdateFormData, SOCIAL_MEDIA_TYPES } from "@/types/user"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { AlertCircle, Check, Loader2, Plus, Trash2, Upload } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import Image from "next/image"
-import { useAuth } from "@/context/authcontext"
-import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
-import { CountrySearch, CitySearch } from "@/components/ui/country-city-search"
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { type UserUpdateFormData, SOCIAL_MEDIA_TYPES } from "@/types/user";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  AlertCircle,
+  Check,
+  Loader2,
+  Plus,
+  Trash2,
+  Upload,
+} from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import Image from "next/image";
+import { useAuth } from "@/context/authcontext";
+import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config";
+import { CountrySearch, CitySearch } from "@/components/ui/country-city-search";
 
 interface ProfileEditProps {
-  onSuccess: () => void
+  onSuccess: () => void;
 }
 
 const formSchema = z.object({
@@ -41,20 +61,24 @@ const formSchema = z.object({
       id: z.number(),
       socialMedia: z.number(),
       url: z.string().url("Invalid URL"),
-    }),
+    })
   ),
   countryFlag: z.string().optional(),
   erasmusCountryFlag: z.string().optional(),
-})
+});
 
 export function ProfileEdit({ onSuccess }: ProfileEditProps) {
-  const { user, updateUserProfile, updateSocialMedia } = useAuth()
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null)
-  const [selectedCountryFlag, setSelectedCountryFlag] = useState<string | null>(null)
-  const [selectedErasmusCountryFlag, setSelectedErasmusCountryFlag] = useState<string | null>(null)
+  const { user, updateUserProfile, updateSocialMedia } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [selectedCountryFlag, setSelectedCountryFlag] = useState<string | null>(
+    null
+  );
+  const [selectedErasmusCountryFlag, setSelectedErasmusCountryFlag] = useState<
+    string | null
+  >(null);
 
   const defaultValues = {
     name: user?.name || "",
@@ -75,61 +99,70 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
     socialMedias: user?.socialMedias || [],
     countryFlag: user?.countryFlag || "",
     erasmusCountryFlag: user?.erasmusCountryFlag || "",
-  }
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
-  })
+  });
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    form.setValue("avatarFile", file)
+    form.setValue("avatarFile", file);
 
     // Create preview
-    const reader = new FileReader()
+    const reader = new FileReader();
     reader.onloadend = () => {
-      setAvatarPreview(reader.result as string)
-    }
-    reader.readAsDataURL(file)
-  }
+      setAvatarPreview(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const addSocialMedia = () => {
-    const currentSocialMedias = form.getValues("socialMedias") || []
-    const newId = currentSocialMedias.length > 0 ? Math.max(...currentSocialMedias.map((s) => s.id)) + 1 : 1
+    const currentSocialMedias = form.getValues("socialMedias") || [];
+    const newId =
+      currentSocialMedias.length > 0
+        ? Math.max(...currentSocialMedias.map((s) => s.id)) + 1
+        : 1;
 
-    form.setValue("socialMedias", [...currentSocialMedias, { id: newId, socialMedia: 1, url: "" }])
-  }
+    form.setValue("socialMedias", [
+      ...currentSocialMedias,
+      { id: newId, socialMedia: 1, url: "" },
+    ]);
+  };
 
   const removeSocialMedia = (id: number) => {
-    const currentSocialMedias = form.getValues("socialMedias")
+    const currentSocialMedias = form.getValues("socialMedias");
     form.setValue(
       "socialMedias",
-      currentSocialMedias.filter((s) => s.id !== id),
-    )
-  }
+      currentSocialMedias.filter((s) => s.id !== id)
+    );
+  };
 
   const handleCountryFlagChange = (flagUrl: string) => {
-    setSelectedCountryFlag(flagUrl)
-    form.setValue("countryFlag", flagUrl)
-  }
+    setSelectedCountryFlag(flagUrl);
+    form.setValue("countryFlag", flagUrl);
+  };
 
   const handleErasmusCountryFlagChange = (flagUrl: string) => {
-    setSelectedErasmusCountryFlag(flagUrl)
-    form.setValue("erasmusCountryFlag", flagUrl)
+    setSelectedErasmusCountryFlag(flagUrl);
+    form.setValue("erasmusCountryFlag", flagUrl);
     // Reset city when country changes
-    form.setValue("city", "")
-  }
+    form.setValue("city", "");
+  };
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     try {
-      setIsSubmitting(true)
-      setError(null)
-      setSuccess(null)
+      setIsSubmitting(true);
+      setError(null);
+      setSuccess(null);
 
-      // Prepare data to send for profile update (excluding social media)
+      const formattedDate = data.erasmusDate
+        ? new Date(data.erasmusDate).toISOString().split("T")[0]
+        : null;
+
       const formData: UserUpdateFormData = {
         name: data.name,
         lastName: data.lastName,
@@ -140,39 +173,41 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         degree: data.degree || "",
         nationality: data.nationality || "",
         erasmusCountry: data.erasmusCountry || "",
-        erasmusDate: data.erasmusDate || "",
+        erasmusDate: formattedDate || "",
         phone: data.phone || "",
         avatarFile: data.avatarFile,
         countryFlag: data.countryFlag,
         erasmusCountryFlag: data.erasmusCountryFlag,
-        socialMedias: [], // Empty array as we'll update social media separately
-      }
+        socialMedias: [], 
+      };
 
       // First update the user profile
-      await updateUserProfile(formData)
+      await updateUserProfile(formData);
 
       // Then update social media separately using the new endpoint
       if (data.socialMedias && data.socialMedias.length > 0) {
-        await updateSocialMedia(data.socialMedias)
+        await updateSocialMedia(data.socialMedias);
       } else {
-        await updateSocialMedia([])
+        await updateSocialMedia([]);
       }
 
-      setSuccess("Profile updated successfully")
+      setSuccess("Profile updated successfully");
 
       // Notify success
       setTimeout(() => {
-        onSuccess()
-      }, 1500)
+        onSuccess();
+      }, 1500);
     } catch (err) {
-      console.error("Error updating profile:", err)
-      setError("Could not update profile. Please try again.")
+      console.error("Error updating profile:", err);
+      setError("Could not update profile. Please try again.");
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
-  const userAvatar = user?.avatarUrl ? API_BASE_IMAGE_URL + user.avatarUrl : "/placeholder.svg?height=128&width=128"
+  const userAvatar = user?.avatarUrl
+    ? API_BASE_IMAGE_URL + user.avatarUrl
+    : "/placeholder.svg?height=128&width=128";
 
   return (
     <Form {...form}>
@@ -197,7 +232,14 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         {/* Avatar upload */}
         <div className="flex flex-col items-center space-y-4">
           <div className="relative h-32 w-32 rounded-full overflow-hidden border-4 border-primary">
-            <Image src={avatarPreview || userAvatar} alt="Avatar" fill className="object-cover" priority unoptimized />
+            <Image
+              src={avatarPreview || userAvatar}
+              alt="Avatar"
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
           </div>
 
           <div className="flex items-center">
@@ -206,7 +248,13 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                 <Upload className="h-4 w-4" />
                 <span>Change photo</span>
               </div>
-              <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
             </label>
           </div>
         </div>
@@ -220,7 +268,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormItem>
                 <FormLabel className="text-gray-700">Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your name" {...field} className="text-gray-800" />
+                  <Input
+                    placeholder="Your name"
+                    {...field}
+                    className="text-gray-800"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,7 +286,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormItem>
                 <FormLabel className="text-gray-700">Last Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your last name" {...field} className="text-gray-800" />
+                  <Input
+                    placeholder="Your last name"
+                    {...field}
+                    className="text-gray-800"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -249,7 +305,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
             <FormItem>
               <FormLabel className="text-gray-700">Email</FormLabel>
               <FormControl>
-                <Input placeholder="your@email.com" {...field} className="text-gray-800" />
+                <Input
+                  placeholder="your@email.com"
+                  {...field}
+                  className="text-gray-800"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -283,7 +343,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormItem>
                 <FormLabel className="text-gray-700">University</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your university" {...field} className="text-gray-800" />
+                  <Input
+                    placeholder="Your university"
+                    {...field}
+                    className="text-gray-800"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -297,7 +361,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormItem>
                 <FormLabel className="text-gray-700">Degree</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your degree or specialty" {...field} className="text-gray-800" />
+                  <Input
+                    placeholder="Your degree or specialty"
+                    {...field}
+                    className="text-gray-800"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -333,7 +401,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormItem>
                 <FormLabel className="text-gray-700">Phone</FormLabel>
                 <FormControl>
-                  <Input placeholder="Your phone number" {...field} className="text-gray-800" />
+                  <Input
+                    placeholder="Your phone number"
+                    {...field}
+                    className="text-gray-800"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -343,7 +415,9 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
 
         {/* Erasmus Information */}
         <div className="space-y-4 pt-4 border-t">
-          <h3 className="text-lg font-semibold text-gray-800">Erasmus Information</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            Erasmus Information
+          </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <FormField
@@ -353,7 +427,12 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                 <FormItem>
                   <FormLabel className="text-gray-700">Erasmus Date</FormLabel>
                   <FormControl>
-                    <Input type="date" {...field} value={field.value || ""} className="text-gray-800" />
+                    <Input
+                      type="date"
+                      {...field}
+                      value={field.value || ""}
+                      className="text-gray-800"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -367,7 +446,9 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               name="erasmusCountry"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-700">Erasmus Country</FormLabel>
+                  <FormLabel className="text-gray-700">
+                    Erasmus Country
+                  </FormLabel>
                   <FormControl>
                     <CountrySearch
                       value={field.value || ""}
@@ -406,7 +487,9 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         {/* Social Media */}
         <div className="space-y-4 pt-4 border-t">
           <div className="flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-gray-800">Social Media</h3>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Social Media
+            </h3>
             <Button
               type="button"
               variant="outline"
@@ -420,16 +503,23 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
           </div>
 
           {form.watch("socialMedias").map((social, index) => (
-            <div key={`social-form-${social.id}-${index}`} className="flex items-start gap-3">
+            <div
+              key={`social-form-${social.id}-${index}`}
+              className="flex items-start gap-3"
+            >
               <FormField
                 control={form.control}
                 name={`socialMedias.${index}.socialMedia`}
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel className="text-gray-700">Social Media</FormLabel>
+                    <FormLabel className="text-gray-700">
+                      Social Media
+                    </FormLabel>
                     <Select
                       value={field.value.toString()}
-                      onValueChange={(value) => field.onChange(Number.parseInt(value))}
+                      onValueChange={(value) =>
+                        field.onChange(Number.parseInt(value))
+                      }
                     >
                       <FormControl>
                         <SelectTrigger className="text-gray-800">
@@ -437,11 +527,13 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-white">
-                        {Object.entries(SOCIAL_MEDIA_TYPES).map(([id, name]) => (
-                          <SelectItem key={`social-type-${id}`} value={id}>
-                            {name}
-                          </SelectItem>
-                        ))}
+                        {Object.entries(SOCIAL_MEDIA_TYPES).map(
+                          ([id, name]) => (
+                            <SelectItem key={`social-type-${id}`} value={id}>
+                              {name}
+                            </SelectItem>
+                          )
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -456,7 +548,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <FormItem className="flex-[2]">
                     <FormLabel className="text-gray-700">URL</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://..." {...field} className="text-gray-800" />
+                      <Input
+                        placeholder="https://..."
+                        {...field}
+                        className="text-gray-800"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -478,7 +574,12 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4 pt-4">
-          <Button type="button" variant="outline" onClick={onSuccess} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onSuccess}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button type="submit" disabled={isSubmitting}>
@@ -494,5 +595,5 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         </div>
       </form>
     </Form>
-  )
+  );
 }

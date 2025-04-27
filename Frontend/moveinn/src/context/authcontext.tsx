@@ -7,7 +7,6 @@ import {
   API_GET_USER,
   API_AUTH_LOGIN,
   API_AUTH_REGISTER,
-  API_BASE_URL,
   API_UPDATE_SOCIALMEDIA,
   API_UPDATE_USER,
 } from "@/utils/endpoints/config"
@@ -86,55 +85,45 @@ export const AuthProvider = ({
 
   const updateUserProfile = async (userData: UserUpdateFormData): Promise<User> => {
     if (!user?.id || !token) {
-      throw new Error("No se puede actualizar el perfil: falta ID de usuario o token")
+      throw new Error("No se puede actualizar el perfil: falta ID de usuario o token");
     }
-
-    const formData = new FormData()
-
-    formData.append("id", user.id)
-    formData.append("name", userData.name)
-    formData.append("lastName", userData.lastName)
-    formData.append("mail", userData.email)
-    formData.append("biography", userData.biography || "")
-    formData.append("school", userData.school || "")
-    formData.append("city", userData.city || "")
-    formData.append("degree", userData.degree || "")
-    formData.append("nationality", userData.nationality || "")
-    formData.append("erasmusCountry", userData.erasmusCountry || "")
-    if (userData.erasmusDate) {
-      formData.append("erasmusDate", userData.erasmusDate)
-    }
-    formData.append("phone", userData.phone || "")
-
-    if (userData.countryFlag) {
-      formData.append("countryFlag", userData.countryFlag)
-    }
-
-    if (userData.erasmusCountryFlag) {
-      formData.append("erasmusCountryFlag", userData.erasmusCountryFlag)
-    }
-
-    if (userData.avatarFile) {
-      formData.append("file", userData.avatarFile)
-    }
-
+  
+    const formData = new FormData();
+  
+    formData.append("id", user.id);
+    formData.append("name", userData.name);
+    formData.append("lastName", userData.lastName);
+    formData.append("mail", userData.email);
+    formData.append("biography", userData.biography || "");
+    formData.append("school", userData.school || "");
+    formData.append("city", userData.city || "");
+    formData.append("degree", userData.degree || "");
+    formData.append("nationality", userData.nationality || "");
+    formData.append("erasmusCountry", userData.erasmusCountry || "");
+    if (userData.erasmusDate) formData.append("erasmusDate", userData.erasmusDate);
+    formData.append("phone", userData.phone || "");
+    if (userData.countryFlag) formData.append("countryFlag", userData.countryFlag);
+    if (userData.erasmusCountryFlag) formData.append("erasmusCountryFlag", userData.erasmusCountryFlag);
+    if (userData.avatarFile) formData.append("file", userData.avatarFile);
+  
     try {
-      const response = await axios.put(`${API_UPDATE_USER}`, formData, {
+      const response = await axios.put(API_UPDATE_USER(user.id), formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
-      })
-
+      });
+  
       if (response.status === 200 && response.data) {
-        setUser(response.data)
+        setUser(response.data);
       }
-
-      return response.data
+  
+      return response.data;
     } catch (error: any) {
-      throw new Error(error.response?.data?.message || "Error al actualizar el perfil")
+      throw new Error(error.response?.data?.message || "Error al actualizar el perfil");
     }
-  }
+  };
+  
 
   const updateSocialMedia = async (socialMedias: Array<{ id: number; socialMedia: number; url: string }>) => {
     if (!user?.id || !token) {

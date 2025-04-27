@@ -18,7 +18,7 @@ export interface UserUpdateFormData {
   degree: string
   nationality: string
   erasmusCountry: string
-  erasmusDate: string | null
+  erasmusDate: string
   phone: string
   password?: string
   avatarFile?: File | null

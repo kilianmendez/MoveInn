@@ -34,7 +34,7 @@ namespace Backend.Controllers
         }
 
         //[Authorize(Roles = nameof(Role.Administrator))]
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<User>> DeleteUserByIdAsync(Guid id)
         {
             var user = await _userService.DeleteAsyncUserById(id);
@@ -45,7 +45,7 @@ namespace Backend.Controllers
             return Ok(user);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(Guid id, [FromForm] UpdateUserRequest request)
         {
             var updatedUser = await _userService.UpdateUserAsync(id, request);
