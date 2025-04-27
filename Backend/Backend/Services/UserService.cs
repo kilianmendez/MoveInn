@@ -117,10 +117,7 @@ namespace Backend.Services
             {
                 user.City = request.City;
             }
-            if(request.ErasmusDate.HasValue)
-            {
-                user.ErasmusDate = request.ErasmusDate;
-            }
+
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
                 user.Password = AuthService.HashPassword(request.Password);
