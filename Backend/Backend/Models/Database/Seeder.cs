@@ -35,7 +35,7 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Yasir",
-                    LastName = "Bel Maalem", 
+                    LastName = "Bel Maalem",
                     Mail = "yasir@gmail.com",
                     Password = AuthService.HashPassword("passwordYasir"),
                     Biography = "Living the Life",
@@ -43,14 +43,15 @@ namespace Backend.Models.Database
                     AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
                     School = "CPIFP Alan Turing",
-                    Degree = "Web Aplication Development", 
+                    Degree = "Web Aplication Development",
                     City = "Izmir",
-                    Nationality = "Morroco",
+                    ErasmusCountry = "Turkey",
+                    Nationality = "Morocco",
                     ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeYasir" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeYasir" }
+                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
+
                     }
                 },
                 new User

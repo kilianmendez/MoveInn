@@ -6,33 +6,10 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { API_BASE, API_BASE_URL } from "@/utils/endpoints/config"
+import {DetailedRecommendationCardProps} from "@/types/recommendation"
 
-interface Recommendation {
-  id: string
-  title: string
-  description: string
-  address: string
-  city: string
-  country: string
-  createdAt: string
-  rating: number
-  category: number
-  tags: string[]
-  userId: string
-  recommendationImages: {
-    id: string
-    url: string
-    createdAt: string
-    userId: string | null
-    user: any | null
-    recommendationId: string
-  }[]
-}
 
-interface DetailedRecommendationCardProps {
-  recommendation: Recommendation
-  categoryIcon: ReactNode
-}
+
 
 const categoryByNumber: Record<number, string> = {
   0: "Restaurant",

@@ -24,7 +24,7 @@ namespace Backend.Services
             {
                 Amount = (long?)request.Amount,       
                 Currency = request.Currency,      
-                PaymentMethodTypes = new List<string> { "card", "paypal"},
+                PaymentMethodTypes = new List<string> { "card"},
             };
 
             var service = new PaymentIntentService();

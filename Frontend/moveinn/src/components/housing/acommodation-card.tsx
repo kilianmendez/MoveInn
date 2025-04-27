@@ -3,28 +3,10 @@ import Image from "next/image"
 import { MapPin, BedIcon, BathIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-
-interface Acommodation {
-  id: number
-  title: string
-  description: string
-  addres: string
-  city: string
-  country: string
-  pricePerMonth: number
-  numberOfRooms: number
-  bathrooms: number
-  squareMeters: number
-  hasWifi: boolean
-  ownetId: string
-  availableFrom: string
-  availableTo: string
-  images: string[]
-  publisher: string
-}
+import { AccommodationData } from "@/types/accommodation"
 
 interface AcommodationCard {
-  acommodation: Acommodation
+  acommodation: AccommodationData
 }
 
 export function AcommodationCard({ acommodation }: AcommodationCard) {
@@ -32,7 +14,7 @@ export function AcommodationCard({ acommodation }: AcommodationCard) {
     <Card className="bg-foreground border-none shadow-md hover:shadow-lg transition-all h-full flex flex-col rounded-md py-0">
       <div className="relative h-48 overflow-hidden rounded-t-md">
         <img
-          src={acommodation.images?.[0] || "/placeholder.svg"}
+          src={acommodation.accomodationImages?.[0]?.url || "/placeholder.svg"}
           alt={acommodation.title}
           className="object-cover w-full h-full bg-gray-500"
         />

@@ -7,35 +7,8 @@ import { MapPin, ChevronLeft, ChevronRight, Star, Wifi, Calendar, BedIcon, BathI
 import { Button } from "@/components/ui/button"
 import { BookingModal } from "@/components/booking/booking-form"
 import { API_BASE_IMAGE_URL, API_GET_ACCOMMODATION, API_GET_USER } from "@/utils/endpoints/config"
+import { AccommodationData,OwnerData } from "@/types/accommodation"
 
-interface AccommodationData {
-  id: string
-  title: string
-  description: string
-  address: string
-  city: string
-  country: string
-  pricePerMonth: number
-  numberOfRooms: number
-  bathrooms: number
-  squareMeters: number
-  hasWifi: boolean
-  availableFrom: string
-  availableTo: string
-  ownerId: string
-  accomodationImages: {
-    id: string
-    url: string
-    createdAt: string
-    accommodationId: string
-  }[]
-}
-
-interface OwnerData {
-  id: string
-  name: string
-  avatarUrl: string
-}
 
 export default function AccommodationDetailsPage() {
   const { id } = useParams()

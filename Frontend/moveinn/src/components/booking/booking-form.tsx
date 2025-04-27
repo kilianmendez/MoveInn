@@ -10,20 +10,9 @@ import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 import { API_BASE_URL, API_CREATE_RESERVATION } from "@/utils/endpoints/config"
 import axios from "axios"
+import { BookingModalProps } from "@/types/accommodation"
 
-interface AccommodationData {
-  id: string
-  title: string
-  pricePerMonth: number
-  availableFrom: string
-  availableTo: string
-}
 
-interface BookingModalProps {
-  isOpen: boolean
-  onClose: () => void
-  accommodation: AccommodationData
-}
 
 export function BookingModal({ isOpen, onClose, accommodation }: BookingModalProps) {
   const router = useRouter()

@@ -10,7 +10,9 @@ export const API_AUTH_REGISTER = `${API_AUTH}/Register`;
 
 const API_USER = `${API_BASE_URL}/User`;
 export const API_GET_USER = (id) => `${API_USER}/${id}`;
-
+export const API_UPDATE_USER = (id) => `${API_USER}/Update/${id}`;
+export const API_DELETE_USER = (id) => `${API_USER}/Delete/${id}`;
+export const API_UPDATE_SOCIALMEDIA = (id) => `${API_USER}/${id}/SocialMedias`;
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
 
@@ -35,3 +37,7 @@ const API_ACOMMODATION = `${API_BASE_URL}/Accommodations`;
 export const API_SEARCH_ACOMMODATION = `${API_ACOMMODATION}/SearchAccommodation`;
 export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
 export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
+
+const API_LOCATION = `${API_BASE_URL}/Location`;
+export const API_GET_COUNTRYSEARCH = (query) => `${API_LOCATION}/CountriesSearch?query=${query}`;
+export const API_GET_CITYSEARCH = (country, query) =>`${API_LOCATION}/CitiesSearch?country=${country}&query=${query}`;

@@ -1,9 +1,11 @@
-﻿using System.Net;
+﻿using System.Collections.ObjectModel;
+using System.Net;
 using Backend.Models.Database;
 using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
 using Backend.Models.Dtos;
 using Backend.Models.Mappers;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services
 {
@@ -107,11 +109,15 @@ namespace Backend.Services
             {
                 user.Phone = request.Phone;
             }
-            if (request.SocialMedias != null && request.SocialMedias.Any())
+            if (request.ErasmusCountry != null)
             {
-                user.SocialMedias = request.SocialMedias;
+                user.ErasmusCountry = request.ErasmusCountry;
             }
 
+            if(request.ErasmusDate.HasValue)
+            {
+                user.ErasmusDate = (DateOnly)request.ErasmusDate;
+            }
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
                 user.Password = AuthService.HashPassword(request.Password);
@@ -136,8 +142,20 @@ namespace Backend.Services
         }
 
 
+        public async Task<UserDto?> UpdateUserSocialMediaAsync(Guid userId, List<SocialMediaLinkDto> linksDto)
+        {
+            var newLinks = linksDto.Select(dto => new SocialMediaLink
+            {
+                SocialMedia = dto.SocialMedia,
+                Url = dto.Url
+            }).ToList();
 
+            await _unitOfWork.UserRepository.ReplaceSocialMediasAsync(userId, newLinks);
+            await _unitOfWork.SaveAsync();
 
+            var updated = await _unitOfWork.UserRepository.GetByIdWithSocialMediasAsync(userId);
+            return updated == null ? null : UserMapper.ToDto(updated);
+        }
 
         /*<------------->DELETE<------------->*/
         public async Task<bool> DeleteAsyncUserById(Guid id)

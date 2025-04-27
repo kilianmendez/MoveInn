@@ -55,6 +55,13 @@ namespace Backend.Controllers
             }
             return Ok(UserMapper.ToDto(updatedUser));
         }
+        [HttpPut("{id}/SocialMedias")]
+        public async Task<IActionResult> UpdateSocialMedias(Guid id, [FromBody] SocialMediasUpdateRequest req)
+        {
+            var dto = await _userService.UpdateUserSocialMediaAsync(id, req.SocialMedias);
+            if (dto == null) return NotFound();
+            return Ok(dto);
+        }
 
         //[Authorize(Roles = nameof(Role.Administrator))]
         [HttpGet("All")]
