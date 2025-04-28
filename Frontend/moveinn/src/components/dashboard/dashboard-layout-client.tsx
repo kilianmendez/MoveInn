@@ -19,9 +19,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
+import { useAuth } from "@/context/authcontext"
 
 export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const { user } = useAuth()
 
   const mainNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
@@ -82,13 +85,13 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src="https://ui-avatars.com/api/?name=Kylian+M.&background=4C69DD&color=fff"
+                src={user?.avatar}
                 alt="User Avatar"
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
               <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900">Kylian M.</span>
-                <span className="text-xs text-text-secondary">Student</span>
+                <span className="text-sm font-medium text-gray-900">{user?.name}</span>
+                <span className="text-xs text-text-secondary">{user?.role}</span>
               </div>
             </div>
             <Button variant="ghost" size="icon" className="text-primary-dark hover:bg-accent-light/30">

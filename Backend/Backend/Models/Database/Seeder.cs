@@ -96,34 +96,71 @@ namespace Backend.Models.Database
             var recommendation1 = new Recommendation
             {
                 Id = Guid.NewGuid(),
-                Title = "Restaurante La Buena Mesa",
-                Description = "Excelente comida local y ambiente familiar.",
-                Category = Category.Restaurant,
-                Address = "Calle Principal 123",
-                City = "Málaga",
+                Title = "La Cacharrería",
+                Description = "Cafetería con un estilo vintage ideal para desayunar tostadas gourmet y cafés especiales.",
+                Category = Category.Cafeteria,
+                Address = "Calle Regina, 14, 41003 Sevilla",
+                City = "Sevilla",
                 Country = "Spain",
                 Rating = Rating.Five,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
-                    new Image { Id = Guid.NewGuid(), Url = "recommendations/restaurant1_1.jpg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/LaCacharreria.jpeg" },
                 }
             };
 
             var recommendation2 = new Recommendation
             {
                 Id = Guid.NewGuid(),
-                Title = "Museo de Arte Moderno",
-                Description = "Exposiciones temporales y colecciones permanentes impresionantes.",
-                Category = Category.Museum,
-                Address = "Calle Anormal 123",
+                Title = "El Pintón",
+                Description = "Restaurante moderno en el centro histórico que fusiona cocina andaluza con toques internacionales.",
+                Category = Category.Restaurant,
+                Address = "Calle Francos, 42, 41004 Sevilla",
                 City = "Sevilla",
                 Country = "Spain",
                 Rating = Backend.Models.Database.Enum.Rating.Four,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
-                    new Image { Id = Guid.NewGuid(), Url = "recommendations/museum1_1.jpg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/ElPinton.jpg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/ElPinton2.jpg" }
+                }
+            };
+
+            var recommendation3 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Museo de Bellas Artes de Sevilla",
+                Description = "Una de las pinacotecas más importantes de España, con una colección destacada de pintura barroca.",
+                Category = Category.Museum,
+                Address = "Plaza del Museo, 9, 41001 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Backend.Models.Database.Enum.Rating.Four,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/Museo.jpg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/Museo2.jpg" }
+                }
+            };
+
+            var recommendation4 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Parque de María Luisa",
+                Description = "Espacio verde emblemático de Sevilla, ideal para pasear y disfrutar de su exuberante vegetación.",
+                Category = Category.Park,
+                Address = "Av. de María Luisa, s/n, 41013 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Backend.Models.Database.Enum.Rating.Four,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/Parque.jpg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/Parque2.jpg" }
                 }
             };
 
@@ -136,7 +173,7 @@ namespace Backend.Models.Database
                     Description = "Cómodo apartamento en el corazón de Madrid",
                     Address = "Calle Gran Vía 123",
                     City = "Madrid",
-                    Country = "España",
+                    Country = "Spain",
                     PricePerMonth = 1200.00m,
                     NumberOfRooms = 2,
                     Bathrooms = 1,
@@ -147,17 +184,20 @@ namespace Backend.Models.Database
                     OwnerId = users[0].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/madrid1.jpg" }
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid3.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid4.jpg" }
                     }
                 },
                 new Accommodation
                 {
                     Id = Guid.NewGuid(),
-                    Title = "Estudio en París",
-                    Description = "Acogedor estudio cerca de la Torre Eiffel",
-                    Address = "Rue de la Paix 45",
-                    City = "París",
-                    Country = "Francia",
+                    Title = "Estudio pequeño en Retiro",
+                    Description = "Acogedor estudio cerca del Parque del Retiro",
+                    Address = "Calle del Retiro n56",
+                    City = "Madrid",
+                    Country = "Spain",
                     PricePerMonth = 1500.00m,
                     NumberOfRooms = 1,
                     Bathrooms = 1,
@@ -168,17 +208,19 @@ namespace Backend.Models.Database
                     OwnerId = users[1].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/paris1.jpg" }
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda3.jpg" }
                     }
                 },
                 new Accommodation
                 {
                     Id = Guid.NewGuid(),
-                    Title = "Casa rural en Barcelona",
-                    Description = "Amplia casa con vistas a la montaña",
+                    Title = "Apartamento Clasico en Barcelona",
+                    Description = "Amplio apartamento con vistas a la Sagrada Familia",
                     Address = "Camí de les Vinyes 789",
                     City = "Barcelona",
-                    Country = "España",
+                    Country = "Spain",
                     PricePerMonth = 1800.00m,
                     NumberOfRooms = 3,
                     Bathrooms = 2,
@@ -189,7 +231,81 @@ namespace Backend.Models.Database
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/barcelona1.jpg" }
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona3.jpg" }
+                    }
+                },
+
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Residencia Moderna en Barcelona",
+                    Description = "Amplio apartamento remodelado con vistas a Paseig de Gracia",
+                    Address = "Camí de les corts 21",
+                    City = "Barcelona",
+                    Country = "Spain",
+                    PricePerMonth = 1800.00m,
+                    NumberOfRooms = 3,
+                    Bathrooms = 2,
+                    SquareMeters = 120,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 1, 1),
+                    AvailableTo = new DateTime(2025, 5, 31),
+                    OwnerId = users[2].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda3.jpg" }
+                    }
+                },
+
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Casa Tradicional a las afueras de Churriana",
+                    Description = "Apartamento en zona alta de churriana",
+                    Address = "Calle los laureles n9",
+                    City = "Malaga",
+                    Country = "Spain",
+                    PricePerMonth = 1800.00m,
+                    NumberOfRooms = 3,
+                    Bathrooms = 2,
+                    SquareMeters = 120,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 1, 1),
+                    AvailableTo = new DateTime(2025, 5, 31),
+                    OwnerId = users[2].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga3.jpg" }
+                    }
+                },
+
+                new Accommodation
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Piso Costero en la Costa del Sol",
+                    Description = "Apartamento en linea costera de Benalmadena",
+                    Address = "Calle las Rosas n12",
+                    City = "Malaga",
+                    Country = "Spain",
+                    PricePerMonth = 1800.00m,
+                    NumberOfRooms = 3,
+                    Bathrooms = 2,
+                    SquareMeters = 120,
+                    HasWifi = true,
+                    AvailableFrom = new DateTime(2025, 1, 1),
+                    AvailableTo = new DateTime(2025, 5, 31),
+                    OwnerId = users[2].Id,
+                    AccomodationImages = new List<ImageAccommodation>
+                    {
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda3.jpg" }
                     }
                 }
             };
