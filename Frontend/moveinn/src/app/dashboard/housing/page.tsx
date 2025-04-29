@@ -244,6 +244,8 @@ export default function AcommodationsPage() {
               </div>
             )}
 
+            
+
             {/* View Mode: Grid or Map */}
             {viewMode === "grid" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

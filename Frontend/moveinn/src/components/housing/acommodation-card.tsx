@@ -10,6 +10,23 @@ interface AcommodationCard {
 }
 
 export function AcommodationCard({ acommodation }: AcommodationCard) {
+
+  const fechaISOFrom = acommodation.availableFrom;
+  const fechaFrom = new Date(fechaISOFrom);
+  const fechaFormateadaFrom = fechaFrom.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
+  const fechaISOTo = acommodation.availableTo;
+  const fechaTo = new Date(fechaISOTo);
+  const fechaFormateadaTo = fechaTo.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+
   return (
     <Card className="bg-foreground border-none shadow-md hover:shadow-lg transition-all h-full flex flex-col rounded-md py-0">
       <div className="relative h-48 overflow-hidden rounded-t-md">
@@ -54,9 +71,10 @@ export function AcommodationCard({ acommodation }: AcommodationCard) {
             </Badge>
           </div>
 
-          <div className="text-xl font-bold text-primary-dark">
+          <div className="text-xl font-bold text-primary-dark gap-2">
             €{acommodation.pricePerMonth}
             <span className="text-sm font-medium text-gray-500"> / month</span>
+            <div className="text-sm text-gray-500 pt-2">{fechaFormateadaFrom} - {fechaFormateadaTo}</div>
           </div>
         </div>
       </CardContent>
