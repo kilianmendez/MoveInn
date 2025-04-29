@@ -139,7 +139,8 @@ public class Program
 
         app.Run();
     }
-    //Comentario
+    //Forzar merge
+    //Forzar merge
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
