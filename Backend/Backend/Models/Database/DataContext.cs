@@ -22,12 +22,8 @@ public class DataContext : DbContext
         optionsBuilder.EnableSensitiveDataLogging();
 
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
+        string databasePath = $"{baseDir}{DATABASE_PATH}";
 
-#if DEBUG
-        optionsBuilder.UseSqlite($"DataSource={baseDir}{DATABASE_PATH}");
-#else
-        optionsBuilder.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString));
-#endif
+        optionsBuilder.UseSqlite($"DataSource={databasePath}");
     }
 }
