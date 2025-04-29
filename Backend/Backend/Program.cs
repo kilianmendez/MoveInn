@@ -127,7 +127,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseAuthorization();
 
-        //app.UseMiddleware<middleware>();
+        app.UseMiddleware<middleware>();
         app.UseCors();
 
         app.UseStaticFiles(new StaticFileOptions
@@ -139,8 +139,7 @@ public class Program
 
         app.Run();
     }
-    //Forzar merge
-    //Forzar merge
+
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
