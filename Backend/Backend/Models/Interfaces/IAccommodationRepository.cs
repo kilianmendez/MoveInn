@@ -10,7 +10,6 @@ public interface IAccommodationRepository
     Task<Accommodation> GetByIdAsync(Guid id);
     Task<IEnumerable<string>> GetAllCountriesAsync();
     Task<IEnumerable<string>> GetCitiesByCountryAsync(string country);
-    Task<Accommodation> GetByIdAsync(Guid id);
     Task UpdateAsync(Accommodation accommodation);
 
 }
