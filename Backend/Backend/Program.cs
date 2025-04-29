@@ -129,6 +129,7 @@ public class Program
 
         app.Run();
     }
+    //Comentario
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
         using IServiceScope scope = serviceProvider.CreateScope();
