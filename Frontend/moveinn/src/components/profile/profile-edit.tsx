@@ -43,6 +43,7 @@ interface ProfileEditProps {
   onSuccess: () => void;
 }
 
+
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -495,7 +496,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               variant="outline"
               size="sm"
               onClick={addSocialMedia}
-              className="flex items-center gap-1"
+              className="flex items-center gap-1 bg-secondary/50 text-primary-dark hover:bg-secondary"
             >
               <Plus className="h-4 w-4" />
               <span>Add</span>
@@ -505,7 +506,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
           {form.watch("socialMedias").map((social, index) => (
             <div
               key={`social-form-${social.id}-${index}`}
-              className="flex items-start gap-3"
+              className="flex items-start gap-3 text-primary-dark"
             >
               <FormField
                 control={form.control}
@@ -522,11 +523,11 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       }
                     >
                       <FormControl>
-                        <SelectTrigger className="text-gray-800">
-                          <SelectValue placeholder="Select a social media" />
+                        <SelectTrigger className="text-primary-dark">
+                          <SelectValue placeholder="Select a social media" className="text-primary-dark" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white">
+                      <SelectContent className="bg-white text-primary-dark">
                         {Object.entries(SOCIAL_MEDIA_TYPES).map(
                           ([id, name]) => (
                             <SelectItem key={`social-type-${id}`} value={id}>
@@ -579,6 +580,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
             variant="outline"
             onClick={onSuccess}
             disabled={isSubmitting}
+            className="text-gray-800 bg-red-400 hover:bg-red-500"
           >
             Cancel
           </Button>

@@ -20,11 +20,43 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/authcontext"
+import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 
 export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const { user } = useAuth()
+
+  const getRoleBadge = (role: number) => {
+    switch (role) {
+      case 0:
+        return (
+          <span className="text-xs font-medium text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full shadow-sm border border-yellow-200">
+            Administrator
+          </span>
+        )
+      case 1:
+        return (
+          <span className="text-xs font-medium text-red-600 bg-red-100 px-3 py-1 rounded-full shadow-sm border border-red-200">
+            Banned
+          </span>
+        )
+      case 2:
+        return (
+          <span className="text-xs font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full shadow-sm border border-blue-200">
+            User
+          </span>
+        )
+      case 3:
+        return (
+          <span className="text-xs font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full shadow-sm border border-green-200">
+            Host
+          </span>
+        )
+      default:
+        return null
+    }
+  }
 
   const mainNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
@@ -42,6 +74,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
     { label: "Help Center", href: "/dashboard/help", icon: HelpCircleIcon },
   ]
 
+  console.log(`${API_BASE_IMAGE_URL}${user?.avatarUrl}`)
   return (
     <div className="flex min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
       {/* Sidebar */}
@@ -85,19 +118,20 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={user?.avatar}
+                src={`${API_BASE_IMAGE_URL}${user?.avatarUrl}`}
                 alt="User Avatar"
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-gray-900">{user?.name}</span>
-                <span className="text-xs text-text-secondary">{user?.role}</span>
+                <span className="text-xs text-text-secondary">{getRoleBadge(user?.role)}</span>
               </div>
             </div>
+            
             <Button variant="ghost" size="icon" className="text-primary-dark hover:bg-accent-light/30">
               <UserIcon className="h-4 w-4" />
             </Button>
-          </div>
+          </div>  
         </div>
       </aside>
 

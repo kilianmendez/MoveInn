@@ -120,11 +120,11 @@ export function UserProfile() {
 
       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-2">
-          <TabsList className="grid grid-cols-2 w-full max-w-xl bg-gray-100 p-1 rounded-xl shadow-inner">
+          <TabsList className="grid grid-cols-2 w-full max-w-xl bg-gray-100 h-fit p-1 rounded-xl shadow-inner">
             <TabsTrigger
               value="info"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
         ${
           activeTab === "info"
             ? "bg-white text-primary shadow-sm border border-gray-200"
@@ -138,7 +138,7 @@ export function UserProfile() {
             <TabsTrigger
               value="edit"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
         ${
           activeTab === "edit"
             ? "bg-white text-primary shadow-sm border border-gray-200"
@@ -153,8 +153,8 @@ export function UserProfile() {
         </div>
 
         <TabsContent value="info" className="mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-gray-200 shadow-sm bg-white">
+            <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-gray-800">Personal Information</CardTitle>
               <CardDescription className="text-gray-600">Details of your user profile</CardDescription>
             </CardHeader>
@@ -165,8 +165,8 @@ export function UserProfile() {
         </TabsContent>
 
         <TabsContent value="edit" className="mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
+          <Card className="border border-gray-200 shadow-sm bg-white">
+            <CardHeader className="border-b border-gray-200">
               <CardTitle className="text-gray-800">Edit Profile</CardTitle>
               <CardDescription className="text-gray-600">Update your personal information</CardDescription>
             </CardHeader>

@@ -398,6 +398,18 @@ namespace Backend.Models.Database
                 Threads = new List<ForumThread>()
             };
 
+            var forum2 = new Forum
+            {
+                Id = Guid.NewGuid(),
+                Title = "My First Culture Shock in Germany!",
+                Description = "My first days in Germany were full of surprises 🇩🇪 — from super strict punctuality (being 5 minutes late was a big deal!) to the importance of a full breakfast every morning 🥐🧀. The language barrier was tough at first, but I’m slowly learning thanks to helpful apps and friendly locals 💬😊",
+                Country = "Spain",
+                Category = ForumCategory.CulturalAndSocialIntegration,
+                CreatedAt = DateTime.UtcNow,
+                CreatedBy = users[0].Id,
+                Threads = new List<ForumThread>()
+            };
+
             var thread1 = new ForumThread
             {
                 Id = Guid.NewGuid(),
