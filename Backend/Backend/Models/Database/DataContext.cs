@@ -3,11 +3,16 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Net;
+using System.Reflection.Emit;
 
 public class DataContext : DbContext
 {
-    private const string DATABASE_PATH = "MoveInnDB.db";
+    //private const string DATABASE_PATH = "MoveInnDB.db";
+    public DataContext(DbContextOptions<DataContext> options): base(options)
+    {
 
+    
+    }
     public DbSet<User> Users { get; set; }
     public DbSet<Accommodation> Accommodations { get; set; }
 
@@ -22,14 +27,16 @@ public class DataContext : DbContext
     public DbSet<ForumThread> ForumsThread { get; set; }
     public DbSet<ForumMessages> ForumsMessages { get; set; }
     public DbSet<Review> Reviews { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        optionsBuilder.LogTo(Console.WriteLine);
-        optionsBuilder.EnableSensitiveDataLogging();
+        base.OnModelCreating(modelBuilder);
 
-        string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string databasePath = $"{baseDir}{DATABASE_PATH}";
+        //optionsBuilder.LogTo(Console.WriteLine);
+        //optionsBuilder.EnableSensitiveDataLogging();
 
-        optionsBuilder.UseSqlite($"DataSource={databasePath}");
+        //string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+        //string databasePath = $"{baseDir}{DATABASE_PATH}";
+
+        //optionsBuilder.UseSqlite($"DataSource={databasePath}");
     }
 }

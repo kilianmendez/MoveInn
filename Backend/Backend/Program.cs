@@ -7,9 +7,11 @@ using Backend.Models.Interfaces;
 using Backend.Services;
 using Backend.WebSockets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Stripe;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -28,7 +30,8 @@ public class Program
         // Add services to the container.
 
         builder.Services.AddControllers();
-        builder.Services.AddControllers().AddJsonOptions(options => {
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
 
@@ -38,7 +41,19 @@ public class Program
 
 
         //Contextos
-        builder.Services.AddScoped<DataContext>();
+        builder.Services.AddDbContext<DataContext>(options =>
+        {
+            var conn = Environment.GetEnvironmentVariable("ConnectionStrings__Default") ??
+                       builder.Configuration.GetConnectionString("Default");
+
+            options.UseMySql(
+                conn,
+                ServerVersion.AutoDetect(conn),
+                mySqlOpts =>
+                {
+                    mySqlOpts.SchemaBehavior(MySqlSchemaBehavior.Ignore);
+                });
+        });
         builder.Services.AddScoped<UserRepository>();
         builder.Services.AddScoped<RecommendationRepository>();
         builder.Services.AddScoped<UnitOfWork>();
@@ -142,12 +157,14 @@ public class Program
 
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
-        using IServiceScope scope = serviceProvider.CreateScope();
-        using DataContext dbContext = scope.ServiceProvider.GetService<DataContext>()!;
+        using var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        if (dbContext.Database.EnsureCreated())
+        await dbContext.Database.MigrateAsync();
+
+        if (!await dbContext.Users.AnyAsync())
         {
-            Seeder seeder = new Seeder(dbContext);
+            var seeder = new Seeder(dbContext);
             await seeder.SeedAsync();
         }
 
