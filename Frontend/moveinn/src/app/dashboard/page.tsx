@@ -10,6 +10,16 @@ import {
     GlobeIcon,
     TrendingUpIcon,
     UsersIcon,
+    Utensils,
+    Coffee,
+    Landmark,
+    Music,
+    GraduationCap,
+    Bike,
+    Grid3X3,
+    Plus,
+    X,
+    Map,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -17,14 +27,174 @@ import { Progress } from "@/components/ui/progress"
 import { EventCard } from "@/components/dashboard/event-card"
 import { NotificationItem } from "@/components/dashboard/notification-item"
 import { RecommendationCard } from "@/components/dashboard/recommendation-card"
-import { GroupCard } from "@/components/dashboard/group-card"
+import { DashboardAcommodationCard } from "@/components/dashboard/dashboard-acommodation-card"
 import { HostCard } from "@/components/dashboard/host-card"
-
+import axios from "axios"
 import { useAuth } from "@/context/authcontext"
+import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+
+interface Recommendation {
+    id: string
+    title: string
+    description: string
+    address: string
+    city: string
+    country: string
+    createdAt: string
+    rating: number
+    category: number
+    tags: string[]
+    userId: string
+    recommendationImages: {
+      id: string
+      url: string
+      createdAt: string
+      userId: string | null
+      user: any | null
+      recommendationId: string
+    }[]
+  }
+
+  interface Acommodation {
+    id: number
+    title: string
+    description: string
+    addres: string
+    city: string
+    country: string
+    pricePerMonth: number
+    numberOfRooms: number
+    bathrooms: number
+    squareMeters: number
+    hasWifi: boolean
+    ownetId: string
+    availableFrom: string
+    availableTo: string
+    images: string[]
+    publisher: string
+  }
+
+  const categories = {
+    Restaurant: 0,
+    Cafeteria: 1,
+    Museum: 2,
+    LeisureZone: 3,
+    Park: 4,
+    HistoricalSite: 5,
+    Shopping: 6,
+    Bar: 7,
+    Other: 8,
+  } as const
+  
+  type CategoryName = keyof typeof categories
+  type CategoryId = (typeof categories)[CategoryName]
+  
+  const categoryByNumber: Record<CategoryId, CategoryName> = Object.entries(categories).reduce(
+    (acc, [name, id]) => {
+      acc[id as CategoryId] = name as CategoryName
+      return acc
+    },
+    {} as Record<CategoryId, CategoryName>
+  )
+  
+  const getCategoryName = (categoryId: number): string => {
+    return categoryByNumber[categoryId as CategoryId] || "Other"
+  }
+  
+  const getCategoryIcon = (categoryId: number) => {
+    const category = categoryByNumber[categoryId as CategoryId]?.toLowerCase() || ""
+  
+    switch (category) {
+      case "restaurant":
+        return <Utensils className="h-4 w-4" />
+      case "cafeteria":
+        return <Coffee className="h-4 w-4" />
+      case "museum":
+        return <Landmark className="h-4 w-4" />
+      case "leisurezone":
+        return <Music className="h-4 w-4" />
+      case "park":
+        return <Bike className="h-4 w-4" />
+      case "historicalsite":
+        return <GraduationCap className="h-4 w-4" />
+      case "shopping":
+        return <Grid3X3 className="h-4 w-4" />
+      case "bar":
+        return <Coffee className="h-4 w-4" />
+      default:
+        return <Map className="h-4 w-4" />
+    }
+  }
 
 export default function DashboardPage() {
     const { user } = useAuth()
+    const [recommendations, setRecommendations] = useState<Recommendation[]>([])
+    const [acomodations, setAcomodations] = useState<Acommodation[]>([])
 
+    const getRecommendations = async () => {
+        try {
+          const token = localStorage.getItem("token") // 👈 get token from storage
+
+          const body = {
+            query: "",
+            sortField: "",
+            sortOrder: "",
+            country: "Spain",
+            city: "",
+            page: 1,
+            limit: 4,
+          }
+  
+          const response = await axios.post(API_SEARCH_RECOMMENDATION, body, {
+            headers: {
+              Authorization: `Bearer ${token}`, // 👈 add Authorization header
+            },
+          })
+      
+          const data = response.data.items
+          console.log("Recomendaciones encontradas:", data)
+      
+          if (Array.isArray(data)) {
+            setRecommendations(data)
+          } else if (Array.isArray(data.recommendations)) {
+            setRecommendations(data.recommendations)
+          } else {
+            setRecommendations([])
+          }
+        } catch (error) {
+          console.error("Error fetching recommendations:", error)
+          setRecommendations([])
+        }
+    }
+
+    const getAcomodations = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.get(API_SEARCH_ACOMMODATION, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const data = response.data.items
+        if (Array.isArray(data)) {
+          setAcomodations(data)
+        } else if (Array.isArray(data.acomodations)) {
+          setAcomodations(data.acomodations)
+        } else {
+          setAcomodations([])
+        }
+      } catch (error) {
+        console.error("Error fetching acomodations:", error)
+        setAcomodations([])
+      }
+    }
+
+    useEffect(() => {
+        getRecommendations()
+    }, [])
+    
     console.log("User data:", user)
 
     return (
@@ -185,43 +355,20 @@ export default function DashboardPage() {
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2 text-text">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Your Groups</CardTitle>
-                    <CardDescription className="text-text-secondary">Residence groups and communities you&apos;re part of</CardDescription>
+                    <CardTitle className="text-xl text-[#0E1E40]">Housing</CardTitle>
+                    <CardDescription className="text-text-secondary">Residences you might be interested in</CardDescription>
                     </div>
+                    <Link href="/dashboard/housing">
                     <Button variant="ghost" className="text-[#4C69DD]">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4" />
                     </Button>
+                    </Link>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <GroupCard
-                        name="Barcelona Central Residence"
-                        members={42}
-                        type="Residence"
-                        lastActivity="10 minutes ago"
-                        unreadMessages={5}
-                    />
-                    <GroupCard
-                        name="UB Economics Students"
-                        members={68}
-                        type="Academic"
-                        lastActivity="2 hours ago"
-                        unreadMessages={0}
-                    />
-                    <GroupCard
-                        name="Weekend Travelers"
-                        members={124}
-                        type="Interest"
-                        lastActivity="Yesterday"
-                        unreadMessages={3}
-                    />
-                    <GroupCard
-                        name="Language Exchange Club"
-                        members={56}
-                        type="Interest"
-                        lastActivity="3 days ago"
-                        unreadMessages={0}
-                    />
+                    {acomodations.map((acommodation) => (
+                        <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
+                    ))}
                     </div>
                 </CardContent>
                 </Card>
@@ -233,44 +380,17 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl text-[#0E1E40]">Local Recommendations</CardTitle>
                     <CardDescription>Places and activities recommended by hosts and other students</CardDescription>
                     </div>
-                    <Button variant="ghost" className="text-[#4C69DD]">
-                    View all <ChevronRightIcon className="ml-1 h-4 w-4" />
-                    </Button>
+                    <Link href="/dashboard/recommendations">
+                        <Button variant="ghost" className="text-[#4C69DD]">
+                        View all <ChevronRightIcon className="ml-1 h-4 w-4" />
+                        </Button>
+                    </Link>
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <RecommendationCard
-                        name="La Sagrada Familia"
-                        category="Sightseeing"
-                        rating={4.9}
-                        priceRange="€€"
-                        description="Gaudí's famous basilica. Book tickets online to avoid long queues!"
-                        recommendedBy="Maria (Host)"
-                    />
-                    <RecommendationCard
-                        name="El Xampanyet"
-                        category="Restaurant"
-                        rating={4.7}
-                        priceRange="€€"
-                        description="Traditional tapas bar with great atmosphere and local cava."
-                        recommendedBy="Thomas (Student)"
-                    />
-                    <RecommendationCard
-                        name="Parc de la Ciutadella"
-                        category="Outdoors"
-                        rating={4.6}
-                        priceRange="Free"
-                        description="Perfect for picnics, studying outdoors, or rowing on the lake."
-                        recommendedBy="Anna (Host)"
-                    />
-                    <RecommendationCard
-                        name="Bunkers del Carmel"
-                        category="Viewpoint"
-                        rating={4.8}
-                        priceRange="Free"
-                        description="Best sunset view of Barcelona. Bring snacks and drinks!"
-                        recommendedBy="Carlos (Student)"
-                    />
+                    {recommendations.map((recommendation) => (
+                        <RecommendationCard key={recommendation.id} name={recommendation.title} category={getCategoryName(recommendation.category)} rating={recommendation.rating} description={recommendation.description} recommendedBy={recommendation.userId} />
+                    ))}
                     </div>
                 </CardContent>
                 </Card>

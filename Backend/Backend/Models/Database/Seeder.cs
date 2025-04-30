@@ -391,7 +391,7 @@ namespace Backend.Models.Database
                 Title = "Foro de Prueba",
                 Description = "Este es un foro para pruebas.",
                 Country = "Spain",
-                Category = ForumCategory.Otro,
+                Category = ForumCategory.Other,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = users[0].Id,
                 Threads = new List<ForumThread>()
