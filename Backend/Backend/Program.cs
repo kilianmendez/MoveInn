@@ -71,6 +71,7 @@ public class Program
         builder.Services.AddSingleton<IFollowService, FollowService>();
         builder.Services.AddSingleton<INotificationService, NotificationService>();
         builder.Services.AddSingleton<IMessagesService, MessagesService>();
+        builder.Services.AddSingleton<middleware>();
 
         //Swagger
         builder.Services.AddEndpointsApiExplorer();
@@ -127,7 +128,7 @@ public class Program
         app.UseHttpsRedirection();
         app.UseAuthorization();
 
-        //app.UseMiddleware<middleware>();
+        app.UseMiddleware<middleware>();
         app.UseCors();
 
         app.UseStaticFiles(new StaticFileOptions
