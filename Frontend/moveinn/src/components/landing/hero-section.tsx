@@ -12,7 +12,7 @@ export function HeroSection() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-[#0E1E40]">
-                Welcome to <span className="text-[#4C69DD] font-extrabold">MoveIn</span>
+                Welcome to <span className="text-[#4C69DD] font-extrabold text-xxl">MoveInn</span>
                 </h1>
                 <p className="text-xl mb-8 text-[#0E1E40]">
                 Your all-in-one platform for making the most of your Erasmus experience. Find accommodation, connect with

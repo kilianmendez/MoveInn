@@ -8,7 +8,7 @@ export function Navbar() {
         <div className="container mx-auto flex justify-between items-center">
             <Link href="/" className="flex items-center">
             <span className="text-2xl font-bold text-[#0E1E40]">
-                Move<span className="text-[#4C69DD] font-extrabold">In</span>
+                Move<span className="text-[#4C69DD] font-extrabold">Inn</span>
             </span>
             </Link>
 
