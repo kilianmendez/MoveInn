@@ -35,7 +35,7 @@ namespace Backend.Controllers
             if (result == null)
                 return StatusCode(500, "No se pudo crear la recomendación.");
 
-            return CreatedAtAction(nameof(GetRecommendationById), new { id = result.Id }, result);
+            return Ok(result);
         }
 
         [HttpPost("SearchRecommendation")]

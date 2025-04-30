@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
 export function Navbar() {
+    
     return (
         <header className="bg-gradient-to-r from-white to-[#E7ECF0]/80 text-[#0E1E40] py-4 px-4 md:px-8 sticky top-0 z-50 shadow-sm">
         <div className="container mx-auto flex justify-between items-center">

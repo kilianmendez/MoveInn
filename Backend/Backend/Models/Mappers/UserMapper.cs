@@ -22,9 +22,16 @@ namespace Backend.Models.Mappers
                 City = user.City,
                 Degree = user.Degree,
                 Nationality = user.Nationality,
+                ErasmusCountry = user.ErasmusCountry,
                 Phone = user.Phone,
                 ErasmusDate = (int)(DateTime.Now - user.ErasmusDate.ToDateTime(TimeOnly.MinValue)).TotalDays,
                 SocialMedias = user.SocialMedias
+            .Select(sm => new SocialMediaLink
+            {
+                SocialMedia = sm.SocialMedia,
+                Url = sm.Url
+            })
+            .ToList()
             };
         }
 
@@ -46,9 +53,16 @@ namespace Backend.Models.Mappers
                 Degree = dto.Degree,
                 Nationality = dto.Nationality,
                 Phone = dto.Phone,
-                SocialMedias = dto.SocialMedias,
+                ErasmusCountry = dto.ErasmusCountry,
                 ErasmusDate = DateOnly.FromDateTime(DateTime.Now).AddDays(-dto.ErasmusDate),
-                Password = password // Recuerda asignar la contraseña si es necesario
+                Password = password,
+                SocialMedias = dto.SocialMedias
+            .Select(sm => new SocialMediaLink
+            {
+                SocialMedia = sm.SocialMedia,
+                Url = sm.Url
+            })
+            .ToList()
             };
         }
     }

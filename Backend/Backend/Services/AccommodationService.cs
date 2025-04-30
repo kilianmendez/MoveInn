@@ -1,5 +1,7 @@
 ﻿using Backend.Models.Database.Entities;
 using Backend.Models.Database.Repositories;
+﻿using Backend.Models.Database;
+using Backend.Models.Database.Entities;
 using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
 using Backend.Models.Mappers;
@@ -17,7 +19,31 @@ public class AccommodationService : IAccommodationService
         _repository = repository;
         _context = context;
     }
+    public async Task<Accommodation> GetByIdAsync(Guid id)
+    {
+        return await _repository.GetByIdAsync(id);
+    }
+    public async Task<IEnumerable<DateTime>> GetUnavailableDatesAsync(Guid accommodationId)
+    {
+        var reservations = await _context.Reservations
+            .Where(r => r.AccommodationId == accommodationId
+                     && r.Status != Models.Database.Enum.ReservationStatus.Cancelled)
+            .ToListAsync();
 
+        var blocked = new SortedSet<DateTime>();
+        foreach (var res in reservations)
+        {
+            var day = res.StartDate.Date;
+            var end = res.EndDate.Date;
+            while (day < end)
+            {
+                blocked.Add(day);
+                day = day.AddDays(1);
+            }
+        }
+
+        return blocked;
+    }
     public async Task<AccommodationDTO> CreateAccommodationAsync(AccommodationCreateDTO accommodationDto)
     {
         var userExists = await _context.Users.AnyAsync(u => u.Id == accommodationDto.OwnerId);
@@ -51,7 +77,7 @@ public class AccommodationService : IAccommodationService
                 _context.Set<ImageAccommodation>().Add(image);
             }
 
-            await _context.SaveChangesAsync(); // Anteriormente línea 35
+            await _context.SaveChangesAsync(); 
         }
 
         return AccommodationMapper.ToDto(accommodation);

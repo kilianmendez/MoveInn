@@ -34,7 +34,7 @@ namespace Backend.Controllers
         }
 
         //[Authorize(Roles = nameof(Role.Administrator))]
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult<User>> DeleteUserByIdAsync(Guid id)
         {
             var user = await _userService.DeleteAsyncUserById(id);
@@ -45,7 +45,7 @@ namespace Backend.Controllers
             return Ok(user);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<ActionResult<UserDto>> UpdateUser(Guid id, [FromForm] UpdateUserRequest request)
         {
             var updatedUser = await _userService.UpdateUserAsync(id, request);
@@ -54,6 +54,13 @@ namespace Backend.Controllers
                 return NotFound("Usuario no encontrado o no se pudo actualizar.");
             }
             return Ok(UserMapper.ToDto(updatedUser));
+        }
+        [HttpPut("{id}/SocialMedias")]
+        public async Task<IActionResult> UpdateSocialMedias(Guid id, [FromBody] SocialMediasUpdateRequest req)
+        {
+            var dto = await _userService.UpdateUserSocialMediaAsync(id, req.SocialMedias);
+            if (dto == null) return NotFound();
+            return Ok(dto);
         }
 
         //[Authorize(Roles = nameof(Role.Administrator))]

@@ -18,7 +18,8 @@ namespace Backend.Models.Mappers
                 AccommodationId = reservation.AccommodationId,
                 StartDate = reservation.StartDate,
                 EndDate = reservation.EndDate,
-                Status = reservation.Status
+                Status = reservation.Status,
+                TotalPrice = reservation.TotalPrice
             };
         }
         public static Reservation ToEntity(ReservationCreateRequest request)
@@ -31,21 +32,13 @@ namespace Backend.Models.Mappers
                 StartDate = request.StartDate,
                 EndDate = request.EndDate,
                 Status = ReservationStatus.Pending,
+                TotalPrice = request.TotalPrice,
                 
               
             };
         }
         public static void UpdateEntity(Reservation reservation, ReservationUpdateRequest request)
         {
-            if (request.StartDate.HasValue)
-                reservation.StartDate = request.StartDate.Value;
-
-            if (request.EndDate.HasValue)
-                reservation.EndDate = request.EndDate.Value;
-
-            if (request.TotalPrice.HasValue)
-                reservation.TotalPrice = request.TotalPrice.Value;
-
             if (request.Status.HasValue)
                 reservation.Status = request.Status.Value;
         }
