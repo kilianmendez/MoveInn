@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import Flag from 'react-world-flags'
 import axios from "axios"
-import { API_ALL_FORUMS } from "@/utils/endpoints/config"
+import { API_ALL_FORUMS, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const categoryLabels: Record<number, string> = {
@@ -90,6 +90,7 @@ export default function ForumsPage() {
       const response = await axios.get(API_ALL_FORUMS, {
         headers: { Authorization: `Bearer ${token}` },
       })
+      console.log("Forums: ", response.data)
       setForums(Array.isArray(response.data) ? response.data : [])
     } catch {
       setForums([])
@@ -211,9 +212,9 @@ export default function ForumsPage() {
                         <p className="text-sm text-gray-600 line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
                       </div>
                       <div className="mt-auto">
-                        <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-4 py-1 w-fit">
+                        <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-3 py-2 w-fit">
                           <Avatar className="h-8 w-8">
-                            <AvatarImage src={forum.creatorAvatar} />
+                            <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
                             <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
                           </Avatar>
                           <span className="text-sm font-medium text-[#0E1E40]">{forum.creatorName}</span>
