@@ -9,6 +9,7 @@ import {
   API_FORUM_MESSAGES_BY_THREAD_ID,
   API_FORUM_POST_RESPONSE_TO_THREAD,
   API_FORUM_POST_THREAD,
+  API_BASE_IMAGE_URL,
 } from '@/utils/endpoints/config'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -16,6 +17,7 @@ import { MapPin, Reply as ReplyIcon } from 'lucide-react'
 import { format } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { useAuth } from '@/context/authcontext'
 
 const categoryLabels: Record<number, string> = {
   0: 'Procedures & Docs',
@@ -51,6 +53,8 @@ export default function ForumDetailPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [activeReply, setActiveReply] = useState<string | null>(null)
   const [replyContent, setReplyContent] = useState<Record<string, string>>({})
+
+  const { user } = useAuth()
 
   const fetchForum = async () => {
     try {
@@ -89,6 +93,7 @@ export default function ForumDetailPage() {
       )
 
       setThreads(threadsWithResponses)
+      console.log("Threads: ", threadsWithResponses)
     } catch (error) {
       console.error('Error fetching threads:', error)
     }
@@ -119,14 +124,13 @@ export default function ForumDetailPage() {
     try {
       setIsSubmitting(true)
       const token = localStorage.getItem('token')
-      const userId = localStorage.getItem('userId') // asumiendo que guardas esto en localStorage
       await axios.post(
         API_FORUM_POST_THREAD,
         {
           forumId: forum.id,
           title: newThread.slice(0, 50), // puedes personalizar esto
           content: newThread,
-          createdBy: userId,
+          createdBy: user?.id,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -137,6 +141,12 @@ export default function ForumDetailPage() {
       fetchThreads()
     } catch (error) {
       console.error('Error creating thread:', error)
+      console.log("Mensaje Enviado:", {
+        forumId: forum.id,
+        title: newThread.slice(0, 50), // puedes personalizar esto
+        content: newThread,
+        createdBy: user?.id,
+      })
     } finally {
       setIsSubmitting(false)
     }
@@ -146,22 +156,24 @@ export default function ForumDetailPage() {
   const handleReplySubmit = async (parentId: string, threadId: string) => {
     const content = replyContent[parentId]
     if (!content?.trim()) return
-
+  
     try {
       const token = localStorage.getItem('token')
-      const userId = localStorage.getItem('userId')
-      await axios.post(
-        API_FORUM_POST_RESPONSE_TO_THREAD,
-        {
-          threadId,
-          content,
-          createdBy: userId,
-          parentMessageId: parentId,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
+      const userId = user?.id || localStorage.getItem('userId')
+  
+      const payload = {
+        threadId: threadId,               // El hilo al que pertenece la respuesta
+        content: content,
+        createdBy: userId,
+        parentMessageId: parentId === threadId ? null : parentId // Solo null si se responde al hilo directamente
+      }
+  
+      console.log("Sending reply:", payload)
+  
+      await axios.post(API_FORUM_POST_RESPONSE_TO_THREAD, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+  
       setReplyContent((prev) => ({ ...prev, [parentId]: '' }))
       setActiveReply(null)
       fetchThreads()
@@ -169,7 +181,7 @@ export default function ForumDetailPage() {
       console.error('Error replying to thread/message:', error)
     }
   }
-
+  
   const getThreadIdByMessageId = (messageId: string): string => {
     for (const thread of threads) {
       if (thread.responses.some((msg: any) => msg.id === messageId)) {
@@ -191,12 +203,27 @@ export default function ForumDetailPage() {
         className="text-sm text-primary-dark mb-2"
       />
       <div className="flex gap-2">
-        <Button size="sm" onClick={() => {
-          console.log('Send reply to', parentId, '→', replyContent[parentId])
+      <Button
+        size="sm"
+        onClick={() => {
+          const threadId = getThreadIdByMessageId(parentId) || parentId // fallback por si es el hilo
+          handleReplySubmit(parentId, threadId)
+        }}
+      >
+        Send
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="hover:bg-[#e84753] bg-red-500 text-white"
+        onClick={() => {
           setActiveReply(null)
           setReplyContent((prev) => ({ ...prev, [parentId]: '' }))
-        }}>Send</Button>
-        <Button size="sm" variant="ghost" className='hover:bg-[#e84753] bg-red-500 text-white' onClick={() => handleReplySubmit(parentId, getThreadIdByMessageId(parentId))}>Cancel</Button>
+        }}
+      >
+        Cancel
+      </Button>
+
       </div>
     </div>
   )
@@ -264,7 +291,7 @@ export default function ForumDetailPage() {
           <p className="text-gray-700 whitespace-pre-line mb-6">{forum.description}</p>
           <div className="flex items-center gap-3 mt-6">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={forum.creatorAvatar} />
+              <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
               <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-sm font-medium text-[#0E1E40]">{forum.creatorName}</span>

@@ -16,6 +16,7 @@ import Flag from 'react-world-flags'
 import axios from "axios"
 import { API_ALL_FORUMS, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/context/authcontext"
 
 const categoryLabels: Record<number, string> = {
   0: "Procedures & Docs",
@@ -83,6 +84,12 @@ export default function ForumsPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState<number | null>(null)
   const [forums, setForums] = useState<Forum[]>([])
+  const [newForumTitle, setNewForumTitle] = useState('');
+  const [newForumDescription, setNewForumDescription] = useState('');
+  const [newForumCategory, setNewForumCategory] = useState<number>(0);
+  const [isCreatingForum, setIsCreatingForum] = useState(false);
+
+  const { user } = useAuth()
 
   const getForums = async () => {
     try {
@@ -96,6 +103,38 @@ export default function ForumsPage() {
       setForums([])
     }
   }
+
+    // Función para crear foro
+  const handleCreateForum = async () => {
+    if (!newForumTitle.trim() || !newForumDescription.trim()) return;
+
+    try {
+      setIsCreatingForum(true);
+      const token = localStorage.getItem("token");
+
+      const payload = {
+        title: newForumTitle,
+        description: newForumDescription,
+        country: user?.erasmusCountry,
+        category: newForumCategory,
+        createdAt: new Date().toISOString(),
+        creatorId: user?.id
+      };
+
+      await axios.post(API_ALL_FORUMS, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setNewForumTitle('');
+      setNewForumDescription('');
+      setNewForumCategory(9);
+      getForums(); // refrescar
+    } catch (err) {
+      console.error("Error creating forum:", err);
+    } finally {
+      setIsCreatingForum(false);
+    }
+  };
 
   useEffect(() => { getForums() }, [])
 
@@ -191,6 +230,62 @@ export default function ForumsPage() {
                 )}
               </div>
             )}
+
+            <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-white">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-bold text-[#0E1E40]">Start a New Forum</h2>
+                <div className="flex items-center gap-1 text-sm text-gray-500">
+                  <MapPin className="h-4 w-4 text-primary" />
+                  <span>{user?.erasmusCountry || "Unknown"}</span>
+                </div>
+              </div>
+
+              <Input
+                value={newForumTitle}
+                onChange={(e) => setNewForumTitle(e.target.value)}
+                placeholder="Forum Title"
+                className="mb-4 placeholder:text-gray-500 text-primary-dark text-sm border border-[#4C69DD] focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
+              />
+
+              <textarea
+                value={newForumDescription}
+                onChange={(e) => setNewForumDescription(e.target.value)}
+                placeholder="What's this forum about?"
+                rows={4}
+                className="w-full mb-4 rounded-md border border-[#4C69DD] placeholder:text-gray-500 text-primary-dark text-sm p-3 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none resize-none"
+              />
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-[#0E1E40] mb-1">Category</label>
+
+                {/* Vista previa de categoría seleccionada */}
+                <div className={`inline-block mb-2 px-3 py-1 text-xs rounded-md font-medium ${forumCategoryBadgeColors[newForumCategory]}`}>
+                  {categoryLabels[newForumCategory]}
+                </div>
+
+                <select
+                  value={newForumCategory}
+                  onChange={(e) => setNewForumCategory(Number(e.target.value))}
+                  className="w-full rounded-md border border-[#4C69DD] bg-white text-primary-dark text-sm p-2 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
+                >
+                  {Object.entries(categoryLabels).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+
+              <Button
+                onClick={handleCreateForum}
+                disabled={isCreatingForum}
+                className="bg-[#4C69DD] hover:bg-[#3b5ccd] text-white"
+              >
+                {isCreatingForum ? "Posting..." : "Post Forum"}
+              </Button>
+            </div>
+
 
             <div className="flex flex-col gap-4 w-full">
               {filteredForums.map((forum) => (

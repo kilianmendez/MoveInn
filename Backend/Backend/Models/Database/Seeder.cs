@@ -56,43 +56,49 @@ namespace Backend.Models.Database
                 new User
                 {
                     Id = Guid.NewGuid(),
-                    Name = "Christian",
-                    LastName = "Rodriguez", 
-                    Mail = "christian@gmail.com",
-                    Password = AuthService.HashPassword("passwordChristian"),
-                    Biography = "Biografía de Christian",
-                    Phone = "222222222",
+                    Name = "Kilian",
+                    LastName = "Méndez Ávila",
+                    Mail = "kilian@gmail.com",
+                    Password = AuthService.HashPassword("passwordKilian"),
+                    Biography = "De erasmus en Turquia",
+                    Phone = "635893667",
                     AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Christian", 
-                    Degree = "Grado de Christian", 
-                    Nationality = "Nacionalidad de Christian",
+                    School = "CPIFP Alan Turing",
+                    Degree = "Web Aplication Development",
+                    City = "Izmir",
+                    ErasmusCountry = "Turkey",
+                    Nationality = "Spain",
+                    ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeChristian" }
+                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
+
                     }
                 },
                 new User
                 {
                     Id = Guid.NewGuid(),
-                    Name = "Kilian",
-                    LastName = "Méndez",
-                    Mail = "kilian@gmail.com",
-                    Password = AuthService.HashPassword("passwordKilian"),
-                    Biography = "Biografía de Kilian",
-                    Phone = "333333333",
-                    AvatarUrl = "default-avatar-url", 
+                    Name = "Christian",
+                    LastName = "Rodriguez Lara",
+                    Mail = "christian@gmail.com",
+                    Password = AuthService.HashPassword("passwordchristian"),
+                    Biography = "Hola Izmir!!!",
+                    Phone = "667896654",
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Kilian", 
-                    Degree = "Grado de Kilian", 
-                    Nationality = "Nacionalidad de Kilian", 
+                    School = "CPIFP Alan Turing",
+                    Degree = "Web Aplication Development",
+                    City = "Izmir",
+                    ErasmusCountry = "Turkey",
+                    Nationality = "Spain",
+                    ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeKilian" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeKilian" }
+                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
+
                     }
-                    }
+                },
                 };
             var recommendation1 = new Recommendation
             {
