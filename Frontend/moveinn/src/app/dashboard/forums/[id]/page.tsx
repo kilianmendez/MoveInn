@@ -45,6 +45,20 @@ const forumCategoryBadgeColors: Record<number, string> = {
   9: 'bg-gray-500 text-white',
 }
 
+const forumCategoryGradients: Record<number, string> = {
+  0: 'from-green-100 to-white',
+  1: 'from-blue-100 to-white',
+  2: 'from-pink-100 to-white',
+  3: 'from-yellow-100 to-white',
+  4: 'from-purple-100 to-white',
+  5: 'from-rose-100 to-white',
+  6: 'from-orange-100 to-white',
+  7: 'from-teal-100 to-white',
+  8: 'from-gray-200 to-white',
+  9: 'from-gray-100 to-white',
+}
+
+
 export default function ForumDetailPage() {
   const { id } = useParams()
   const [forum, setForum] = useState<any | null>(null)
@@ -99,25 +113,6 @@ export default function ForumDetailPage() {
     }
   }
 
-  // const handleSubmit = async () => {
-  //   if (!newThread.trim()) return
-  //   try {
-  //     setIsSubmitting(true)
-  //     const token = localStorage.getItem('token')
-  //     await axios.post(API_FORUM_THREADS_BY_FORUM_ID(id), {
-  //       content: newThread,
-  //     }, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     })
-  //     setNewThread('')
-  //     fetchThreads()
-  //   } catch (error) {
-  //     console.error('Error creating thread:', error)
-  //   } finally {
-  //     setIsSubmitting(false)
-  //   }
-  // }
-
   // Crear un nuevo hilo en el foro
   const handleSubmitThread = async () => {
     if (!newThread.trim() || !forum?.id) return
@@ -128,7 +123,7 @@ export default function ForumDetailPage() {
         API_FORUM_POST_THREAD,
         {
           forumId: forum.id,
-          title: newThread.slice(0, 50), // puedes personalizar esto
+          title: newThread.slice(0, 50),
           content: newThread,
           createdBy: user?.id,
         },
@@ -143,7 +138,7 @@ export default function ForumDetailPage() {
       console.error('Error creating thread:', error)
       console.log("Mensaje Enviado:", {
         forumId: forum.id,
-        title: newThread.slice(0, 50), // puedes personalizar esto
+        title: newThread.slice(0, 50),
         content: newThread,
         createdBy: user?.id,
       })
@@ -162,10 +157,10 @@ export default function ForumDetailPage() {
       const userId = user?.id || localStorage.getItem('userId')
   
       const payload = {
-        threadId: threadId,               // El hilo al que pertenece la respuesta
+        threadId: threadId,
         content: content,
         createdBy: userId,
-        parentMessageId: parentId === threadId ? null : parentId // Solo null si se responde al hilo directamente
+        parentMessageId: parentId === threadId ? null : parentId
       }
   
       console.log("Sending reply:", payload)
@@ -206,7 +201,7 @@ export default function ForumDetailPage() {
       <Button
         size="sm"
         onClick={() => {
-          const threadId = getThreadIdByMessageId(parentId) || parentId // fallback por si es el hilo
+          const threadId = getThreadIdByMessageId(parentId) || parentId
           handleReplySubmit(parentId, threadId)
         }}
       >
@@ -223,7 +218,6 @@ export default function ForumDetailPage() {
       >
         Cancel
       </Button>
-
       </div>
     </div>
   )
@@ -276,21 +270,23 @@ export default function ForumDetailPage() {
     <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30 py-10 px-4 md:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Forum Header */}
-        <div className="bg-white shadow-lg rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <Badge className={`text-sm px-3 py-1 rounded-full ${forumCategoryBadgeColors[forum.category] || 'bg-gray-300 text-gray-800'}`}>
-              {categoryLabels[forum.category] || 'Other'}
-            </Badge>
-            <span className="text-sm text-gray-500">{format(new Date(forum.createdAt), 'PPP')}</span>
-          </div>
-          <h1 className="text-2xl font-bold text-[#0E1E40] mb-4">{forum.title}</h1>
-          <div className="flex items-center text-sm text-gray-600 mb-6">
-            <MapPin className="h-4 w-4 mr-1 text-[#4C69DD]" />
-            {forum.country}
+        <div className="shadow-lg rounded-lg p-6 bg-white">
+          <div className={`rounded-t-md mb-6 -mx-6 -mt-6 px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white'}`}>
+            <div className="flex items-center justify-between mb-4">
+              <Badge className={`text-sm px-3 py-1 rounded-full ${forumCategoryBadgeColors[forum.category] || 'bg-gray-300 text-gray-800'}`}>
+                {categoryLabels[forum.category] || 'Other'}
+              </Badge>
+              <span className="text-sm text-gray-500">{format(new Date(forum.createdAt), 'PPP')}</span>
+            </div>
+            <h1 className="text-2xl font-bold text-[#0E1E40] mb-4">{forum.title}</h1>
+            <div className="flex items-center text-sm text-gray-600 mb-2">
+              <MapPin className="h-4 w-4 mr-1 text-[#4C69DD]" />
+              {forum.country}
+            </div>
           </div>
           <p className="text-gray-700 whitespace-pre-line mb-6">{forum.description}</p>
           <div className="flex items-center gap-3 mt-6">
-            <Avatar className="h-10 w-10">
+            <Avatar className="h-10 w-10 bg-primary">
               <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
               <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
             </Avatar>

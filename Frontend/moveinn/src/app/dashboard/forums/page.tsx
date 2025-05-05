@@ -7,6 +7,8 @@ import {
   MapPin,
   PlusCircle,
   X,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -88,6 +90,8 @@ export default function ForumsPage() {
   const [newForumDescription, setNewForumDescription] = useState('');
   const [newForumCategory, setNewForumCategory] = useState<number>(0);
   const [isCreatingForum, setIsCreatingForum] = useState(false);
+  const [showCreateForum, setShowCreateForum] = useState(false)
+
 
   const { user } = useAuth()
 
@@ -155,9 +159,12 @@ export default function ForumsPage() {
                   <h1 className="text-2xl md:text-3xl font-bold mb-2">Community Forums</h1>
                   <p className="text-white/80">Connect with fellow Erasmus students, ask questions, and share your experiences.</p>
                 </div>
-                <Button className="bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90 mt-4 md:mt-0">
+                <Button
+                  className="bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90 mt-4 md:mt-0 cursor-pointer"
+                  onClick={() => setShowCreateForum(prev => !prev)}
+                >
                   <PlusCircle className="mr-2 h-4 w-4" />
-                  Create New Topic
+                  {showCreateForum ? "Close Form" : "Create New Topic"}
                 </Button>
               </div>
               <div className="relative flex-1">
@@ -181,7 +188,7 @@ export default function ForumsPage() {
                     <Button
                       key={country.name}
                       variant="outline"
-                      className={`w-full justify-between h-auto py-2 text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD] text-white" : ""}`}
+                      className={`w-full justify-between h-auto py-2 text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD] text-white" : ""} cursor-pointer`}
                       onClick={() => setActiveFilter(activeFilter === country.name ? null : country.name)}
                     >
                       <div className="flex items-center">
@@ -231,61 +238,84 @@ export default function ForumsPage() {
               </div>
             )}
 
-            <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-[#0E1E40]">Start a New Forum</h2>
-                <div className="flex items-center gap-1 text-sm text-gray-500">
-                  <MapPin className="h-4 w-4 text-primary" />
-                  <span>{user?.erasmusCountry || "Unknown"}</span>
-                </div>
+            <div
+              className={`
+                flex items-center justify-between cursor-pointer
+                rounded-lg px-4 py-3 mb-4 transition-colors duration-200
+                bg-gradient-to-r from-accent-light to-white
+                hover:bg-accent/80 hover:bg-none
+                border border-dashed border-accent
+              `}
+              
+              onClick={() => setShowCreateForum(prev => !prev)}
+            >
+              <div className="flex items-center gap-2">
+                {showCreateForum ? (
+                  <ChevronUp className="h-4 w-4 text-[#0E1E40]" />
+                ) : (
+                  <ChevronDown className="h-4 w-4 text-[#0E1E40]" />
+                )}
+                <span className="text-sm font-medium text-[#0E1E40]">
+                  {showCreateForum ? "Hide Forum Form" : "Create Forum Post"}
+                </span>
               </div>
-
-              <Input
-                value={newForumTitle}
-                onChange={(e) => setNewForumTitle(e.target.value)}
-                placeholder="Forum Title"
-                className="mb-4 placeholder:text-gray-500 text-primary-dark text-sm border border-[#4C69DD] focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
-              />
-
-              <textarea
-                value={newForumDescription}
-                onChange={(e) => setNewForumDescription(e.target.value)}
-                placeholder="What's this forum about?"
-                rows={4}
-                className="w-full mb-4 rounded-md border border-[#4C69DD] placeholder:text-gray-500 text-primary-dark text-sm p-3 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none resize-none"
-              />
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-[#0E1E40] mb-1">Category</label>
-
-                {/* Vista previa de categoría seleccionada */}
-                <div className={`inline-block mb-2 px-3 py-1 text-xs rounded-md font-medium ${forumCategoryBadgeColors[newForumCategory]}`}>
-                  {categoryLabels[newForumCategory]}
-                </div>
-
-                <select
-                  value={newForumCategory}
-                  onChange={(e) => setNewForumCategory(Number(e.target.value))}
-                  className="w-full rounded-md border border-[#4C69DD] bg-white text-primary-dark text-sm p-2 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
-                >
-                  {Object.entries(categoryLabels).map(([key, label]) => (
-                    <option key={key} value={key}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-
-              <Button
-                onClick={handleCreateForum}
-                disabled={isCreatingForum}
-                className="bg-[#4C69DD] hover:bg-[#3b5ccd] text-white"
-              >
-                {isCreatingForum ? "Posting..." : "Post Forum"}
-              </Button>
+              <span className="text-xs text-gray-700">{user?.erasmusCountry || "Your country"}</span>
             </div>
 
+
+
+            {showCreateForum && (
+              <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-white transition-all duration-300 animate-fade-in">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold text-[#0E1E40]">Start a New Forum</h2>
+                  <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <MapPin className="h-4 w-4 text-primary" />
+                    <span>{user?.erasmusCountry || "Unknown"}</span>
+                  </div>
+                </div>
+
+                <Input
+                  value={newForumTitle}
+                  onChange={(e) => setNewForumTitle(e.target.value)}
+                  placeholder="Forum Title"
+                  className="mb-4 placeholder:text-gray-500 text-primary-dark text-sm border border-[#4C69DD] focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
+                />
+
+                <textarea
+                  value={newForumDescription}
+                  onChange={(e) => setNewForumDescription(e.target.value)}
+                  placeholder="What's this forum about?"
+                  rows={4}
+                  className="w-full mb-4 rounded-md border border-[#4C69DD] placeholder:text-gray-500 text-primary-dark text-sm p-3 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none resize-none"
+                />
+
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-[#0E1E40] mb-1">Category</label>
+                  <div className={`inline-block mb-2 px-3 py-1 text-xs rounded-md font-medium ${forumCategoryBadgeColors[newForumCategory]}`}>
+                    {categoryLabels[newForumCategory]}
+                  </div>
+                  <select
+                    value={newForumCategory}
+                    onChange={(e) => setNewForumCategory(Number(e.target.value))}
+                    className="w-full rounded-md border border-[#4C69DD] bg-white text-primary-dark text-sm p-2 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
+                  >
+                    {Object.entries(categoryLabels).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <Button
+                  onClick={handleCreateForum}
+                  disabled={isCreatingForum}
+                  className="bg-[#4C69DD] hover:bg-[#3b5ccd] text-white cursor-pointer"
+                >
+                  {isCreatingForum ? "Posting..." : "Post Forum"}
+                </Button>
+              </div>
+            )}
 
             <div className="flex flex-col gap-4 w-full">
               {filteredForums.map((forum) => (
