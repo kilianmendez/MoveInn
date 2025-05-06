@@ -24,6 +24,12 @@ public class ForumRepository : IForumRepository
             .ToListAsync();
     }
 
+    public async Task<Forum> GetForumByIdAsync(Guid id)
+    {
+        return await _context.Forum
+                .FirstAsync(x => x.Id == id);
+    }
+
     public async Task CreateThreadAsync(ForumThread forumThread)
     {
         await _context.ForumsThread.AddAsync(forumThread);

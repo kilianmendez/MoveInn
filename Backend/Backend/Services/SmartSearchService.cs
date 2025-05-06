@@ -1,6 +1,8 @@
-﻿using Backend.Models.Database.Entities;
+﻿using Backend.Models.Database;
+using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
 using Backend.Models.Dtos;
+using Backend.Models.Mappers;
 using F23.StringSimilarity;
 using F23.StringSimilarity.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,11 +16,13 @@ public class SmartSearchService
     private const double THRESHOLD = 0.75;
     private readonly INormalizedStringSimilarity _stringSimilarityComparer;
     private readonly DataContext _context;
+    private readonly UnitOfWork _unitOfWork;
 
-    public SmartSearchService(DataContext context)
+    public SmartSearchService(DataContext context, UnitOfWork unitOfWork)
     {
         _context = context;
         _stringSimilarityComparer = new JaroWinkler();
+        _unitOfWork = unitOfWork;
     }
 
     public async Task<IEnumerable<AccommodationDTO>> SearchAccommodationAsync(string query)
@@ -105,6 +109,55 @@ public class SmartSearchService
             CreatedAt = r.CreatedAt
         });
     }
+
+    public async Task<IEnumerable<ForumDTO>> SearchForumsAsync(string query)
+    {
+        List<Forum> rawForums;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            rawForums = await _context.Forum.ToListAsync();
+        }
+        else
+        {
+            var keys = GetKeys(ClearText(query));
+            rawForums = new List<Forum>();
+
+            var allForums = await _context.Forum.ToListAsync();
+            foreach (var forum in allForums)
+            {
+                var itemKeys = GetKeys(ClearText(forum.Title + " " + forum.Description));
+                if (IsMatch(keys, itemKeys))
+                    rawForums.Add(forum);
+            }
+        }
+
+        var dtos = new List<ForumDTO>();
+
+        foreach (var forum in rawForums)
+        {
+            var dto = ForumMapper.ToDto(forum);
+
+            var user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(forum.CreatedBy);
+            if (user != null)
+            {
+                dto.CreatorName = user.Name;
+                dto.CreatorAvatar = user.AvatarUrl;
+                dto.CreatorNationatility = user.Nationality;
+            }
+            else
+            {
+                dto.CreatorName = "Usuario desconocido";
+                dto.CreatorAvatar = "default-avatar.png";
+                dto.CreatorNationatility = "Nacionalidad desconocida";
+            }
+
+            dtos.Add(dto);
+        }
+
+        return dtos;
+    }
+
     private bool IsMatch(string[] queryKeys, string[] itemKeys)
     {
         bool isMatch = false;

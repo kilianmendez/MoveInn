@@ -67,7 +67,10 @@ public class ForumMapper
             Title = thread.Title,
             Content = thread.Content,
             CreatedAt = thread.CreatedAt,
-            CreatedBy = thread.CreatedBy
+            CreatorId = thread.CreatedBy,
+            CreatorName = string.Empty,
+            CreatorAvatar = string.Empty,
+            CreatorNationatility = string.Empty
         };
     }
 
@@ -96,8 +99,11 @@ public class ForumMapper
             ThreadId = message.ThreadId,
             Content = message.Content,
             CreatedAt = message.CreatedAt,
-            CreatedBy = message.CreatedBy,
-            ParentMessageId = message.ParentMessageId
+            CreatorId = message.CreatedBy,
+            ParentMessageId = message.ParentMessageId,
+            CreatorName = string.Empty,
+            CreatorAvatar = string.Empty,
+            CreatorNationatility = string.Empty
         };
     }
 }
