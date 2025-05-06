@@ -150,7 +150,7 @@ export default function ForumsPage() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="min-h-screen">
       <main className="container mx-auto px-4 py-6">
         <section className="mb-8">
           <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
@@ -182,14 +182,14 @@ export default function ForumsPage() {
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
           <div className="space-y-6 order-2 xl:order-1 xl:col-span-1">
             <Card className="border-none shadow-md bg-foreground border border-gray-200">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Countries</h2>
+              <CardContent className="px-4">
+                <h2 className="font-semibold text-text-secondary mb-3">Countries</h2>
                 <div className="space-y-2">
                   {countries.map((country) => (
                     <Button
                       key={country.name}
                       variant="outline"
-                      className={`w-full justify-between h-auto py-2 text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD] text-white" : ""} cursor-pointer`}
+                      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD] text-white" : ""} cursor-pointer`}
                       onClick={() => setActiveFilter(activeFilter === country.name ? null : country.name)}
                     >
                       <div className="flex items-center">
@@ -204,8 +204,8 @@ export default function ForumsPage() {
             </Card>
 
             <Card className="border-none shadow-md bg-foreground">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Categories</h2>
+              <CardContent className="px-4">
+                <h2 className="font-semibold text-text-secondary mb-3">Categories</h2>
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(categoryLabels).map(([id, label]) => (
                     <Badge
@@ -273,9 +273,9 @@ export default function ForumsPage() {
                   transition={{ duration: 0.3, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-white">
+                  <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-foreground">
                     <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-xl font-bold text-[#0E1E40]">Start a New Forum</h2>
+                      <h2 className="text-xl font-bold text-text">Start a New Forum</h2>
                       <div className="flex items-center gap-1 text-sm text-gray-500">
                         <MapPin className="h-4 w-4 text-primary" />
                         <span>{user?.erasmusCountry || "Unknown"}</span>
@@ -298,14 +298,14 @@ export default function ForumsPage() {
                     />
 
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-[#0E1E40] mb-1">Category</label>
+                      <label className="block text-sm font-medium text-text-secondary mb-1">Category</label>
                       <div className={`inline-block mb-2 px-3 py-1 text-xs rounded-md font-medium ${forumCategoryBadgeColors[newForumCategory]}`}>
                         {categoryLabels[newForumCategory]}
                       </div>
                       <select
                         value={newForumCategory}
                         onChange={(e) => setNewForumCategory(Number(e.target.value))}
-                        className="w-full rounded-md border border-[#4C69DD] bg-white text-primary-dark text-sm p-2 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
+                        className="w-full rounded-md border border-[#4C69DD] bg-foreground text-primary-dark text-sm p-2 focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
                       >
                         {Object.entries(categoryLabels).map(([key, label]) => (
                           <option key={key} value={key}>
@@ -331,8 +331,8 @@ export default function ForumsPage() {
             <div className="flex flex-col gap-4 w-full">
             {filteredForums.map((forum) => (
                 <Link href={`/dashboard/forums/${forum.id}`} key={forum.id}>
-                  <Card className="flex py-0 flex-col justify-between border border-gray-200 shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
-                    <CardContent className="p-0 flex flex-col flex-grow">
+                  <Card className="flex py-0 flex-col justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
+                    <CardContent className="p-0 flex flex-col flex-grow bg-foreground rounded-md">
                       <div className={`rounded-t-md px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryColors[forum.category] || 'from-gray-100 to-white'}`}>
                         <Badge className={`mb-2 w-fit text-xs font-medium px-2 py-1 rounded-md ${forumCategoryBadgeColors[forum.category]}`}>
                           {categoryLabels[forum.category]}
@@ -348,14 +348,14 @@ export default function ForumsPage() {
                       </div>
 
                       <div className="p-6 pt-4 flex-grow flex flex-col bg-foreground rounded-b-md border-t border-gray-200">
-                        <p className="text-sm text-gray-600 line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
+                        <p className="text-sm text-text line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
                         <div className="mt-auto">
                           <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-3 py-2 w-fit">
-                            <Avatar className="h-8 w-8">
+                            <Avatar className="h-8 w-8 text-text">
                               <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
                               <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
                             </Avatar>
-                            <span className="text-sm font-medium text-[#0E1E40]">{forum.creatorName}</span>
+                            <span className="text-sm font-medium text-text">{forum.creatorName}</span>
                           </div>
                         </div>
                       </div>

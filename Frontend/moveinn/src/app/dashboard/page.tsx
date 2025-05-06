@@ -198,7 +198,7 @@ export default function DashboardPage() {
     console.log("User data:", user)
 
     return (
-        <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+        <div className="min-h-screen ">
         <div className="container mx-auto">
             {/* Welcome Section */}
             <section className="mb-8">
@@ -243,12 +243,12 @@ export default function DashboardPage() {
 
             {/* Quick Stats */}
             <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="border-none shadow-sm bg-gradient-to-br from-white to-[#B7F8C8]/10">
+            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#B7F8C8]/10">
                 <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                    <p className="text-sm text-gray-500">Upcoming Events</p>
-                    <p className="text-2xl font-bold text-[#0E1E40]">5</p>
+                    <p className="text-sm text-text-secondary">Upcoming Events</p>
+                    <p className="text-2xl font-bold text-text">5</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[#B7F8C8]/50 flex items-center justify-center">
                     <CalendarIcon className="h-5 w-5 text-[#0E1E40]" />
@@ -257,12 +257,12 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
 
-            <Card className="border-none shadow-sm bg-gradient-to-br from-white to-[#4C69DD]/10">
+            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#4C69DD]/10">
                 <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                    <p className="text-sm text-gray-500">New Messages</p>
-                    <p className="text-2xl font-bold text-[#0E1E40]">12</p>
+                    <p className="text-sm text-text-secondary">New Messages</p>
+                    <p className="text-2xl font-bold text-text">12</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[#4C69DD]/30 flex items-center justify-center">
                     <MessageCircleIcon className="h-5 w-5 text-white" />
@@ -271,12 +271,12 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
 
-            <Card className="border-none shadow-sm bg-gradient-to-br from-white to-[#62C3BA]/10">
+            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#62C3BA]/10">
                 <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                    <p className="text-sm text-gray-500">Group Invites</p>
-                    <p className="text-2xl font-bold text-[#0E1E40]">3</p>
+                    <p className="text-sm text-text-secondary">Group Invites</p>
+                    <p className="text-2xl font-bold text-text">3</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[#62C3BA]/40 flex items-center justify-center">
                     <Users2Icon className="h-5 w-5 text-[#0E1E40]" />
@@ -285,12 +285,12 @@ export default function DashboardPage() {
                 </CardContent>
             </Card>
 
-            <Card className="border-none shadow-sm bg-gradient-to-br from-white to-[#0E1E40]/10">
+            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#0E1E40]/10">
                 <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                    <p className="text-sm text-gray-500">New Recommendations</p>
-                    <p className="text-2xl font-bold text-[#0E1E40]">8</p>
+                    <p className="text-sm text-text-secondary">New Recommendations</p>
+                    <p className="text-2xl font-bold text-text">8</p>
                     </div>
                     <div className="w-10 h-10 rounded-full bg-[#0E1E40]/70 flex items-center justify-center">
                     <MapPinIcon className="h-5 w-5 text-white" />
@@ -308,10 +308,10 @@ export default function DashboardPage() {
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Upcoming Events</CardTitle>
-                    <CardDescription>Events you&apos;ve joined or might be interested in</CardDescription>
+                    <CardTitle className="text-xl text-text">Upcoming Events</CardTitle>
+                    <CardDescription className="text-text-secondary">Events you&apos;ve joined or might be interested in</CardDescription>
                     </div>
-                    <Button variant="ghost" className="text-primary">
+                    <Button variant="ghost" className="">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4"/>
                     </Button>
                 </CardHeader>
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                     <EventCard
                         title="Weekend Trip to Montserrat"
                         date="Saturday, 9:00 AM"
-                        location="Meeting at Plaça Catalunya"
+                        location="Plaça Catalunya"
                         attendees={24}
                         category="Trip"
                         joined={true}
@@ -351,15 +351,15 @@ export default function DashboardPage() {
                 </CardFooter>
                 </Card>
 
-                {/* Your Groups */}
+                {/* Housing */}
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2 text-text">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Housing</CardTitle>
+                    <CardTitle className="text-xl text-text">Housing</CardTitle>
                     <CardDescription className="text-text-secondary">Residences you might be interested in</CardDescription>
                     </div>
                     <Link href="/dashboard/housing">
-                    <Button variant="ghost" className="text-[#4C69DD]">
+                    <Button variant="ghost" className="">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4" />
                     </Button>
                     </Link>
@@ -377,11 +377,11 @@ export default function DashboardPage() {
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Local Recommendations</CardTitle>
-                    <CardDescription>Places and activities recommended by hosts and other students</CardDescription>
+                    <CardTitle className="text-xl text-text">Local Recommendations</CardTitle>
+                    <CardDescription className="text-text-secondary">Places and activities recommended by hosts and other students</CardDescription>
                     </div>
                     <Link href="/dashboard/recommendations">
-                        <Button variant="ghost" className="text-[#4C69DD]">
+                        <Button variant="ghost" className="">
                         View all <ChevronRightIcon className="ml-1 h-4 w-4" />
                         </Button>
                     </Link>
@@ -402,10 +402,10 @@ export default function DashboardPage() {
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Notifications</CardTitle>
-                    <CardDescription>Recent updates and activities</CardDescription>
+                    <CardTitle className="text-xl text-text">Notifications</CardTitle>
+                    <CardDescription className="text-text-secondary">Recent updates and activities</CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-[#4C69DD]">
+                    <Button variant="ghost" size="sm" className="">
                     Mark all as read
                     </Button>
                 </CardHeader>
@@ -444,7 +444,7 @@ export default function DashboardPage() {
                     </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                    <Button variant="ghost" className="w-full text-[#4C69DD]">
+                    <Button variant="ghost" className="w-full">
                     View all notifications
                     </Button>
                 </CardFooter>
@@ -454,10 +454,10 @@ export default function DashboardPage() {
                 <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
-                    <CardTitle className="text-xl text-[#0E1E40]">Your Hosts</CardTitle>
-                    <CardDescription>Local students helping you navigate Barcelona</CardDescription>
+                    <CardTitle className="text-xl text-text">Your Hosts</CardTitle>
+                    <CardDescription className="text-text-secondary">Local students helping you navigate Barcelona</CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="text-[#4C69DD]">
+                    <Button variant="ghost" size="sm" className="">
                     Find more
                     </Button>
                 </CardHeader>

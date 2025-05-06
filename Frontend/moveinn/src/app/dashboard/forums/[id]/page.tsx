@@ -236,7 +236,7 @@ export default function ForumDetailPage() {
             {format(new Date(msg.createdAt), 'PPPp')}
           </span>
         </div>
-        <p className="text-sm text-gray-700 ml-8">{msg.content}</p>
+        <p className="text-sm text-text ml-8">{msg.content}</p>
         <Button
           variant="ghost"
           size="sm"
@@ -267,10 +267,10 @@ export default function ForumDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30 py-10 px-4 md:px-8">
+    <div className="min-h-screen py-10 px-4 md:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Forum Header */}
-        <div className="shadow-lg rounded-lg p-6 bg-white border border-gray-200">
+        <div className="shadow-lg rounded-lg p-6 bg-foreground">
           <div className={`rounded-t-lg mb-6 -mx-6 -mt-6 px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white'} border-b border-gray-200`}>
             <div className="flex items-center justify-between mb-4">
               <Badge className={`text-sm px-3 py-1 rounded-full ${forumCategoryBadgeColors[forum.category] || 'bg-gray-300 text-gray-800'}`}>
@@ -284,13 +284,13 @@ export default function ForumDetailPage() {
               {forum.country}
             </div>
           </div>
-          <p className="text-gray-700 whitespace-pre-line mb-6">{forum.description}</p>
+          <p className="text-text whitespace-pre-line mb-6">{forum.description}</p>
           <div className="flex items-center gap-3 mt-6">
             <Avatar className="h-10 w-10 bg-primary">
               <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
               <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
             </Avatar>
-            <span className="text-sm font-medium text-[#0E1E40]">{forum.creatorName}</span>
+            <span className="text-sm font-medium text-text">{forum.creatorName}</span>
           </div>
           <div className="border-t mt-9 pt-6">
             <Textarea
@@ -315,7 +315,7 @@ export default function ForumDetailPage() {
             threads.map((thread) => {
               const rootReplies = thread.responses.filter((r: any) => r.parentMessageId === null)
               return (
-                <div key={thread.id} className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+                <div key={thread.id} className="bg-foreground shadow-sm rounded-lg overflow-hidden">
                   
                   {/* Barra de color */}
                   <div className={`h-3 w-full bg-gradient-to-r ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white border-b border-gray-200'}`} />
@@ -333,7 +333,7 @@ export default function ForumDetailPage() {
                         {format(new Date(thread.createdAt), 'PPPp')}
                       </span>
                     </div>
-                    <p className="text-gray-700 whitespace-pre-line mb-3 px-3">{thread.content}</p>
+                    <p className="text-text whitespace-pre-line mb-3 px-3">{thread.content}</p>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -354,7 +354,7 @@ export default function ForumDetailPage() {
                           <span className="font-medium text-sm">{msg.creatorName}</span>
                           <span className="text-xs text-gray-400">{format(new Date(msg.createdAt), 'PPPp')}</span>
                         </div>
-                        <p className="text-sm text-gray-700 ml-8">{msg.content}</p>
+                        <p className="text-sm text-text ml-8">{msg.content}</p>
                         <Button
                           variant="ghost"
                           size="sm"

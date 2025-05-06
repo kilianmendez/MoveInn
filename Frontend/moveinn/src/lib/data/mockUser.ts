@@ -17,7 +17,7 @@ export const mockUser = {
       {
         "id": 1,
         "title": "Language Exchange Night",
-        "date": "2025-07-14T19:00:00",
+        "date": "2025-05-07T19:00:00",
         "location": "Café del Mar, Barcelona",
         "address": "Passeig Marítim, 34, 08003 Barcelona",
         "attendees": 18,
@@ -32,7 +32,7 @@ export const mockUser = {
       {
         "id": 2,
         "title": "Weekend Trip to Montserrat",
-        "date": "2025-09-19T09:00:00",
+        "date": "2025-05-07T09:00:00",
         "location": "Meeting at Plaça Catalunya",
         "address": "Plaça Catalunya, Barcelona",
         "attendees": 24,

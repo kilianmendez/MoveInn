@@ -41,22 +41,22 @@ export function ProfileInfo() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Contact Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Contact</h3>
+          <h3 className="text-lg font-semibold text-text-secondary border-b pb-2">Contact</h3>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="text-gray-800">{user.mail}</p>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="text-text">{user.mail}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Phone</p>
-                <p className="text-gray-800">{user.phone || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="text-text">{user.phone || "Not specified"}</p>
               </div>
             </div>
           </div>
@@ -64,22 +64,22 @@ export function ProfileInfo() {
 
         {/* Academic Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Academic</h3>
+          <h3 className="text-lg font-semibold text-text-secondary border-b pb-2">Academic</h3>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <School className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">University</p>
-                <p className="text-gray-800">{user.school || "Not specified"}</p>
+                <p className="text-sm text-gray-500">University</p>
+                <p className="text-text">{user.school || "Not specified"}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <Briefcase className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Degree</p>
-                <p className="text-gray-800">{user.degree || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Degree</p>
+                <p className="text-text">{user.degree || "Not specified"}</p>
               </div>
             </div>
           </div>
@@ -89,7 +89,7 @@ export function ProfileInfo() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Personal Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Personal</h3>
+          <h3 className="text-lg font-semibold text-text-secondary border-b pb-2">Personal</h3>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
@@ -108,8 +108,8 @@ export function ProfileInfo() {
                 <Globe className="h-5 w-5 text-primary" />
               )}
               <div>
-                <p className="text-sm text-gray-600">Nationality</p>
-                <p className="text-gray-800">{user.nationality || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Nationality</p>
+                <p className="text-text">{user.nationality || "Not specified"}</p>
               </div>
             </div>
           </div>
@@ -117,14 +117,14 @@ export function ProfileInfo() {
 
         {/* Erasmus Information */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-800 border-b pb-2">Erasmus</h3>
+          <h3 className="text-lg font-semibold text-text-secondary border-b pb-2">Erasmus</h3>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <Calendar className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Erasmus Date</p>
-                <p className="text-gray-800">{formatDate(user.erasmusDate)}</p>
+                <p className="text-sm text-gray-500">Erasmus Date</p>
+                <p className="text-text">{formatDate(user.erasmusDate)}</p>
               </div>
             </div>
 
@@ -144,16 +144,16 @@ export function ProfileInfo() {
                 <Globe className="h-5 w-5 text-primary" />
               )}
               <div>
-                <p className="text-sm text-gray-600">Erasmus Country</p>
-                <p className="text-gray-800">{user.erasmusCountry || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Erasmus Country</p>
+                <p className="text-text">{user.erasmusCountry || "Not specified"}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <MapPin className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Erasmus City</p>
-                <p className="text-gray-800">{user.city || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Erasmus City</p>
+                <p className="text-text">{user.city || "Not specified"}</p>
               </div>
             </div>
           </div>

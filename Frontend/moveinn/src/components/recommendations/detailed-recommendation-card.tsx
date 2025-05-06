@@ -86,7 +86,7 @@ export function DetailedRecommendationCard({
     }
 
   return (
-    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">
+    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-foreground border-none">
       <div className="relative h-48 w-full">
         <Image
           src={`https://${API_BASE}/` + recommendation.recommendationImages[0].url}
@@ -122,7 +122,7 @@ export function DetailedRecommendationCard({
       </CardContent>
 
       <CardContent className="pt-3 px-4 pb-4">
-        <p className="text-sm text-gray-700 mb-3 line-clamp-3">{recommendation.description}</p>
+        <p className="text-sm text-text mb-3 line-clamp-3">{recommendation.description}</p>
 
         {recommendation.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
@@ -135,13 +135,13 @@ export function DetailedRecommendationCard({
         )}
       </CardContent>
 
-      <CardFooter className="p-3 bg-gray-50 flex justify-between">
+      <CardFooter className="p-3 bg-none flex justify-between">
         <Button variant="outline" size="sm" className="text-[#4C69DD] border-[#4C69DD]/30 hover:bg-[#4C69DD]/10">
           <Share2 className="h-3.5 w-3.5 mr-1" />
           Share
         </Button>
         <Link href={`/dashboard/recommendations/${recommendation.id}`}>
-          <Button size="sm" className="bg-[#4C69DD] hover:bg-[#4C69DD]/90">
+          <Button size="sm" className="text-white bg-[#4C69DD] hover:bg-[#4C69DD]/90">
             <ExternalLink className="h-3.5 w-3.5 mr-1" />
             View Details
           </Button>

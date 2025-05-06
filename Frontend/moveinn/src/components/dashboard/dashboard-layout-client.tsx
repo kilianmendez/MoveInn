@@ -84,7 +84,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         )}
       >
         {/* Sidebar title */}
-        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-foreground z-50">
+        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-none z-50">
           <span className="text-4xl font-bold text-primary-dark tracking-wide">Move<span className="text-secondary">Inn</span></span>
         </div>
         <ScrollArea className="h-full px-3 py-4 pb-24">
@@ -117,11 +117,11 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         </ScrollArea>
 
         {/* Logout Button */}
-        <div className="absolute bottom-20 left-0 w-full px-3 py-2 bg-foreground">
+        <div className="absolute bottom-20 left-0 w-full px-3 py-2 bg-none">
           <Button
             onClick={() => setShowLogoutModal(true)}
             variant="outline"
-            className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
+            className="w-full bg-negativo justify-start text-red-600 border-red-200 hover:bg-negativo"
           >
             <LogOutIcon className="h-4 w-4 mr-2" />
             Logout
@@ -129,7 +129,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         </div>
 
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-foreground">
+        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img

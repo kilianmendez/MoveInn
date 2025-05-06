@@ -60,7 +60,7 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="min-h-screen">
       <main className="container mx-auto px-0 py-0">
         {/* Header */}
         <section className="mb-8">
@@ -178,7 +178,7 @@ export default function EventsPage() {
 
         {/* Selected Date Title */}
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-[#0E1E40]">
+          <h2 className="text-xl font-bold text-text-secondary">
             Events for {format(selectedDate, "EEEE, MMMM d, yyyy")}
           </h2>
           <p className="text-gray-500">
@@ -194,17 +194,17 @@ export default function EventsPage() {
                 <DetailedEventCard key={event.id} event={event} categoryIcon={getCategoryIcon(event.category)} />
               ))
             ) : (
-              <div className="text-center py-12 bg-foreground rounded-lg border border-gray-100">
-                <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Calendar className="h-8 w-8 text-gray-400" />
+              <div className="text-center py-12 bg-foreground rounded-lg">
+                <div className="bg-background rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Calendar className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No events found</h3>
-                <p className="text-gray-500 max-w-md mx-auto mb-6">
+                <h3 className="text-xl font-medium text-text-secondary mb-2">No events found</h3>
+                <p className="text-text max-w-md mx-auto mb-6">
                   There are no events scheduled for this date that match your filters.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center px-4">
-                  <Button onClick={clearFilters} className="" >Clear filters</Button>
-                  <Button variant="default" className="bg-secondary text-primary-dark hover:bg-secondary/80" onClick={() => setIsCreateEventOpen(true)}>
+                  <Button onClick={clearFilters} className="text-white" >Clear filters</Button>
+                  <Button variant="default" className="bg-secondary-greenblue text-text hover:bg-secondary/80" onClick={() => setIsCreateEventOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Create an event
                   </Button>

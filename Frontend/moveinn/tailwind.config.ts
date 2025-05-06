@@ -32,8 +32,8 @@ const config: Config = {
           light: "oklch(var(--accent-light))", /*Amarillo claro*/
           dark: "oklch(var(--accent-dark))", /*Amarillo oscuro*/
         },
-        "negative-red": "oklch(var(--negative-red))", /*Rojo dislike*/
-        "positive-green": "oklch(var(--positive-green))", /*Verde like*/
+        negativo: "oklch(var(--negativo))", /*Rojo dislike*/
+        positivo: "oklch(var(--positivo))", /*Verde like*/
       },
       borderRadius: {
         sm: "var(--radius-sm)", /*5px*/
