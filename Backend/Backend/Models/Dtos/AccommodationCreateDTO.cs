@@ -1,4 +1,7 @@
-﻿namespace Backend.Models.Dtos;
+﻿using Backend.Models.Database.Entities;
+using Backend.Models.Database.Enum;
+
+namespace Backend.Models.Dtos;
 
 public class AccommodationCreateDTO
 {
@@ -15,6 +18,8 @@ public class AccommodationCreateDTO
     public Guid OwnerId { get; set; }
     public DateTime AvailableFrom { get; set; }
     public DateTime AvailableTo { get; set; }
-    public List<IFormFile> Images { get; set; }
+    public ICollection<ImageAccommodation> AccomodationImages { get; set; }
+    public AcommodationType AcommodationType { get; set; }
+
 }
 

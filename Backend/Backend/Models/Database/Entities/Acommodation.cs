@@ -1,6 +1,7 @@
 ﻿using Backend.Models.Database.Entities;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Backend.Models.Database.Enum;
 
 public class Accommodation
 {
@@ -28,6 +29,6 @@ public class Accommodation
 
     [ForeignKey(nameof(OwnerId))]
     public User Owner { get; set; }
-
+    public AcommodationType AcommodationType { get; set; }
     public ICollection<ImageAccommodation> AccomodationImages { get; set; } = new List<ImageAccommodation>();
 }

@@ -9,7 +9,6 @@ namespace Backend.Models.Database
     {
         private readonly DataContext _dataContext;
 
-
         public Seeder(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -17,11 +16,7 @@ namespace Backend.Models.Database
 
         public async Task SeedAsync()
         {
-            // Evitamos sembrar si ya existen usuarios
-            if (await _dataContext.Users.AnyAsync())
-            {
-                return;
-            }
+            if (await _dataContext.Users.AnyAsync()) return;
 
             await Seed();
             await _dataContext.SaveChangesAsync();
@@ -30,7 +25,7 @@ namespace Backend.Models.Database
         public async Task Seed()
         {
             var users = new List<User>
-                 {
+            {
                 new User
                 {
                     Id = Guid.NewGuid(),
@@ -43,31 +38,31 @@ namespace Backend.Models.Database
                     AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
                     School = "CPIFP Alan Turing",
-                    Degree = "Web Aplication Development",
+                    Degree = "Web Application Development",
                     City = "Izmir",
                     ErasmusCountry = "Turkey",
                     Nationality = "Morocco",
                     ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
-
+                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" }
                     }
                 },
                 new User
                 {
                     Id = Guid.NewGuid(),
                     Name = "Christian",
-                    LastName = "Rodriguez", // Puedes ajustar el apellido
+                    LastName = "Rodriguez",
                     Mail = "christian@gmail.com",
                     Password = AuthService.HashPassword("passwordChristian"),
                     Biography = "Biografía de Christian",
                     Phone = "222222222",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Christian", // Add this line
-                    Degree = "Grado de Christian", // Add this line
-                    Nationality = "Nacionalidad de Christian", // Add this line
+                    School = "Escuela de Christian",
+                    Degree = "Grado de Christian",
+                    Nationality = "España",
+                    ErasmusDate = new DateOnly(2025, 4, 20),
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
@@ -78,24 +73,27 @@ namespace Backend.Models.Database
                 {
                     Id = Guid.NewGuid(),
                     Name = "Kilian",
-                    LastName = "Méndez", // Puedes ajustar el apellido
+                    LastName = "Méndez",
                     Mail = "kilian@gmail.com",
                     Password = AuthService.HashPassword("passwordKilian"),
                     Biography = "Biografía de Kilian",
                     Phone = "333333333",
-                    AvatarUrl = "default-avatar-url", // Add this line
+                    AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Kilian", // Add this line
-                    Degree = "Grado de Kilian", // Add this line
-                    Nationality = "Nacionalidad de Kilian", // Add this line
+                    School = "Escuela de Kilian",
+                    Degree = "Grado de Kilian",
+                    Nationality = "España",
+                    ErasmusDate = new DateOnly(2025, 5, 5),
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeKilian" },
                         new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeKilian" }
                     }
-                    }
-                };
-            var recommendation1 = new Recommendation
+                }
+            };
+            _dataContext.Users.AddRange(users);
+
+            var rec1 = new Recommendation
             {
                 Id = Guid.NewGuid(),
                 Title = "Restaurante La Buena Mesa",
@@ -103,33 +101,25 @@ namespace Backend.Models.Database
                 Category = Category.Restaurant,
                 Address = "Calle Principal 123",
                 City = "Málaga",
-                Country = "Spain",
+                Country = "España",
                 Rating = Rating.Five,
-                CreatedAt = DateTime.UtcNow,
-                RecommendationImages = new List<Image>
-                {
-                    new Image { Id = Guid.NewGuid(), Url = "recommendations/restaurant1_1.jpg" },
-                }
+                CreatedAt = DateTime.UtcNow
             };
-
-            var recommendation2 = new Recommendation
+            var rec2 = new Recommendation
             {
                 Id = Guid.NewGuid(),
                 Title = "Museo de Arte Moderno",
                 Description = "Exposiciones temporales y colecciones permanentes impresionantes.",
                 Category = Category.Museum,
-                Address = "Calle Anormal 123",
+                Address = "Calle Anormal 456",
                 City = "Sevilla",
-                Country = "Spain",
-                Rating = Backend.Models.Database.Enum.Rating.Four,
-                CreatedAt = DateTime.UtcNow,
-                RecommendationImages = new List<Image>
-                {
-                    new Image { Id = Guid.NewGuid(), Url = "recommendations/museum1_1.jpg" },
-                }
+                Country = "España",
+                Rating = Rating.Four,
+                CreatedAt = DateTime.UtcNow
             };
+            _dataContext.Recommendations.AddRange(rec1, rec2);
 
-            var accommodations = new List<Accommodation>
+            var accoms = new List<Accommodation>
             {
                 new Accommodation
                 {
@@ -139,14 +129,15 @@ namespace Backend.Models.Database
                     Address = "Calle Gran Vía 123",
                     City = "Madrid",
                     Country = "España",
-                    PricePerMonth = 1200.00m,
+                    PricePerMonth = 1200m,
                     NumberOfRooms = 2,
                     Bathrooms = 1,
                     SquareMeters = 75,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 6, 1),
-                    AvailableTo = new DateTime(2025, 12, 25),
+                    AvailableFrom = new DateTime(2025,6,1),
+                    AvailableTo = new DateTime(2025,12,25),
                     OwnerId = users[0].Id,
+                    AcommodationType = AcommodationType.Apartment,
                     AccomodationImages = new List<ImageAccommodation>
                     {
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/madrid1.jpg" }
@@ -160,14 +151,15 @@ namespace Backend.Models.Database
                     Address = "Rue de la Paix 45",
                     City = "París",
                     Country = "Francia",
-                    PricePerMonth = 1500.00m,
+                    PricePerMonth = 1500m,
                     NumberOfRooms = 1,
                     Bathrooms = 1,
                     SquareMeters = 40,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 6, 1),
-                    AvailableTo = new DateTime(2025, 12, 31),
+                    AvailableFrom = new DateTime(2025,6,1),
+                    AvailableTo = new DateTime(2025,12,31),
                     OwnerId = users[1].Id,
+                    AcommodationType = AcommodationType.Apartment,
                     AccomodationImages = new List<ImageAccommodation>
                     {
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/paris1.jpg" }
@@ -181,27 +173,59 @@ namespace Backend.Models.Database
                     Address = "Camí de les Vinyes 789",
                     City = "Barcelona",
                     Country = "España",
-                    PricePerMonth = 1800.00m,
+                    PricePerMonth = 1800m,
                     NumberOfRooms = 3,
                     Bathrooms = 2,
                     SquareMeters = 120,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableFrom = new DateTime(2025,1,1),
+                    AvailableTo = new DateTime(2025,5,31),
                     OwnerId = users[2].Id,
+                    AcommodationType = AcommodationType.Rural,
                     AccomodationImages = new List<ImageAccommodation>
                     {
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/barcelona1.jpg" }
                     }
                 }
             };
+            _dataContext.Accommodations.AddRange(accoms);
 
-            _dataContext.Users.AddRange(users);
-            _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
-            _dataContext.Accommodations.AddRange(accommodations);
-            await _dataContext.SaveChangesAsync();
+            var events = new List<Event>
+            {
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Weekend Trip to Montserrat",
+                    Date = new DateTime(2025,9,19,9,0,0),
+                    Location = "Meeting at Plaça Catalunya",
+                    Address = "Plaça Catalunya, Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 30,
+                    Category = "Trip",
+                    Description = "Join us for a day trip to the beautiful mountain of Montserrat!",
+                    Organizer = "Erasmus Outdoor Club",
+                    ImageUrl = "events/montserrat-trip.jpg",
+                    Tags = new List<string> { "Hiking", "Nature", "Adventure" },
+                    CreatorId = users[0].Id
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Cooking Class: Paella Workshop",
+                    Date = new DateTime(2025,7,12,17,30,0),
+                    Location = "Kitchen Lab Barcelona",
+                    Address = "Carrer de Mallorca 250, Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 20,
+                    Category = "Workshop",
+                    Description = "Learn to cook authentic paella with a local chef.",
+                    Organizer = "Barcelona Foodies",
+                    ImageUrl = "events/paella-workshop.jpg",
+                    Tags = new List<string> { "Cooking", "Culture", "Food" },
+                    CreatorId = users[1].Id
+                }
+            };
+            _dataContext.Events.AddRange(events);
         }
-
     }
-
 }
