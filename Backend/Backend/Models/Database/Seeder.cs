@@ -59,10 +59,9 @@ namespace Backend.Models.Database
                     Phone = "222222222",
                     AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
-                    School = "Escuela de Christian",
-                    Degree = "Grado de Christian",
-                    Nationality = "España",
-                    ErasmusDate = new DateOnly(2025, 4, 20),
+                    School = "Escuela de Christian", 
+                    Degree = "Grado de Christian", 
+                    Nationality = "Nacionalidad de Christian",
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
@@ -78,12 +77,11 @@ namespace Backend.Models.Database
                     Password = AuthService.HashPassword("passwordKilian"),
                     Biography = "Biografía de Kilian",
                     Phone = "333333333",
-                    AvatarUrl = "default-avatar-url",
+                    AvatarUrl = "default-avatar-url", 
                     Role = Role.Administrator,
-                    School = "Escuela de Kilian",
-                    Degree = "Grado de Kilian",
-                    Nationality = "España",
-                    ErasmusDate = new DateOnly(2025, 5, 5),
+                    School = "Escuela de Kilian", 
+                    Degree = "Grado de Kilian", 
+                    Nationality = "Nacionalidad de Kilian", 
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeKilian" },

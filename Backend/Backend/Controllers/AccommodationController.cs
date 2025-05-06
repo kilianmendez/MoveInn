@@ -5,6 +5,8 @@ using Backend.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Mail;
+using System.Security.Claims;
 
 namespace Backend.Controllers;
 
@@ -25,7 +27,7 @@ public class AccommodationsController : ControllerBase
 
     [HttpPost("CreateAccommodation")]
     public async Task<IActionResult> CreateAccommodation([FromForm] AccommodationCreateDTO dto)
-    {
+    { 
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
@@ -58,42 +60,35 @@ public class AccommodationsController : ControllerBase
     public async Task<IActionResult> Search([FromBody] SearchAccommodationDTO request)
     {
         if (request.Page < 1 || request.Limit < 1)
-        {
             return BadRequest("La página y el límite deben ser mayores que 0.");
+
+        if (request.AvailableFrom.HasValue
+            && request.AvailableTo.HasValue
+            && request.AvailableFrom > request.AvailableTo)
+        {
+            return BadRequest("La fecha de inicio debe ser anterior o igual a la fecha de fin.");
         }
+
         try
         {
             var accommodations = string.IsNullOrWhiteSpace(request.Query)
-                ? await _accommodationService.GetAllAccommodationsAsync()
-                : await _smartSearchService.SearchAccommodationAsync(request.Query);
+                ? (await _accommodationService.GetAllAccommodationsAsync()).ToList()
+                : (await _smartSearchService.SearchAccommodationAsync(request.Query)).ToList();
 
             if (accommodations == null || !accommodations.Any())
-            {
-                return NotFound("No accommodations found.");
-            }
+                return NotFound("No se han encontrado alojamientos.");
 
-            if (request.AvailableFrom.HasValue)
+            if (request.AvailableFrom.HasValue || request.AvailableTo.HasValue)
             {
-                var from = request.AvailableFrom.Value.Date;
+                var from = request.AvailableFrom?.Date ?? DateTime.MinValue;
+                var to = request.AvailableTo?.Date ?? DateTime.MaxValue;
+
                 accommodations = accommodations
                     .Where(a =>
-                        a.AvailableFrom != default &&
-                        a.AvailableFrom.Date <= from &&
-                        a.AvailableTo != default &&
-                        a.AvailableTo.Date >= from
-                    )
-                    .ToList();
-            }
-
-            if (request.AvailableTo.HasValue)
-            {
-                var to = request.AvailableTo.Value.Date;
-                accommodations = accommodations
-                    .Where(a =>
-                        a.AvailableFrom != default &&
+                        a.AvailableFrom != default(DateTime) &&
+                        a.AvailableTo != default(DateTime) &&
                         a.AvailableFrom.Date <= to &&
-                        a.AvailableTo != default &&
-                        a.AvailableTo.Date >= to
+                        a.AvailableTo.Date >= from
                     )
                     .ToList();
             }
@@ -101,28 +96,32 @@ public class AccommodationsController : ControllerBase
             if (!string.IsNullOrWhiteSpace(request.Country))
             {
                 accommodations = accommodations
-                    .Where(a => a.Country != null &&
-                                a.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase))
+                    .Where(a =>
+                        !string.IsNullOrWhiteSpace(a.Country) &&
+                        a.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase)
+                    )
                     .ToList();
             }
 
-            if (request.SortField?.ToLower() == "price")
+            if (!string.IsNullOrWhiteSpace(request.SortField))
             {
-                accommodations = request.SortOrder?.ToLower() == "asc"
-                    ? accommodations.OrderBy(p => p.PricePerMonth).ToList()
-                    : accommodations.OrderByDescending(p => p.PricePerMonth).ToList();
-            }
-            else if (request.SortField?.ToLower() == "name")
-            {
-                accommodations = request.SortOrder?.ToLower() == "asc"
-                    ? accommodations.OrderBy(p => p.Title).ToList()
-                    : accommodations.OrderByDescending(p => p.Title).ToList();
+                var field = request.SortField.Trim().ToLower();
+                var asc = string.Equals(request.SortOrder, "asc", StringComparison.OrdinalIgnoreCase);
+
+                if (field == "price")
+                    accommodations = asc
+                        ? accommodations.OrderBy(a => a.PricePerMonth).ToList()
+                        : accommodations.OrderByDescending(a => a.PricePerMonth).ToList();
+                else if (field == "name")
+                    accommodations = asc
+                        ? accommodations.OrderBy(a => a.Title).ToList()
+                        : accommodations.OrderByDescending(a => a.Title).ToList();
             }
 
-            var totalItems = accommodations.Count();
-            var totalPages = (int)Math.Ceiling(totalItems / (double)request.Limit);
+            int totalItems = accommodations.Count;
+            int totalPages = (int)Math.Ceiling(totalItems / (double)request.Limit);
 
-            var paginatedProducts = accommodations
+            var paginatedItems = accommodations
                 .Skip((request.Page - 1) * request.Limit)
                 .Take(request.Limit)
                 .ToList();
@@ -132,15 +131,29 @@ public class AccommodationsController : ControllerBase
                 currentPage = request.Page,
                 totalPages,
                 totalItems,
-                items = paginatedProducts
+                items = paginatedItems
             };
 
             return Ok(result);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal server error: " + ex.Message);
+            return StatusCode(500, "Error interno del servidor: " + ex.Message);
         }
+    }
+
+
+    [HttpPut("{id}/{ownerId}")]
+    public async Task<IActionResult> Update(Guid id, Guid ownerId, [FromBody] AccommodationUpdateDTO updateDto)
+    {
+        var result = await _accommodationService.UpdateAccommodationAsync(id, updateDto, ownerId);
+
+        if (!result)
+        {
+            return Ok(new { message = "No se ha encontrado el alojamiento, o no eres el propietario del alojamiento" });
+        }
+
+        return Ok(new { message = "¡Alojamiento actualizado correctamente!" });
     }
 
     [HttpGet("{id}")]
