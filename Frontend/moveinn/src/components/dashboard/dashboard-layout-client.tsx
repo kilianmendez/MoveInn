@@ -5,27 +5,31 @@ import Link from "next/link"
 import {
   MenuIcon,
   HomeIcon,
-  Users2Icon,
   CalendarIcon,
   MessageCircleIcon,
   BookmarkIcon,
   MapPinIcon,
   UserIcon,
-  SettingsIcon,
-  HelpCircleIcon,
   GlobeIcon,
   SofaIcon,
+  LogOutIcon,
+  MoonIcon, 
+  SunIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/authcontext"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
+import { useTheme } from "next-themes"
 
 export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+
+  const { theme, setTheme } = useTheme()
 
   const getRoleBadge = (role: number) => {
     switch (role) {
@@ -69,14 +73,9 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
     { label: "Profile", href: "/dashboard/profile", icon: UserIcon },
   ]
 
-  const settingsNav = [
-    { label: "Settings", href: "/dashboard/settings", icon: SettingsIcon },
-    { label: "Help Center", href: "/dashboard/help", icon: HelpCircleIcon },
-  ]
-
   console.log(`${API_BASE_IMAGE_URL}${user?.avatarUrl}`)
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="flex min-h-screen bg-gradient-to-b from-foreground to-background">
       {/* Sidebar */}
       <aside
         className={cn(
@@ -85,7 +84,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         )}
       >
         {/* Sidebar title */}
-        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-white z-50">
+        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-foreground z-50">
           <span className="text-4xl font-bold text-primary-dark tracking-wide">Move<span className="text-secondary">Inn</span></span>
         </div>
         <ScrollArea className="h-full px-3 py-4 pb-24">
@@ -101,20 +100,36 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
             ))}
 
             <div className="pt-4 mt-4 border-t border-gray-200">
-              {settingsNav.map(({ label, href, icon: Icon }) => (
-                <SidebarItem
-                  key={label}
-                  href={href}
-                  icon={<Icon className="h-5 w-5" />}
-                  label={label}
-                />
-              ))}
+              <Button
+                variant="ghost"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                className="w-full justify-start text-text-secondary hover:bg-secondary/15 hover:text-primary-dark"
+              >
+                {theme === "light" ? (
+                  <MoonIcon className="h-5 w-5 mr-3" />
+                ) : (
+                  <SunIcon className="h-5 w-5 mr-3" />
+                )}
+                Toggle Theme
+              </Button>
             </div>
           </nav>
         </ScrollArea>
 
+        {/* Logout Button */}
+        <div className="absolute bottom-20 left-0 w-full px-3 py-2 bg-foreground">
+          <Button
+            onClick={() => setShowLogoutModal(true)}
+            variant="outline"
+            className="w-full justify-start text-red-600 border-red-200 hover:bg-red-50"
+          >
+            <LogOutIcon className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
+
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-white">
+        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-foreground">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
@@ -133,6 +148,32 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
             </Button>
           </div>  
         </div>
+
+        {/* MODAL */}
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-sm p-6">
+              <h2 className="text-lg font-semibold text-primary-dark mb-2">Confirm Logout</h2>
+              <p className="text-sm text-gray-600 mb-4">Are you sure you want to log out?</p>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" className="bg-white text-primary-dark hover:bg-gray-100" onClick={() => setShowLogoutModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="outline"
+                  className="bg-red-500 text-white hover:bg-red-800"
+                  onClick={() => {
+                    logout()
+                    setShowLogoutModal(false)
+                  }}
+                >
+                  Log Out
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </aside>
 
       {/* Overlay */}

@@ -86,14 +86,14 @@ export function DetailedRecommendationCard({
     }
 
   return (
-    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">
+    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border border-gray-200 shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">
       <div className="relative h-48 w-full">
         <Image
           src={`https://${API_BASE}/` + recommendation.recommendationImages[0].url}
           alt={recommendation.title}
           fill
           unoptimized // 👈 desactiva el loader de imágenes
-          className="object-cover"
+          className="object-cover pb-0 mb-0"
         />
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 to-transparent"></div>
         <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
@@ -110,14 +110,18 @@ export function DetailedRecommendationCard({
         </div>
       </div>
 
-      <CardContent className={`p-4 bg-gradient-to-br ${getCategoryColor()} flex-grow`}>
-        <h3 className="font-semibold text-lg text-[#0E1E40] mb-1">{recommendation.title}</h3>
+      <CardContent className={`p-0 pb-0 mt-0 bg-gradient-to-br ${getCategoryColor()}`}>
+        <div className="px-4 py-2 my-0">
+          <h3 className="font-semibold text-lg text-[#0E1E40] mb-1">{recommendation.title}</h3>
 
-        <div className="flex items-start mb-3">
-          <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0 mr-1" />
-          <p className="text-xs text-gray-600">{recommendation.address}</p>
+          <div className="flex items-start">
+            <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0 mr-1" />
+            <p className="text-xs text-gray-600">{recommendation.address}</p>
+          </div>
         </div>
+      </CardContent>
 
+      <CardContent className="pt-3 px-4 pb-4">
         <p className="text-sm text-gray-700 mb-3 line-clamp-3">{recommendation.description}</p>
 
         {recommendation.tags.length > 0 && (

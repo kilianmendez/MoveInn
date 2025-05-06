@@ -258,7 +258,7 @@ export const AuthProvider = ({
     sessionStorage.removeItem("accessToken")
     setUser(null)
     setToken(null)
-    router.push("/")
+    router.push("/login")
   }
 
   return (

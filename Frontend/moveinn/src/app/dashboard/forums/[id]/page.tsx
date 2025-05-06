@@ -270,8 +270,8 @@ export default function ForumDetailPage() {
     <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30 py-10 px-4 md:px-8">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Forum Header */}
-        <div className="shadow-lg rounded-lg p-6 bg-white">
-          <div className={`rounded-t-md mb-6 -mx-6 -mt-6 px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white'}`}>
+        <div className="shadow-lg rounded-lg p-6 bg-white border border-gray-200">
+          <div className={`rounded-t-lg mb-6 -mx-6 -mt-6 px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white'} border-b border-gray-200`}>
             <div className="flex items-center justify-between mb-4">
               <Badge className={`text-sm px-3 py-1 rounded-full ${forumCategoryBadgeColors[forum.category] || 'bg-gray-300 text-gray-800'}`}>
                 {categoryLabels[forum.category] || 'Other'}
@@ -315,57 +315,65 @@ export default function ForumDetailPage() {
             threads.map((thread) => {
               const rootReplies = thread.responses.filter((r: any) => r.parentMessageId === null)
               return (
-                <div key={thread.id} className="bg-white shadow-sm rounded-lg p-4 border">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={thread.creatorAvatar} />
-                      <AvatarFallback>{thread.creatorName?.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="text-sm font-medium text-primary-dark">{thread.creatorName}</div>
-                    <span className="text-xs text-gray-500 ml-auto">
-                      {format(new Date(thread.createdAt), 'PPPp')}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 whitespace-pre-line mb-3 px-3">{thread.content}</p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs text-blue-600 ml-3 hover:bg-background"
-                    onClick={() => setActiveReply(thread.id)}
-                  >
-                    <ReplyIcon className="h-4 w-4 mr-1" />Reply
-                  </Button>
-                  {activeReply === thread.id && renderReplyBox(thread.id)}
+                <div key={thread.id} className="bg-white shadow-sm rounded-lg border border-gray-200 overflow-hidden">
+                  
+                  {/* Barra de color */}
+                  <div className={`h-3 w-full bg-gradient-to-r ${forumCategoryGradients[forum.category] || 'from-gray-100 to-white border-b border-gray-200'}`} />
 
-                  {rootReplies.slice(0, 5).map((msg: any) => (
-                    <div key={msg.id} className="ml-6 mt-2 pl-4 border-l">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src={msg.creatorAvatar} />
-                          <AvatarFallback>{msg.creatorName?.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        <span className="font-medium text-sm">{msg.creatorName}</span>
-                        <span className="text-xs text-gray-400">{format(new Date(msg.createdAt), 'PPPp')}</span>
-                      </div>
-                      <p className="text-sm text-gray-700 ml-8">{msg.content}</p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-xs text-blue-600 ml-8 mt-1 hover:bg-background"
-                        onClick={() => setActiveReply(msg.id)}
-                      >
-                        <ReplyIcon className="h-4 w-4 mr-1" />Reply
-                      </Button>
-                      {activeReply === msg.id && renderReplyBox(msg.id)}
-                      {renderNestedReplies(thread.responses, msg.id)}
+            
+                  {/* Contenido del hilo */}
+                  <div className="p-4">
+                    <div className="flex items-center gap-3 mb-2">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={thread.creatorAvatar} />
+                        <AvatarFallback>{thread.creatorName?.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div className="text-sm font-medium text-primary-dark">{thread.creatorName}</div>
+                      <span className="text-xs text-gray-500 ml-auto">
+                        {format(new Date(thread.createdAt), 'PPPp')}
+                      </span>
                     </div>
-                  ))}
-
-                  {rootReplies.length > 5 && (
-                    <button className="text-sm text-blue-600 hover:underline ml-6 mt-2">
-                      Show more replies...
-                    </button>
-                  )}
+                    <p className="text-gray-700 whitespace-pre-line mb-3 px-3">{thread.content}</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs text-blue-600 ml-3 hover:bg-background"
+                      onClick={() => setActiveReply(thread.id)}
+                    >
+                      <ReplyIcon className="h-4 w-4 mr-1" />Reply
+                    </Button>
+                    {activeReply === thread.id && renderReplyBox(thread.id)}
+            
+                    {rootReplies.slice(0, 5).map((msg: any) => (
+                      <div key={msg.id} className="ml-6 mt-2 pl-4 border-l">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Avatar className="h-6 w-6">
+                            <AvatarImage src={msg.creatorAvatar} />
+                            <AvatarFallback>{msg.creatorName?.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium text-sm">{msg.creatorName}</span>
+                          <span className="text-xs text-gray-400">{format(new Date(msg.createdAt), 'PPPp')}</span>
+                        </div>
+                        <p className="text-sm text-gray-700 ml-8">{msg.content}</p>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-xs text-blue-600 ml-8 mt-1 hover:bg-background"
+                          onClick={() => setActiveReply(msg.id)}
+                        >
+                          <ReplyIcon className="h-4 w-4 mr-1" />Reply
+                        </Button>
+                        {activeReply === msg.id && renderReplyBox(msg.id)}
+                        {renderNestedReplies(thread.responses, msg.id)}
+                      </div>
+                    ))}
+            
+                    {rootReplies.length > 5 && (
+                      <button className="text-sm text-blue-600 hover:underline ml-6 mt-2">
+                        Show more replies...
+                      </button>
+                    )}
+                  </div>
                 </div>
               )
             })
