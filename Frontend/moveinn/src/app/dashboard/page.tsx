@@ -424,21 +424,9 @@ export default function DashboardPage() {
                         read={false}
                     />
                     <NotificationItem
-                        type="group"
-                        content="You were added to 'UB Economics Students' group"
-                        time="Yesterday"
-                        read={true}
-                    />
-                    <NotificationItem
                         type="recommendation"
                         content="Anna recommended 'Parc de la Ciutadella' to you"
                         time="2 days ago"
-                        read={true}
-                    />
-                    <NotificationItem
-                        type="system"
-                        content="Complete your profile to get personalized recommendations"
-                        time="3 days ago"
                         read={true}
                     />
                     </div>

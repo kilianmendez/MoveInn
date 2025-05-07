@@ -28,32 +28,32 @@ export function RecommendationCard({
   const getCategoryColor = () => {
     switch (categorySlug) {
       case "restaurant":
-        return "from-[#B7F8C8]/30 to-white"
+        return "from-[#B7F8C8]/30 to-foreground"
       case "cafeteria":
-        return "from-pink-100 to-white"
+        return "from-pink-100 to-foreground"
       case "museum":
-        return "from-[#4C69DD]/20 to-white"
+        return "from-[#4C69DD]/20 to-foreground"
       case "leisurezone":
-        return "from-amber-100 to-white"
+        return "from-amber-100 to-foreground"
       case "park":
-        return "from-green-100 to-white"
+        return "from-green-100 to-foreground"
       case "historicalsite":
-        return "from-yellow-100 to-white"
+        return "from-yellow-100 to-foreground"
       case "shopping":
-        return "from-purple-100 to-white"
+        return "from-purple-100 to-foreground"
       case "bar":
-        return "from-[#0E1E40]/20 to-white"
+        return "from-[#0E1E40]/20 to-foreground"
       case "other":
-        return "from-gray-200 to-white"
+        return "from-gray-200 to-foreground"
       default:
-        return "from-gray-200 to-white"
+        return "from-gray-200 to-foreground"
     }
   }
 
   const getCategoryBadgeColor = () => {
     switch (categorySlug) {
       case "restaurant":
-        return "bg-secondary text-primary-dark"
+        return "bg-secondary text-green-900"
       case "cafeteria":
         return "bg-pink-200 text-pink-900"
       case "museum":
@@ -101,12 +101,12 @@ export function RecommendationCard({
 
   return (
     <div
-      className={`p-4 rounded-[var(--radius-lg)] border border-gray-100 hover:border-gray-200 bg-gradient-to-br ${getCategoryColor()} transition-all hover:shadow-md 
+      className={`p-4 rounded-[var(--radius-lg)] hover:border-gray-200 bg-gradient-to-br ${getCategoryColor()} transition-all hover:shadow-md 
       flex flex-col min-h-[200px]`} // Quité justify-between
     >
       <div className="flex-grow"> {/* Este div ocupa el espacio disponible */}
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-medium text-[#0E1E40]">{name}</h3>
+          <h3 className="font-medium text-text">{name}</h3>
           <div className="flex items-center bg-amber-100 px-2 py-0.5 rounded-full">
             <StarIcon className="h-3.5 w-3.5 text-amber-500 mr-1" />
             <span className="text-sm font-medium text-amber-700">{rating}</span>
@@ -117,12 +117,12 @@ export function RecommendationCard({
           <Badge className={getCategoryBadgeColor()}>{category}</Badge>
         </div>
 
-        <p className="text-sm text-gray-700 mb-3 line-clamp-3">{description}</p>
+        <p className="text-sm text-text mb-3 line-clamp-3">{description}</p>
       </div>
 
-      <div className="flex items-center text-xs bg-white/50 px-2 py-1 rounded-full w-fit">
-        <MapPinIcon className="h-3 w-3 mr-1 text-[#4C69DD]" />
-        <span className="text-[#0E1E40]">Recommended by {recommenderName}</span>
+      <div className="flex items-center text-xs bg-foreground px-2 py-1 rounded-full w-fit">
+        <MapPinIcon className="h-3 w-3 mr-1 text-primary" />
+        <span className="text-text-secondary">Recommended by {recommenderName}</span>
       </div>
     </div>
   )

@@ -37,25 +37,25 @@ export function DetailedRecommendationCard({
     const getCategoryColor = () => {
       switch (categorySlug) {
         case "restaurant":
-          return "from-[#B7F8C8]/30 to-white"
+          return "from-[#B7F8C8]/30 to-foreground"
         case "cafeteria":
-          return "from-pink-100 to-white"
+          return "from-pink-100 to-foreground"
         case "museum":
-          return "from-[#4C69DD]/20 to-white"
+          return "from-[#4C69DD]/20 to-foreground"
         case "leisurezone":
-          return "from-amber-100 to-white"
+          return "from-amber-100 to-foreground"
         case "park":
-          return "from-green-100 to-white"
+          return "from-green-100 to-foreground"
         case "historicalsite":
-          return "from-yellow-100 to-white"
+          return "from-yellow-100 to-foreground"
         case "shopping":
-          return "from-purple-100 to-white"
+          return "from-purple-100 to-foreground"
         case "bar":
-          return "from-[#0E1E40]/20 to-white"
+          return "from-[#0E1E40]/20 to-foreground"
         case "other":
-          return "from-gray-200 to-white"
+          return "from-gray-200 to-foreground"
         default:
-          return "from-gray-200 to-white"
+          return "from-gray-200 to-foreground"
       }
     }
     
@@ -63,7 +63,7 @@ export function DetailedRecommendationCard({
     const getCategoryBadgeColor = () => {
       switch (categorySlug) {
         case "restaurant":
-          return "bg-secondary text-primary-dark"
+          return "bg-secondary text-green-900"
         case "cafeteria":
           return "bg-pink-200 text-pink-900"
         case "museum":
@@ -112,11 +112,11 @@ export function DetailedRecommendationCard({
 
       <CardContent className={`p-0 pb-0 mt-0 bg-gradient-to-br ${getCategoryColor()}`}>
         <div className="px-4 py-2 my-0">
-          <h3 className="font-semibold text-lg text-[#0E1E40] mb-1">{recommendation.title}</h3>
+          <h3 className="font-semibold text-lg text-text mb-1">{recommendation.title}</h3>
 
           <div className="flex items-start">
-            <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0 mr-1" />
-            <p className="text-xs text-gray-600">{recommendation.address}</p>
+            <MapPin className="h-4 w-4 text-primary-dark mt-0.5 flex-shrink-0 mr-1" />
+            <p className="text-xs text-text-secondary">{recommendation.address}</p>
           </div>
         </div>
       </CardContent>

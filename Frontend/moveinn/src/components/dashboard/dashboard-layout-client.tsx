@@ -79,7 +79,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-full pt-16 transition-all duration-300 transform bg-foreground border-r border-gray-200",
+          "fixed top-0 left-0 z-40 h-full pt-16 transition-all duration-300 transform bg-foreground border-r border-gray-200 dark:border-gray-800",
           sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:translate-x-0"
         )}
       >
@@ -99,7 +99,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
               />
             ))}
 
-            <div className="pt-4 mt-4 border-t border-gray-200">
+            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
               <Button
                 variant="ghost"
                 onClick={() => setTheme(theme === "light" ? "dark" : "light")}
@@ -120,8 +120,8 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         <div className="absolute bottom-20 left-0 w-full px-3 py-2 bg-none">
           <Button
             onClick={() => setShowLogoutModal(true)}
-            variant="outline"
-            className="w-full bg-negativo justify-start text-red-600 border-red-200 hover:bg-negativo"
+            variant="default"
+            className="w-full bg-foreground justify-start text-red-600 border-red-200 hover:bg-red-200/70"
           >
             <LogOutIcon className="h-4 w-4 mr-2" />
             Logout
@@ -129,7 +129,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         </div>
 
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-none">
+        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 dark:border-gray-700 bg-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
@@ -138,7 +138,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
               <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-gray-900">{user?.name}</span>
+                <span className="text-sm font-medium text-text">{user?.name}</span>
                 <span className="text-xs text-text-secondary">{getRoleBadge(user?.role)}</span>
               </div>
             </div>
@@ -152,16 +152,16 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         {/* MODAL */}
         {showLogoutModal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-lg shadow-lg w-[90%] max-w-sm p-6">
+            <div className="bg-foreground rounded-lg shadow-lg w-[90%] max-w-sm p-6">
               <h2 className="text-lg font-semibold text-primary-dark mb-2">Confirm Logout</h2>
-              <p className="text-sm text-gray-600 mb-4">Are you sure you want to log out?</p>
+              <p className="text-sm text-text-secondary mb-4">Are you sure you want to log out?</p>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" className="bg-white text-primary-dark hover:bg-gray-100" onClick={() => setShowLogoutModal(false)}>
+                <Button variant="outline" className="bg-foreground text-primary-dark hover:bg-gray-400" onClick={() => setShowLogoutModal(false)}>
                   Cancel
                 </Button>
                 <Button
                   variant="outline"
-                  className="bg-red-500 text-white hover:bg-red-800"
+                  className="bg-red-500 text-white hover:bg-red-600"
                   onClick={() => {
                     logout()
                     setShowLogoutModal(false)
