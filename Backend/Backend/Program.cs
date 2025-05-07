@@ -23,9 +23,7 @@ public class Program
 
         var builder = WebApplication.CreateBuilder(args);
 
-        //A�adimos la configuracion en AppSettings
         builder.Services.Configure<Settings>(builder.Configuration.GetSection(Settings.SECTION_NAME));
-        // Add services to the container.
 
         builder.Services.AddControllers();
         builder.Services.AddControllers().AddJsonOptions(options => {
@@ -44,6 +42,7 @@ public class Program
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         builder.Services.AddScoped<ReservationRepository>();
+        builder.Services.AddScoped<EventRepository>();
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
         builder.Services.AddScoped<IChatRepository, ChatRepository>();
         builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
@@ -54,6 +53,7 @@ public class Program
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
         builder.Services.AddScoped<RecommendationService>();
         builder.Services.AddScoped<ReservationService>();
+        builder.Services.AddScoped<Services.EventService>();
         builder.Services.AddHttpClient("CountriesNow", client =>
         {
             client.BaseAddress = new Uri("https://countriesnow.space/api/v0.1/");
@@ -116,7 +116,6 @@ public class Program
 
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();

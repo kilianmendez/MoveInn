@@ -35,9 +35,8 @@ import {
 } from "@/utils/endpoints/config";
 import axios from "axios";
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-);
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+
 
 interface AccommodationData {
   id: string;

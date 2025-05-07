@@ -15,6 +15,7 @@ public class DataContext : DbContext
     public DbSet<ImageAccommodation> ImageAccommodations { get; set; }
     public DbSet<SocialMediaLink> SocialMediaLinks { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Event> Events { get; set; }
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Follow> Follows { get; set; }
     public DbSet<Forum> Forum { get; set; }

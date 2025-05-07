@@ -11,4 +11,5 @@ public interface IForumService
     Task<bool> CreateMessageAsync(CreateForumMessageDTO messageDto);
     Task<IEnumerable<ForumMessageDTO>> GetMessagesByThreadIdAsync(Guid threadId);
     Task<IEnumerable<ForumDTO>> GetAllForumsAsync();
+    Task <ForumDTO> GetForumByIdAsync(Guid id);
 }
