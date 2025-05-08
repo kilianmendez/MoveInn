@@ -96,7 +96,7 @@ namespace Backend.Services
             ev.AttendeesCount = Math.Max(0, ev.AttendeesCount - 1);
 
             await _unitOfWork.EventRepository.UpdateAsync(ev);
-            return await _unitOfWork.SaveAsync();
+            return await _unitOfWork.EventRepository.SaveAsync();
         }
 
         private async Task<string> SaveImage(IFormFile file, Guid eventId)
