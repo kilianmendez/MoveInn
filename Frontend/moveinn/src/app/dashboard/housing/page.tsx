@@ -150,7 +150,7 @@ export default function AcommodationsPage() {
   }, [searchQuery])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="min-h-screen">
 
       <main className="container mx-auto px-4 py-6">
         {/* Header Section */}
@@ -243,6 +243,8 @@ export default function AcommodationsPage() {
                 </Badge>
               </div>
             )}
+
+            
 
             {/* View Mode: Grid or Map */}
             {viewMode === "grid" ? (

@@ -92,12 +92,12 @@ export function UserProfile() {
         </div>
 
         <div className="text-center md:text-left">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          <h1 className="text-3xl font-bold text-text mb-2">
             {user.name} {user.lastName || ""}
           </h1>
           {getRoleBadge(user.role)}
 
-          {user.biography && <p className="px-1 mt-6 text-gray-800 max-w-2xl">{user.biography}</p>}
+          {user.biography && <p className="px-1 mt-6 text-text-secondary max-w-2xl">{user.biography}</p>}
 
           {user.socialMedias && user.socialMedias.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
@@ -120,15 +120,15 @@ export function UserProfile() {
 
       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-2">
-          <TabsList className="grid grid-cols-2 w-full max-w-xl bg-gray-100 p-1 rounded-xl shadow-inner">
+          <TabsList className="grid grid-cols-2 w-full max-w-xl bg-background h-fit p-1 rounded-xl shadow-inner">
             <TabsTrigger
               value="info"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
         ${
           activeTab === "info"
             ? "bg-white text-primary shadow-sm border border-gray-200"
-            : "text-gray-600 hover:text-primary hover:bg-white/50"
+            : "text-primary hover:text-primary hover:bg-white/50"
         }
       `}
             >
@@ -138,11 +138,11 @@ export function UserProfile() {
             <TabsTrigger
               value="edit"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
         ${
           activeTab === "edit"
             ? "bg-white text-primary shadow-sm border border-gray-200"
-            : "text-gray-600 hover:text-primary hover:bg-white/50"
+            : "text-primary hover:text-primary hover:bg-white/50"
         }
       `}
             >
@@ -153,10 +153,10 @@ export function UserProfile() {
         </div>
 
         <TabsContent value="info" className="mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
-              <CardTitle className="text-gray-800">Personal Information</CardTitle>
-              <CardDescription className="text-gray-600">Details of your user profile</CardDescription>
+          <Card className="border-none shadow-sm bg-foreground">
+            <CardHeader className="border-b border-gray-200">
+              <CardTitle className="text-text">Personal Information</CardTitle>
+              <CardDescription className="text-gray-500">Details of your user profile</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <ProfileInfo />
@@ -165,10 +165,10 @@ export function UserProfile() {
         </TabsContent>
 
         <TabsContent value="edit" className="mt-6">
-          <Card className="border border-gray-200 shadow-sm">
-            <CardHeader className="bg-gray-50 border-b border-gray-200">
-              <CardTitle className="text-gray-800">Edit Profile</CardTitle>
-              <CardDescription className="text-gray-600">Update your personal information</CardDescription>
+          <Card className="border-none shadow-sm bg-foreground">
+            <CardHeader className="border-b border-gray-200">
+              <CardTitle className="text-text">Edit Profile</CardTitle>
+              <CardDescription className="text-gray-500">Update your personal information</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <ProfileEdit onSuccess={() => setActiveTab("info")} />

@@ -120,7 +120,7 @@ export default function RecommendationsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30 px-4 py-6 container mx-auto">
+    <div className="min-h-screen px-4 py-6 container mx-auto">
       <section className="mb-8">
         <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 text-white relative">
           <div className="relative z-10">
@@ -173,7 +173,7 @@ export default function RecommendationsPage() {
             variant="outline"
             size="sm"
             className={`rounded-full ${
-              activeFilters.includes(cat) ? "bg-[#4C69DD] text-white" : "text-[#0E1E40]"
+              activeFilters.includes(cat) ? "bg-foreground text-text" : "text-white bg-primary"
             }`}
             onClick={() => toggleFilter(cat)}
           >

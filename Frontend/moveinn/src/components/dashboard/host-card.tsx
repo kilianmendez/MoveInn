@@ -18,7 +18,7 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
 
     // Generate a gradient based on online status
     const getStatusGradient = () => {
-        return lastActive === "Online" ? "bg-gradient-to-r from-[#B7F8C8]/30 to-white" : "bg-white"
+        return lastActive === "Online" ? "bg-gradient-to-r from-[#B7F8C8]/30 to-foreground" : "bg-foreground"
     }
 
     return (
@@ -30,15 +30,15 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
 
         <div className="flex-1">
             <div className="flex items-center justify-between">
-            <h3 className="font-medium text-[#0E1E40]">{name}</h3>
+            <h3 className="font-medium text-text">{name}</h3>
             <span
-                className={`text-xs px-2 py-0.5 rounded-full ${lastActive === "Online" ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}
+                className={`text-xs px-2 py-0.5 rounded-full ${lastActive === "Online" ? "bg-green-100 text-green-700" : "bg-foreground text-gray-500"}`}
             >
                 {lastActive}
             </span>
             </div>
 
-            <p className="text-xs text-gray-500 mb-1">{university}</p>
+            <p className="text-xs text-gray-400 mb-1">{university}</p>
 
             <div className="flex flex-wrap gap-1 mb-2">
             {languages.map((lang, index) => (
@@ -50,7 +50,7 @@ export function HostCard({ name, university, languages, lastActive }: HostCardPr
                     ? "border-[#4C69DD] text-[#4C69DD]"
                     : index === 1
                         ? "border-[#62C3BA] text-[#62C3BA]"
-                        : "border-[#0E1E40] text-[#0E1E40]"
+                        : "border-accent text-accent"
                 }`}
                 >
                 {lang}

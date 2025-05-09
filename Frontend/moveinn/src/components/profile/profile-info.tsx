@@ -57,16 +57,16 @@ export function ProfileInfo() {
             <div className="flex items-center gap-3">
               <Mail className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Email</p>
-                <p className="text-gray-800">{user.mail}</p>
+                <p className="text-sm text-gray-500">Email</p>
+                <p className="text-text">{user.mail}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <Phone className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Phone</p>
-                <p className="text-gray-800">{user.phone || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Phone</p>
+                <p className="text-text">{user.phone || "Not specified"}</p>
               </div>
             </div>
           </div>
@@ -176,18 +176,16 @@ export function ProfileInfo() {
                 <Globe className="h-5 w-5 text-primary" />
               )}
               <div>
-                <p className="text-sm text-gray-600">Erasmus Country</p>
-                <p className="text-gray-800">
-                  {user.erasmusCountry || "Not specified"}
-                </p>
+                <p className="text-sm text-gray-500">Erasmus Country</p>
+                <p className="text-text">{user.erasmusCountry || "Not specified"}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <MapPin className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Erasmus City</p>
-                <p className="text-gray-800">{user.city || "Not specified"}</p>
+                <p className="text-sm text-gray-500">Erasmus City</p>
+                <p className="text-text">{user.city || "Not specified"}</p>
               </div>
             </div>
           </div>
