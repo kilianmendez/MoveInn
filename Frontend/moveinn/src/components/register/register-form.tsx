@@ -56,7 +56,6 @@ export default function RegisterForm() {
           <span className="text-secondary">Inn</span>
           <span className="text-text"> Today</span>
         </h1>
-        <p className="text-gray-600 text-sm">Create your account in just a few steps</p>
       </div>
 
       <div className="border border-gray-200 rounded-lg p-6 bg-foreground shadow-sm">

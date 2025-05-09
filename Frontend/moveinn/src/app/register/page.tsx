@@ -7,8 +7,8 @@ export default function RegisterPage() {
     <main className="h-screen bg-gray-100">
       <div className="h-screen max-w-6xl mx-auto p-4">
         <div className="h-full overflow-hidden flex">
-          <div className="h-full w-full md:w-1/2 bg-gradient-to-br from-[#7AE582] via-[#4C69DD] to-[#4C69DD] p-8 text-white flex flex-col rounded-lg">
-            <div className="mx-auto mb-2 w-60 h-60 rounded-full overflow-hidden shadow-lg">
+          <div className="h-full w-full md:w-1/2 bg-gradient-to-br from-[#7AE582] via-[#4C69DD] to-[#4C69DD] p-6 text-white flex flex-col rounded-lg">
+            <div className="mx-auto mb-2 w-60 h-60 rounded-full overflow-hidden shadow-lg mb-4">
               <Image
                 src={student}
                 alt="Student"
@@ -16,8 +16,8 @@ export default function RegisterPage() {
               />
             </div>
 
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Start your Erasmus adventure today</h2>
+            <div className="text-center mb-4">
+              <h2 className="text-xl md:text-xl font-bold mb-2">Start your Erasmus adventure today</h2>
             </div>
 
             <div className="space-y-6 max-w-md mx-auto">

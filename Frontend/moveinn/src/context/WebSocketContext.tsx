@@ -17,7 +17,6 @@ export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [lastMessage, setLastMessage] = useState<any>(null);
 
-  // Conectar cuando haya token
   useEffect(() => {
     if (!token) return;
 

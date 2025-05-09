@@ -38,7 +38,7 @@ export interface User {
   degree?: string
   nationality?: string
   erasmusCountry?: string
-  erasmusDate?: string | number | null
+  erasmusDate?: number
   avatarUrl?: string
   countryFlag?: string
   erasmusCountryFlag?: string

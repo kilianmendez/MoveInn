@@ -80,6 +80,13 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
     string | null
   >(null);
 
+  function getFormattedErasmusDate(daysInCountry: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() - daysInCountry);
+    return date.toISOString().split("T")[0]; 
+  }
+  
+
   const defaultValues = {
     name: user?.name || "",
     lastName: user?.lastName || "",
@@ -90,11 +97,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
     degree: user?.degree || "",
     nationality: user?.nationality || "",
     erasmusCountry: user?.erasmusCountry || "",
-    erasmusDate: user?.erasmusDate
-      ? typeof user.erasmusDate === "number"
-        ? new Date(user.erasmusDate).toISOString().split("T")[0]
-        : user.erasmusDate
-      : "",
+    erasmusDate: user?.erasmusDate ? getFormattedErasmusDate(user.erasmusDate) : "",
     phone: user?.phone || "",
     socialMedias: user?.socialMedias || [],
     countryFlag: user?.countryFlag || "",
@@ -159,10 +162,6 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
       setError(null);
       setSuccess(null);
 
-      const formattedDate = data.erasmusDate
-        ? new Date(data.erasmusDate).toISOString().split("T")[0]
-        : null;
-
       const formData: UserUpdateFormData = {
         name: data.name,
         lastName: data.lastName,
@@ -173,12 +172,14 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         degree: data.degree || "",
         nationality: data.nationality || "",
         erasmusCountry: data.erasmusCountry || "",
-        erasmusDate: formattedDate || "",
+        erasmusDate: user?.erasmusDate
+        ? getFormattedErasmusDate(user.erasmusDate)
+        : "",      
         phone: data.phone || "",
         avatarFile: data.avatarFile,
         countryFlag: data.countryFlag,
         erasmusCountryFlag: data.erasmusCountryFlag,
-        socialMedias: [], 
+        socialMedias: [],
       };
 
       // First update the user profile
