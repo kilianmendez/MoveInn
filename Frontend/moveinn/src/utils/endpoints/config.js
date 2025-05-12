@@ -59,3 +59,18 @@ export const API_FORUM_POST_RESPONSE_TO_THREAD = `${API_FORUMS}/createMessageInT
 const API_LOCATION = `${API_BASE_URL}/Location`;
 export const API_GET_COUNTRYSEARCH = (query) => `${API_LOCATION}/CountriesSearch?query=${query}`;
 export const API_GET_CITYSEARCH = (country, query) =>`${API_LOCATION}/CitiesSearch?country=${country}&query=${query}`;
+
+const API_EVENT = `${API_BASE_URL}/Event`;
+export const API_CREATE_EVENT = `${API_EVENT}`;
+export const API_GET_ALL_EVENTS = `${API_EVENT}`;
+export const API_GET_EVENT = (id) => `${API_EVENT}/${id}`;
+export const API_DELETE_EVENT = (id) => `${API_EVENT}/${id}`;
+export const API_JOIN_EVENT = (id, userId) => `${API_EVENT}/${id}/join?userId=${userId}`;
+export const API_LEAVE_EVENT = (id, userId) => `${API_EVENT}/${id}/leave?userId=${userId}`;
+
+const API_REVIEWS = `${API_BASE_URL}/Reviews`;
+export const API_GET_ALL_REVIEWS = `${API_REVIEWS}`;
+export const API_GET_REVIEW = (id) => `${API_REVIEWS}/${id}`;
+export const API_CREATE_REVIEW = `${API_REVIEWS}`;
+export const API_DELETE_REVIEW = (id) => `${API_REVIEWS}/${id}`;
+export const API_GET_REVIEWS_BY_ACCOMMODATION = (accommodationId) => `${API_REVIEWS}/accommodation/${accommodationId}`;

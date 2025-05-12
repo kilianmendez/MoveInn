@@ -15,10 +15,6 @@ export interface Recommendation {
   recommendationImages: {
     id: string;
     url: string;
-    createdAt: string;
-    userId: string | null;
-    user: any | null;
-    recommendationId: string;
   }[];
 }
 export interface DetailedRecommendationCardProps {

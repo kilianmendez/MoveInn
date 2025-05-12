@@ -2,6 +2,6 @@
 {
     public enum Role
     {
-        Administrator, Banned, User, Host
+        Administrator, Banned, User, Host, Lessor
     }
 }

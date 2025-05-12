@@ -20,7 +20,6 @@ namespace Backend.Models.Database
         public ReservationRepository ReservationRepository => _reservationRepository ??= new ReservationRepository(_dataContext);
         public EventRepository EventRepository => _eventRepository ??= new EventRepository(_dataContext);
         public ForumRepository ForumRepository => _forumRepository ??= new ForumRepository(_dataContext);
-
         public UnitOfWork(DataContext dataContext)
         {
             _dataContext = dataContext;

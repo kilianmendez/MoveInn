@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Backend.Models.Database.Enum;
 
 namespace Backend.Models.Dtos
 {
@@ -17,7 +18,7 @@ namespace Backend.Models.Dtos
 
         public int? MaxAttendees { get; set; }
 
-        public string Category { get; set; }
+        public EventCategory Category { get; set; }
 
         public string Description { get; set; }
 

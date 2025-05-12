@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Backend.Models.Database.Enum;
 
 namespace Backend.Models.Database.Entities
 {
@@ -18,9 +19,8 @@ namespace Backend.Models.Database.Entities
         public int AttendeesCount { get; set; } = 0;
         public int? MaxAttendees { get; set; }
 
-        public string Category { get; set; }
+        public EventCategory Category { get; set; }
         public string Description { get; set; }
-        public string Organizer { get; set; }       
 
         public string ImageUrl { get; set; }
 

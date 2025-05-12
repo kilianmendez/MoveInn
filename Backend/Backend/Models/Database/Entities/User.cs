@@ -38,10 +38,10 @@ namespace Backend.Models.Database.Entities
         public List<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
 
         [InverseProperty(nameof(Event.Creator))]
-        public virtual ICollection<Event> CreatedEvents { get; set; } = new List<Event>();
+        public ICollection<Event> CreatedEvents { get; set; } = new List<Event>();
 
         [InverseProperty(nameof(Event.Participants))]
-        public virtual ICollection<Event> ParticipatingEvents { get; set; } = new List<Event>();
+        public ICollection<Event> ParticipatingEvents { get; set; } = new List<Event>();
 
     }
 }

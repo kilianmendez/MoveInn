@@ -16,9 +16,9 @@ namespace Backend.Services
             MaxAttendees = e.MaxAttendees,
             Category = e.Category,
             Description = e.Description,
-            Organizer = e.Organizer,
             ImageUrl = e.ImageUrl,
             Tags = e.Tags.ToList(),
+            CreatorId = e.CreatorId
             
         };
 
@@ -32,7 +32,9 @@ namespace Backend.Services
             MaxAttendees = dto.MaxAttendees,
             Category = dto.Category,
             Description = dto.Description,
-            Tags = dto.Tags.ToList()
+            Tags = dto.Tags.ToList(),
+            
+            
         };
 
         public static void UpdateEntity(Event e, EventUpdateDto dto)

@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/authcontext";
 import Image from "next/image";
+import { User } from "@/types/user";
 
-export function ProfileInfo() {
-  const { user } = useAuth();
+export function ProfileInfo({ user }: { user: User }) {
 
   if (!user) {
     return <div className="text-gray-800">No user information available</div>;
@@ -111,25 +111,12 @@ export function ProfileInfo() {
 
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              {user.countryFlag ? (
-                <div className="h-5 w-7 overflow-hidden rounded-sm">
-                  <Image
-                    src={user.countryFlag || "/placeholder.svg"}
-                    alt="Country flag"
-                    width={28}
-                    height={20}
-                    className="object-cover"
-                    unoptimized
-                  />
-                </div>
-              ) : (
-                <Globe className="h-5 w-5 text-primary" />
-              )}
+              <Globe className="h-5 w-5 text-primary" />
               <div>
-                <p className="text-sm text-gray-600">Nationality</p>
-                <p className="text-gray-800">
-                  {user.nationality || "Not specified"}
-                </p>
+          <p className="text-sm text-gray-600">Nationality</p>
+          <p className="text-gray-800">
+            {user.nationality || "Not specified"}
+          </p>
               </div>
             </div>
           </div>
@@ -161,19 +148,10 @@ export function ProfileInfo() {
             </div>
 
             <div className="flex items-center gap-3">
-              {user.erasmusCountryFlag ? (
-                <div className="h-5 w-7 overflow-hidden rounded-sm">
-                  <Image
-                    src={user.erasmusCountryFlag || "/placeholder.svg"}
-                    alt="Erasmus country flag"
-                    width={28}
-                    height={20}
-                    className="object-cover"
-                    unoptimized
-                  />
-                </div>
-              ) : (
+              {user.erasmusCountry ? (
                 <Globe className="h-5 w-5 text-primary" />
+              ) : (
+                <Globe className="h-5 w-5 text-gray-300" />
               )}
               <div>
                 <p className="text-sm text-gray-500">Erasmus Country</p>

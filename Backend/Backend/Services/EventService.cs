@@ -8,12 +8,13 @@ namespace Backend.Services
     {
         private readonly UnitOfWork _unitOfWork;
         private readonly string _imagesFolder;
-
-        public EventService(UnitOfWork unitOfWork)
+        private readonly DataContext _dataContext;
+        public EventService(UnitOfWork unitOfWork, DataContext dataContext)
         {
             _unitOfWork = unitOfWork;
             _imagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "events");
             Directory.CreateDirectory(_imagesFolder);
+            _dataContext = dataContext;
         }
 
         public async Task<EventDto> CreateAsync(EventCreateDto dto)
@@ -24,8 +25,22 @@ namespace Backend.Services
 
             await _unitOfWork.EventRepository.InsertAsync(ev);
             await _unitOfWork.SaveAsync();
-            return EventMapper.ToDto(ev, joined: false);
+
+            var creator = await _unitOfWork.UserRepository.GetByIdAsync(ev.CreatorId);
+            if (creator != null)
+            {
+                _dataContext.Entry(creator)
+                    .Collection(u => u.CreatedEvents)
+                    .Load();
+
+                creator.CreatedEvents.Add(ev);
+                await _unitOfWork.UserRepository.UpdateAsync(creator);
+                await _unitOfWork.SaveAsync();
+            }
+
+            return EventMapper.ToDto(ev, joined: true);
         }
+
 
         public async Task<IEnumerable<EventDto>> GetAllAsync(Guid? currentUserId = null)
         {
@@ -68,19 +83,27 @@ namespace Backend.Services
         public async Task<bool> JoinAsync(Guid eventId, Guid userId)
         {
             var ev = await _unitOfWork.EventRepository.GetByIdWithRelationsAsync(eventId)
-                ?? throw new KeyNotFoundException("Evento no encontrado");
+                     ?? throw new KeyNotFoundException("Evento no encontrado");
 
-            if (ev.Participants.Any(u => u.Id == userId)) return false;
+            if (ev.Participants.Any(u => u.Id == userId))
+                return false;
             if (ev.MaxAttendees.HasValue && ev.AttendeesCount >= ev.MaxAttendees)
                 throw new InvalidOperationException("Evento completo");
 
             var user = await _unitOfWork.UserRepository.GetByIdAsync(userId)
-                ?? throw new KeyNotFoundException("Usuario no encontrado");
+                       ?? throw new KeyNotFoundException("Usuario no encontrado");
 
             ev.Participants.Add(user);
             ev.AttendeesCount++;
-
             await _unitOfWork.EventRepository.UpdateAsync(ev);
+            await _unitOfWork.SaveAsync();
+
+            _dataContext.Entry(user)
+                .Collection(u => u.ParticipatingEvents)
+                .Load();
+
+            user.ParticipatingEvents.Add(ev);
+            await _unitOfWork.UserRepository.UpdateAsync(user);
             return await _unitOfWork.SaveAsync();
         }
 

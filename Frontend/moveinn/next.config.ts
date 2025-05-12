@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "7023",
         pathname: "/accommodations/**",
+        
       },
     ],
   },

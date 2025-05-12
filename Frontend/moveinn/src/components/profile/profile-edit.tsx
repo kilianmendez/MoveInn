@@ -102,7 +102,6 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
     phone: user?.phone || "",
     socialMedias: user?.socialMedias || [],
     countryFlag: user?.countryFlag || "",
-    erasmusCountryFlag: user?.erasmusCountryFlag || "",
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -183,10 +182,8 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         socialMedias: [],
       };
 
-      // First update the user profile
       await updateUserProfile(formData);
 
-      // Then update social media separately using the new endpoint
       if (data.socialMedias && data.socialMedias.length > 0) {
         await updateSocialMedia(data.socialMedias);
       } else {

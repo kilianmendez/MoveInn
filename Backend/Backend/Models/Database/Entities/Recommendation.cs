@@ -27,6 +27,7 @@ namespace Backend.Models.Database.Entities
         public ICollection<String> Tags { get; set; } = new List<String>();
         public ICollection<Image> RecommendationImages { get; set; } = new List<Image>();
 
+
         [ForeignKey("UserId")]
         public Guid? UserId { get; set; }
         public User? User { get; set; }

@@ -20,8 +20,11 @@ namespace Backend.Models.Database.Repositories
         public async Task<User?> GetUserDataByIdAsync(Guid id)
         {
             return await _context.Users
-                .Include(u => u.Accommodations)
                 .Include(u => u.SocialMedias)
+                .Include(u => u.Accommodations)
+                .Include(u => u.Recommendations)
+                .Include(u => u.CreatedEvents)
+                .Include(u => u.ParticipatingEvents)
                 .SingleOrDefaultAsync(u => u.Id == id);
         }
 
