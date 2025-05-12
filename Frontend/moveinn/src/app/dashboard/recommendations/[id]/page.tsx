@@ -62,10 +62,36 @@ const getCategoryIcon = (categoryId: number) => {
   }
 }
 
+const getCategoryGradient = (category: string) => {
+  switch (category.toLowerCase()) {
+    case "restaurant":
+      return "from-[#B7F8C8]/30 to-foreground"
+    case "cafeteria":
+      return "from-pink-100 dark:from-[#ffbfea]/50 to-foreground"
+    case "museum":
+      return "from-[#4C69DD]/20 to-foreground"
+    case "leisurezone":
+      return "from-amber-200 dark:from-[#723917]/50 to-foreground"
+    case "park":
+      return "from-green-100 dark:from-secondary-greenblue/30 to-foreground"
+    case "historicalsite":
+      return "from-yellow-100 dark:from-yellow-200/50 to-foreground"
+    case "shopping":
+      return "from-purple-100 dark:from-[#ccb1ef]/50 to-foreground"
+    case "bar":
+      return "from-[#0E1E40]/30 dark:from-[#0E1E40]/50 to-foreground"
+    case "other":
+      return "from-gray-200 dark:from-gray-400/20 to-foreground"
+    default:
+      return "from-gray-200 to-foreground"
+  }
+}
+
+
 const getCategoryBadgeColor = (category: string) => {
   switch (category.toLowerCase()) {
     case "restaurant":
-      return "bg-secondary text-primary-dark"
+      return "bg-secondary text-green-900"
     case "cafeteria":
       return "bg-pink-200 text-pink-900"
     case "museum":
@@ -154,14 +180,15 @@ export default function RecommendationDetailPage() {
                 </Badge>
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">{recommendation.title}</h1>
-              <div className="flex items-center text-white/90">
+              <div className="flex items-center text-white/90 bg-black/50 w-fit px-2 py-1 rounded-full">
                 <MapPin className="h-4 w-4 mr-1" />
                 <span className="text-sm">{recommendation.address}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-between items-center p-4 border-b border-gray-100">
+          <div className={`flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-br ${getCategoryGradient(categoryName)}`}>
+
             <div className="flex items-center">
               <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
                 <Star className="h-4 w-4 text-amber-500 fill-amber-500 mr-1" />
@@ -169,7 +196,7 @@ export default function RecommendationDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-primary border-gray-200 hover:bg-primary hover:text-white">
+              <Button variant="outline" size="sm" className="text-primary border-gray-200 dark:border-gray-800 hover:bg-primary hover:text-white">
                 <Share2 className="h-4 w-4 mr-1" />
                 Share
               </Button>

@@ -121,7 +121,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
           <Button
             onClick={() => setShowLogoutModal(true)}
             variant="default"
-            className="w-full bg-foreground justify-start text-red-600 border-red-200 hover:bg-red-200/70"
+            className="w-full bg-foreground justify-start text-red-600 dark:text-red-300 border-red-200 hover:bg-red-200/70 dark:hover:bg-red-500/70"
           >
             <LogOutIcon className="h-4 w-4 mr-2" />
             Logout

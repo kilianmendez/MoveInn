@@ -114,7 +114,7 @@ export default function AccommodationDetailsPage() {
     <div className="container mx-auto px-4 py-4 max-w-6xl">
       {/* Header with title and rating */}
       <div className="flex justify-between items-center mb-2">
-        <h1 className="text-2xl font-bold text-primary">{accommodation.title}</h1>
+        <h1 className="text-2xl font-bold text-primary dark:text-text-secondary">{accommodation.title}</h1>
         <div className="flex items-center bg-accent-light px-2 py-1 rounded-md">
           <Star className="h-4 w-4 text-accent-dark mr-1 fill-accent-dark" />
           <span className="font-bold text-accent-dark">4.9</span>
@@ -122,12 +122,12 @@ export default function AccommodationDetailsPage() {
       </div>
 
       {/* Address */}
-      <div className="flex items-center text-text-secondary mb-4">
+      <div className="flex items-center text-text-secondary dark:text-gray-300 mb-4">
         <MapPin className="h-4 w-4 mr-1" />
         <span>{accommodation.address}</span>
       </div>
 
-      <div className="relative rounded-lg overflow-hidden mb-6 h-72 bg-background">
+      <div className="relative rounded-lg overflow-hidden mb-6 h-82 bg-background">
         {accommodation.accomodationImages && accommodation.accomodationImages.length > 0 ? (
           <Image
             src={`${API_BASE_IMAGE_URL}${accommodation.accomodationImages[currentImageIndex]?.url}`}

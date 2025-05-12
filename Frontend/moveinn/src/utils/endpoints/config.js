@@ -48,7 +48,7 @@ export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
 
 
 const API_FORUMS = `${API_BASE_URL}/Forum`;
-export const API_ALL_FORUMS = `${API_FORUMS}/forum`;
+export const API_ALL_FORUMS = `${API_FORUMS}/forums`;
 export const API_FORUM_THREADS_BY_FORUM_ID = (forumId) => `${API_FORUMS}/thread/forum/${forumId}`;
 export const API_FORUM_MESSAGES_BY_THREAD_ID = (threadId) => `${API_FORUMS}/message/thread/${threadId}`;
 export const API_FORUM_POST_FORUM = `${API_FORUMS}/forum`;

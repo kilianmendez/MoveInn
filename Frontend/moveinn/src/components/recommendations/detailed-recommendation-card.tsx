@@ -39,21 +39,21 @@ export function DetailedRecommendationCard({
         case "restaurant":
           return "from-[#B7F8C8]/30 to-foreground"
         case "cafeteria":
-          return "from-pink-100 to-foreground"
+          return "from-pink-100 dark:from-[#ffbfea]/50 to-foreground"
         case "museum":
           return "from-[#4C69DD]/20 to-foreground"
         case "leisurezone":
-          return "from-amber-100 to-foreground"
+          return "from-amber-200 dark:from-[#723917]/50 to-foreground"
         case "park":
-          return "from-green-100 to-foreground"
+          return "from-green-100 dark:from-secondary-greenblue/30 to-foreground"
         case "historicalsite":
-          return "from-yellow-100 to-foreground"
+          return "from-yellow-100 dark:from-yellow-200/50 to-foreground"
         case "shopping":
-          return "from-purple-100 to-foreground"
+          return "from-purple-100 dark:from-[#ccb1ef]/50 to-foreground"
         case "bar":
-          return "from-[#0E1E40]/20 to-foreground"
+          return "from-[#0E1E40]/30 dark:from-[#0E1E40]/50 to-foreground"
         case "other":
-          return "from-gray-200 to-foreground"
+          return "from-gray-200 dark:from-gray-400/20 to-foreground"
         default:
           return "from-gray-200 to-foreground"
       }
@@ -114,9 +114,9 @@ export function DetailedRecommendationCard({
         <div className="px-4 py-2 my-0">
           <h3 className="font-semibold text-lg text-text mb-1">{recommendation.title}</h3>
 
-          <div className="flex items-start">
-            <MapPin className="h-4 w-4 text-primary-dark mt-0.5 flex-shrink-0 mr-1" />
-            <p className="text-xs text-text-secondary">{recommendation.address}</p>
+          <div className="flex items-start bg-foreground/10 w-fit px-2 py-1 rounded-full">
+            <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0 mr-1" />
+            <p className="text-xs text-gray-700 dark:text-gray-200">{recommendation.address}</p>
           </div>
         </div>
       </CardContent>

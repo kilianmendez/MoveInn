@@ -155,7 +155,7 @@ export default function AcommodationsPage() {
       <main className="container mx-auto px-4 py-6">
         {/* Header Section */}
         <section className="mb-8">
-          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/placeholder.svg?height=100&width=100')] opacity-5 bg-repeat"></div>
@@ -201,25 +201,6 @@ export default function AcommodationsPage() {
                       <DropdownMenuLabel>Rooms</DropdownMenuLabel>
                     </DropdownMenuContent>
                   </DropdownMenu>
-
-                  <Tabs defaultValue="grid" className="w-auto">
-                    <TabsList className="bg-white/10 border border-white/20">
-                      <TabsTrigger
-                        value="grid"
-                        onClick={() => setViewMode("grid")}
-                        className="data-[state=active]:bg-white data-[state=active]:text-[#0E1E40] text-white"
-                      >
-                        <Users className="h-4 w-4" />
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="map"
-                        onClick={() => setViewMode("map")}
-                        className="data-[state=active]:bg-white data-[state=active]:text-[#0E1E40] text-white"
-                      >
-                        <MapPin className="h-4 w-4" />
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
                 </div>
               </div>
             </div>

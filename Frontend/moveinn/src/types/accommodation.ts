@@ -13,12 +13,7 @@ export interface AccommodationData {
   availableFrom: string
   availableTo: string
   ownerId: string
-  accomodationImages: {
-    id: string
-    url: string
-    createdAt: string
-    accommodationId: string
-  }[]
+  images: string[]
 }
 export interface AcommodationCard {
     acommodation: AccommodationData

@@ -170,6 +170,91 @@ namespace Backend.Models.Database
                     new Image { Id = Guid.NewGuid(), Url = "recommendations/Parque2.jpg" }
                 }
             };
+            var recommendation5 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Isla Mágica",
+                Description = "Parque temático con atracciones acuáticas y espectáculos, ideal para pasar el día con amigos.",
+                Category = Category.LeisureZone,
+                Address = "Pabellón de España, Camino de los Descubrimientos, 41092 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Rating.Four,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/IslaMagica.jpg" }
+                }
+            };
+
+            var recommendation6 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Alcázar de Sevilla",
+                Description = "Complejo palaciego real de impresionante arquitectura mudéjar e historia profunda.",
+                Category = Category.HistoricalSite,
+                Address = "Patio de Banderas, s/n, 41004 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Rating.Five,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/Alcazar.jpg" }
+                }
+            };
+
+            var recommendation7 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Centro Comercial Torre Sevilla",
+                Description = "Centro comercial moderno con tiendas de moda, restaurantes y mirador panorámico.",
+                Category = Category.Shopping,
+                Address = "Calle Gonzalo Jiménez de Quesada, 2, 41092 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Rating.Three,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/TorreSevilla.jpg" }
+                }
+            };
+
+            var recommendation8 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "La Terraza de EME",
+                Description = "Bar con vistas espectaculares a la Giralda, ideal para copas al atardecer.",
+                Category = Category.Bar,
+                Address = "Calle Alemanes, 27, 41004 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Rating.Four,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/TerrazaEME.jpg" }
+                }
+            };
+
+            var recommendation9 = new Recommendation
+            {
+                Id = Guid.NewGuid(),
+                Title = "Rincón Secreto",
+                Description = "Espacio cultural emergente con exposiciones temporales y arte alternativo.",
+                Category = Category.Other,
+                Address = "Calle San Luis, 70, 41003 Sevilla",
+                City = "Sevilla",
+                Country = "Spain",
+                Rating = Rating.Three,
+                CreatedAt = DateTime.UtcNow,
+                RecommendationImages = new List<Image>
+                {
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/RinconSecreto.jpg" }
+                }
+            };
+
 
             var accommodations = new List<Accommodation>
             {
@@ -316,6 +401,7 @@ namespace Backend.Models.Database
                     }
                 }
             };
+
             var reservations = new List<Reservation>
             {
                 new Reservation
@@ -510,7 +596,7 @@ namespace Backend.Models.Database
             forum.Threads.Add(thread2);
 
             _dataContext.Users.AddRange(users);
-            _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
+            _dataContext.Recommendations.AddRange(recommendation1, recommendation2, recommendation3, recommendation4, recommendation5, recommendation6, recommendation7, recommendation8, recommendation9);
             _dataContext.Accommodations.AddRange(accommodations);
             _dataContext.Reservations.AddRange(reservations);
             _dataContext.Reviews.AddRange(reviews);

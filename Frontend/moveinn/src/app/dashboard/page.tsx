@@ -202,7 +202,7 @@ export default function DashboardPage() {
         <div className="container mx-auto">
             {/* Welcome Section */}
             <section className="mb-8">
-            <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
+            <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/placeholder.svg?height=100&width=100')] opacity-5 bg-repeat"></div>
@@ -311,36 +311,73 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl text-text">Upcoming Events</CardTitle>
                     <CardDescription className="text-text-secondary">Events you&apos;ve joined or might be interested in</CardDescription>
                     </div>
-                    <Button variant="ghost" className="">
+                    <Button variant="ghost" className="dark:text-text-secondary">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4"/>
                     </Button>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                    <EventCard
-                        title="Language Exchange Night"
-                        date="Today, 7:00 PM"
-                        location="Café del Mar, Barcelona"
-                        attendees={18}
-                        category="Social"
-                        joined={true}
-                    />
-                    <EventCard
-                        title="Weekend Trip to Montserrat"
-                        date="Saturday, 9:00 AM"
-                        location="Plaça Catalunya"
-                        attendees={24}
-                        category="Trip"
-                        joined={true}
-                    />
-                    <EventCard
-                        title="International Food Festival"
-                        date="Next Tuesday, 6:30 PM"
-                        location="University Campus"
-                        attendees={42}
-                        category="Cultural"
-                        joined={false}
-                    />
+                    <CardContent>
+  <div className="space-y-4">
+    <EventCard
+      title="Language Exchange Night"
+      date="Today, 7:00 PM"
+      location="Café del Mar, Barcelona"
+      attendees={18}
+      category="Social"
+      joined={true}
+    />
+    <EventCard
+      title="Weekend Trip to Montserrat"
+      date="Today, 9:00 AM"
+      location="Plaça Catalunya"
+      attendees={24}
+      category="Trip"
+      joined={true}
+    />
+    <EventCard
+      title="International Food Festival"
+      date="Tomorrow, 6:30 PM"
+      location="University Campus"
+      attendees={42}
+      category="Cultural"
+      joined={false}
+    />
+    <EventCard
+      title="AI in Education: A Debate"
+      date="Sunday, 10:00 AM"
+      location="Tech Hub, Barcelona"
+      attendees={16}
+      category="Academic"
+      joined={true}
+    />
+    <EventCard
+      title="Sunset Beach Volleyball"
+      date="Sunday, 6:00 PM"
+      location="Barceloneta Beach"
+      attendees={20}
+      category="Sports"
+      joined={true}
+    />
+    <EventCard
+      title="Photography Workshop: City at Night"
+      date="Sunday, 8:00 PM"
+      location="Plaza Real"
+      attendees={12}
+      category="Workshop"
+      joined={false}
+    />
+    <EventCard
+      title="Neon Party at Apolo"
+      date="Sunday, 11:00 PM"
+      location="Sala Apolo, Barcelona"
+      attendees={80}
+      category="Party"
+      joined={false}
+    />
+  </div>
+</CardContent>
+
                     </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
@@ -359,7 +396,7 @@ export default function DashboardPage() {
                     <CardDescription className="text-text-secondary">Residences you might be interested in</CardDescription>
                     </div>
                     <Link href="/dashboard/housing">
-                    <Button variant="ghost" className="">
+                    <Button variant="ghost" className="dark:text-text-secondary">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4" />
                     </Button>
                     </Link>
@@ -381,7 +418,7 @@ export default function DashboardPage() {
                     <CardDescription className="text-text-secondary">Places and activities recommended by hosts and other students</CardDescription>
                     </div>
                     <Link href="/dashboard/recommendations">
-                        <Button variant="ghost" className="">
+                        <Button variant="ghost" className="dark:text-text-secondary">
                         View all <ChevronRightIcon className="ml-1 h-4 w-4" />
                         </Button>
                     </Link>
@@ -405,7 +442,7 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl text-text">Notifications</CardTitle>
                     <CardDescription className="text-text-secondary">Recent updates and activities</CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="">
+                    <Button variant="ghost" size="sm" className="dark:text-text-secondary">
                     Mark all as read
                     </Button>
                 </CardHeader>
@@ -432,7 +469,7 @@ export default function DashboardPage() {
                     </div>
                 </CardContent>
                 <CardFooter className="border-t pt-4">
-                    <Button variant="ghost" className="w-full">
+                    <Button variant="ghost" className="w-full dark:text-text-secondary">
                     View all notifications
                     </Button>
                 </CardFooter>
@@ -445,7 +482,7 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl text-text">Your Hosts</CardTitle>
                     <CardDescription className="text-text-secondary">Local students helping you navigate Barcelona</CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="">
+                    <Button variant="ghost" size="sm" className="dark:text-text-secondary">
                     Find more
                     </Button>
                 </CardHeader>

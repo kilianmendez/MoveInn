@@ -64,7 +64,7 @@ export default function EventsPage() {
       <main className="container mx-auto px-0 py-0">
         {/* Header */}
         <section className="mb-8">
-          <div className="relative bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white overflow-hidden">
+          <div className="relative bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full -translate-x-1/2 translate-y-1/2 blur-3xl" />
             <div className="relative z-10 space-y-4 md:space-y-0 md:flex md:items-center md:justify-between">
@@ -142,7 +142,7 @@ export default function EventsPage() {
               className={`flex-shrink-0 h-fit w-20 text-sm ${
                 isSameDay(date, selectedDate)
                   ? "bg-[#4C69DD] text-white"
-                  : "bg-foreground text-primary-dark hover:bg-background"
+                  : "bg-foreground text-primary-dark hover:bg-background dark:border-gray-800"
               }`}
               onClick={() => setSelectedDate(date)}
             >

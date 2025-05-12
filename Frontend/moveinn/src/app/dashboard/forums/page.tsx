@@ -35,30 +35,32 @@ const categoryLabels: Record<number, string> = {
 }
 
 const forumCategoryColors: Record<number, string> = {
-  0: "from-green-100 to-white",
-  1: "from-blue-100 to-white",
-  2: "from-pink-100 to-white",
-  3: "from-yellow-100 to-white",
-  4: "from-purple-100 to-white",
-  5: "from-rose-100 to-white",
-  6: "from-orange-100 to-white",
-  7: "from-teal-100 to-white",
-  8: "from-gray-200 to-white",
-  9: "from-gray-100 to-white",
+  0: "from-[#B7F8C8]/30 to-foreground", // Procedures & Docs → estilo similar a restaurant
+  1: "from-yellow-100 dark:from-yellow-200/50 to-foreground", // University Life → historicalsite
+  2: "from-pink-100 dark:from-[#ffbfea]/50 to-foreground", // Cultural & Social → cafeteria
+  3: "from-purple-100 dark:from-[#ccb1ef]/50 to-foreground", // Scholarships → shopping
+  4: "from-green-100 dark:from-secondary-greenblue/30 to-foreground", // Transport → park
+  5: "from-amber-200 dark:from-[#723917]/50 to-foreground", // Tourism & Nightlife → leisurezone
+  6: "from-[#0E1E40]/30 dark:from-[#0E1E40]/50 to-foreground", // Events → bar
+  7: "from-[#4C69DD]/20 to-foreground", // Tips → museum (usa azul)
+  8: "from-gray-200 dark:from-gray-400/20 to-foreground", // FAQ → other
+  9: "from-gray-200 dark:from-gray-400/20 to-foreground", // Other
 }
 
+
 const forumCategoryBadgeColors: Record<number, string> = {
-  0: "bg-primary text-white",                  // Procedures & Docs
-  1: "bg-yellow-200 text-yellow-900",          // University Life
-  2: "bg-pink-200 text-pink-900",              // Cultural & Social
-  3: "bg-purple-200 text-purple-900",          // Scholarships
-  4: "bg-secondary-greenblue text-green-900",  // Transport
-  5: "bg-amber-400 text-amber-900",            // Tourism & Nightlife
-  6: "bg-[#0E1E40] text-white",                // Events
-  7: "bg-secondary text-primary-dark",         // Tips
-  8: "bg-gray-300 text-gray-800",              // FAQ
-  9: "bg-gray-200 text-gray-700",              // Other
+  0: "bg-secondary text-green-900", // Procedures & Docs
+  1: "bg-yellow-200 text-yellow-900", // University Life
+  2: "bg-pink-200 text-pink-900", // Cultural & Social
+  3: "bg-purple-200 text-purple-900", // Scholarships
+  4: "bg-secondary-greenblue text-green-900", // Transport
+  5: "bg-amber-400 text-amber-900", // Tourism & Nightlife
+  6: "bg-[#0E1E40] text-white", // Events
+  7: "bg-primary text-white", // Tips (azul, como museum)
+  8: "bg-gray-300 text-gray-800", // FAQ
+  9: "bg-gray-200 text-gray-700", // Other
 }
+
 
 
 const countries = [
@@ -153,7 +155,7 @@ export default function ForumsPage() {
     <div className="min-h-screen">
       <main className="container mx-auto px-4 py-6">
         <section className="mb-8">
-          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
             <div className="relative z-10">
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                 <div>
@@ -189,13 +191,13 @@ export default function ForumsPage() {
                     <Button
                       key={country.name}
                       variant="outline"
-                      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD] text-white" : ""} cursor-pointer`}
+                      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD]/20" : ""} cursor-pointer`}
                       onClick={() => setActiveFilter(activeFilter === country.name ? null : country.name)}
                     >
                       <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span className="mr-2">{country.name}</span>
+                        {/* <MapPin className="h-4 w-4 mr-2" /> */}
                         <Flag code={country.code} style={{ width: 24, height: 16 }} />
+                        <span className="ml-2"> {country.name}</span>
                       </div>
                     </Button>
                   ))}
@@ -337,8 +339,8 @@ export default function ForumsPage() {
                         <Badge className={`mb-2 w-fit text-xs font-medium px-2 py-1 rounded-md ${forumCategoryBadgeColors[forum.category]}`}>
                           {categoryLabels[forum.category]}
                         </Badge>
-                        <h3 className="font-bold text-[#0E1E40] text-lg mb-2">{forum.title}</h3>
-                        <div className="flex items-center text-xs text-gray-500 justify-between mb-1">
+                        <h3 className="font-bold text-text text-lg mb-2">{forum.title}</h3>
+                        <div className="flex items-center text-xs text-gray-600 bg-gray-200 dark:text-gray-400 dark:bg-foreground rounded-md px-2 py-1 justify-between mb-1">
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3 w-3 text-[#4C69DD]" />
                             {forum.country}
@@ -347,7 +349,7 @@ export default function ForumsPage() {
                         </div>
                       </div>
 
-                      <div className="p-6 pt-4 flex-grow flex flex-col bg-foreground rounded-b-md border-t border-gray-200">
+                      <div className="p-6 pt-4 flex-grow flex flex-col bg-foreground rounded-b-md border-t border-gray-200 dark:border-gray-800">
                         <p className="text-sm text-text line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
                         <div className="mt-auto">
                           <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-3 py-2 w-fit">
@@ -367,9 +369,9 @@ export default function ForumsPage() {
 
             {filteredForums.length === 0 && (
               <div className="text-center py-12">
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No forums found</h3>
-                <p className="text-gray-500 mb-6">Try adjusting your search or filters.</p>
-                <Button onClick={() => { setActiveFilter(null); setActiveCategory(null); }}>
+                <h3 className="text-xl font-medium text-text mb-2">No forums found</h3>
+                <p className="text-text-secondary mb-6">Try adjusting your search or filters.</p>
+                <Button className="text-white" onClick={() => { setActiveFilter(null); setActiveCategory(null); }}>
                   Clear Filters
                 </Button>
               </div>

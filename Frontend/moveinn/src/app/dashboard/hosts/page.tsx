@@ -92,7 +92,7 @@ export default function HostsPage() {
       <main className="container mx-auto px-4 py-6">
         {/* Header Section */}
         <section className="mb-8">
-          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
+          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/placeholder.svg?height=100&width=100')] opacity-5 bg-repeat"></div>
@@ -126,27 +126,27 @@ export default function HostsPage() {
                 <div className="flex gap-2">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="border-white/20 text-white hover:bg-white/5 bg-white/10">
+                      <Button variant="outline" className="border-white/20 dark:border-gray-800 text-white hover:bg-white/5 bg-white/10">
                         <Filter className="mr-2 h-4 w-4" />
                         Filter
                         <ChevronDown className="ml-2 h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56">
-                      <DropdownMenuLabel>Filter By</DropdownMenuLabel>
+                    <DropdownMenuContent className="w-56 text-text bg-foreground dark:border-gray-800">
+                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Filter By</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem>All Hosts</DropdownMenuItem>
                       <DropdownMenuItem>Super Hosts</DropdownMenuItem>
                       <DropdownMenuItem>Online Now</DropdownMenuItem>
                       <DropdownMenuItem>Highest Rated</DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuLabel>Languages</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Languages</DropdownMenuLabel>
                       <DropdownMenuItem>English</DropdownMenuItem>
                       <DropdownMenuItem>Spanish</DropdownMenuItem>
                       <DropdownMenuItem>French</DropdownMenuItem>
                       <DropdownMenuItem>German</DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuLabel>Expertise</DropdownMenuLabel>
+                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Expertise</DropdownMenuLabel>
                       <DropdownMenuItem>Housing</DropdownMenuItem>
                       <DropdownMenuItem>Academic Support</DropdownMenuItem>
                       <DropdownMenuItem>Local Culture</DropdownMenuItem>
@@ -154,24 +154,7 @@ export default function HostsPage() {
                     </DropdownMenuContent>
                   </DropdownMenu>
 
-                  <Tabs defaultValue="grid" className="w-auto">
-                    <TabsList className="bg-white/10 border border-white/20">
-                      <TabsTrigger
-                        value="grid"
-                        onClick={() => setViewMode("grid")}
-                        className="data-[state=active]:bg-white data-[state=active]:text-[#0E1E40] text-white"
-                      >
-                        <Users className="h-4 w-4" />
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="map"
-                        onClick={() => setViewMode("map")}
-                        className="data-[state=active]:bg-white data-[state=active]:text-[#0E1E40] text-white"
-                      >
-                        <MapPin className="h-4 w-4" />
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                  
                 </div>
               </div>
             </div>
@@ -186,21 +169,21 @@ export default function HostsPage() {
               <CardContent className="p-4">
                 <h2 className="font-semibold text-text-secondary mb-3">Host Community</h2>
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center w-full">
+                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center w-full">
                     <div className="text-xl font-bold text-text">1,240</div>
-                    <div className="text-sm text-text-secondary">Active Hosts</div>
+                    <div className="text-xs text-secondary">Active Hosts</div>
                   </div>
-                  <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center w-full">
+                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center w-full">
                     <div className="text-xl font-bold text-text">42</div>
-                    <div className="text-sm text-text-secondary">Countries</div>
+                    <div className="text-xs text-secondary">Countries</div>
                   </div>
-                  <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center">
+                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center">
                     <div className="text-xl font-bold text-text">156</div>
-                    <div className="text-sm text-text-secondary">Universities</div>
+                    <div className="text-xs text-secondary">Universities</div>
                   </div>
-                  <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center">
+                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center">
                     <div className="text-xl font-bold text-text">28</div>
-                    <div className="text-sm text-text-secondary">Languages</div>
+                    <div className="text-xs text-secondary">Languages</div>
                   </div>
                 </div>
               </CardContent>
@@ -215,7 +198,7 @@ export default function HostsPage() {
                     <Button
                       key={city.name}
                       variant="outline"
-                      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${
+                      className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
                         activeFilter === city.name ? "bg-[#4C69DD] text-white" : ""
                       }`}
                       onClick={() => setActiveFilter(activeFilter === city.name ? null : city.name)}
@@ -228,7 +211,7 @@ export default function HostsPage() {
                       </div>
                       <Badge
                         className={`${
-                          activeFilter === city.name ? "bg-white text-[#4C69DD]" : "bg-[#E7ECF0] text-[#4C69DD]"
+                          activeFilter === city.name ? "bg-white text-[#4C69DD]" : "bg-foreground text-[#4C69DD] dark:text-text-secondary"
                         }`}
                       >
                         {city.count}
@@ -236,7 +219,7 @@ export default function HostsPage() {
                     </Button>
                   ))}
                 </div>
-                <Button variant="ghost" className="w-full mt-2 text-[#4C69DD]">
+                <Button variant="ghost" className="w-full mt-2 text-primary dark:text-text-secondary">
                   View All Cities
                 </Button>
               </CardContent>

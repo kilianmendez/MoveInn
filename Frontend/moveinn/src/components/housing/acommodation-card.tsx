@@ -4,6 +4,7 @@ import { MapPin, BedIcon, BathIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { AccommodationData } from "@/types/accommodation"
+import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 
 interface AcommodationCard {
   acommodation: AccommodationData
@@ -31,7 +32,7 @@ export function AcommodationCard({ acommodation }: AcommodationCard) {
     <Card className="bg-foreground border-none shadow-md hover:shadow-lg transition-all h-full flex flex-col rounded-md py-0">
       <div className="relative h-48 overflow-hidden rounded-t-md">
         <img
-          src={acommodation.accomodationImages?.[0]?.url || "/placeholder.svg"}
+          src={`${API_BASE_IMAGE_URL}${acommodation.images?.[0]}` || "/placeholder.svg"}
           alt={acommodation.title}
           className="object-cover w-full h-full bg-gray-500"
         />
