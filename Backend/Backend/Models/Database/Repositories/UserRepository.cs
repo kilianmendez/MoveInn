@@ -1,4 +1,5 @@
 ﻿using Backend.Models.Database.Entities;
+using Backend.Models.Database.Enum;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -60,6 +61,15 @@ namespace Backend.Models.Database.Repositories
             if (user == null) return false;
             var hashed = AuthService.HashPassword(password);
             return user.Password == hashed;
+        }
+
+        public async Task<bool> ChangeRoleAsync(Guid userId, Role newRole)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return false;
+            user.Role = newRole;
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

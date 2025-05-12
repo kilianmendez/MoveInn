@@ -46,6 +46,7 @@ public class Program
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
         builder.Services.AddScoped<IChatRepository, ChatRepository>();
         builder.Services.AddScoped<IMessagesRepository, MessagesRepository>();
+        builder.Services.AddScoped<IHostRepository, HostRepository>();
 
         // Servicios
         builder.Services.AddScoped<AuthService>();
@@ -64,6 +65,7 @@ public class Program
         builder.Services.AddScoped<IReviewService, Services.ReviewService>();
         builder.Services.AddScoped<IForumService, ForumService>();
         builder.Services.AddScoped<IChatService, ChatService>();
+        builder.Services.AddScoped<IHostService, HostService>();
 
         // WebSocket
         builder.Services.AddSingleton<WebsocketHandler>();
