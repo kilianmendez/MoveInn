@@ -1,31 +1,18 @@
-import { MapPin, BedIcon, BathIcon } from "lucide-react"
+import { MapPin, BedIcon, BathIcon, Wifi } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import type { AccommodationData } from "@/types/accommodation" // Asegúrate de que el path es correcto
 
-interface Acommodation {
-  id: number
-  title: string
-  description: string
-  addres: string
-  city: string
-  country: string
-  pricePerMonth: number
-  numberOfRooms: number
-  bathrooms: number
-  squareMeters: number
-  hasWifi: boolean
-  ownetId: string
-  availableFrom: string
-  availableTo: string
-  images: string[]
-  publisher: string
+interface AcommodationCard {
+  acommodation: AccommodationData
 }
 
-interface DashboardAcommodationCardProps {
-  acommodation: Acommodation
-}
+export function DashboardAcommodationCard({ acommodation }: AcommodationCard) {
+  const shortenedAddress =
+    acommodation.address.length > 35
+      ? `${acommodation.address.slice(0, 35)}...`
+      : acommodation.address
 
-export function DashboardAcommodationCard({ acommodation }: DashboardAcommodationCardProps) {
   return (
     <Card className="bg-gradient-to-br from-white to-[#E7ECF0]/30 border-none shadow-sm hover:shadow-md transition-all rounded-lg overflow-hidden">
       {/* Imagen */}
@@ -38,14 +25,14 @@ export function DashboardAcommodationCard({ acommodation }: DashboardAcommodatio
       </div>
 
       {/* Contenido */}
-      <CardContent className="p-3 flex flex-col space-y-2">
-        <h3 className="font-semibold text-[#0E1E40] text-md truncate">
-          {acommodation.title}
-        </h3>
+      <CardContent className="p-3 flex flex-col justify-between space-y-2 h-[210px]">
+        <div>
+          <h3 className="font-semibold text-[#0E1E40] text-md truncate">{acommodation.title}</h3>
 
-        <div className="text-gray-600 text-xs flex items-center">
-          <MapPin className="h-3 w-3 text-[#4C69DD] mr-1" />
-          {acommodation.city}, {acommodation.country}
+          <div className="text-gray-600 text-xs flex items-center">
+            <MapPin className="h-3 w-3 text-[#4C69DD] mr-1" />
+            <span>{shortenedAddress}</span>
+          </div>
         </div>
 
         <div className="flex flex-wrap gap-1 text-xs">
@@ -55,10 +42,19 @@ export function DashboardAcommodationCard({ acommodation }: DashboardAcommodatio
           <Badge variant="outline" className="text-gray-700 border-gray-300">
             {acommodation.bathrooms} <BathIcon className="h-3 w-3 ml-1" />
           </Badge>
+          <Badge variant="outline" className="text-gray-700 border-gray-300">
+            {acommodation.squareMeters} m²
+          </Badge>
+          {acommodation.hasWifi && (
+            <Badge variant="outline" className="text-gray-700 border-gray-300">
+              <Wifi className="h-3 w-3" />
+            </Badge>
+          )}
         </div>
 
         <div className="text-primary-dark font-bold text-sm">
-          €{acommodation.pricePerMonth} <span className="text-gray-500 text-xs">/ month</span>
+          €{acommodation.pricePerMonth}
+          <span className="text-gray-500 text-xs"> / month</span>
         </div>
       </CardContent>
     </Card>
