@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss"
+/** @type {import('tailwindcss').Config} */
 
 const config: Config = {
-  darkMode: "class", // 👈 Habilita modo oscuro por clase
+  darkMode: "class", 
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -14,21 +15,21 @@ const config: Config = {
         sans: ["Inter", "sans-serif"],
       },
       colors: {
-        background: "oklch(var(--background))", /*Gris muy claro casi blanco para el fondo*/
-        foreground: "oklch(var(--foreground))", /*blanco puro*/
-        text: "oklch(var(--text))", /*Azul oscuro de textos principales*/
-        "text-secondary": "oklch(var(--text-secondary))", /*Gris claro de textos secundarios*/
+        background: "oklch(var(--background))", 
+        foreground: "oklch(var(--foreground))", 
+        text: "oklch(var(--text))", 
+        "text-secondary": "oklch(var(--text-secondary))", 
 
         primary: {
-          DEFAULT: "oklch(var(--primary))", /*Azul*/
-          dark: "oklch(var(--primary-dark))", /*Azul oscuro*/
+          DEFAULT: "oklch(var(--primary))", 
+          dark: "oklch(var(--primary-dark))",
         },
         secondary: {
-          DEFAULT: "oklch(var(--secondary))", /*Verde claro*/
-          greenblue: "oklch(var(--secondary-greenblue))", /*Verde turquesa*/
+          DEFAULT: "oklch(var(--secondary))", 
+          greenblue: "oklch(var(--secondary-greenblue))",
         },
         accent: {
-          DEFAULT: "oklch(var(--accent))", /*Amarillo*/
+          DEFAULT: "oklch(var(--accent))",
           light: "oklch(var(--accent-light))", /*Amarillo claro*/
           dark: "oklch(var(--accent-dark))", /*Amarillo oscuro*/
         },

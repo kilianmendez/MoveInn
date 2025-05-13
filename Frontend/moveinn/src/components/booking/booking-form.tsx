@@ -13,10 +13,9 @@ import axios from "axios"
 import { BookingModalProps } from "@/types/accommodation"
 
 
-
 export function BookingModal({ isOpen, onClose, accommodation }: BookingModalProps) {
   const router = useRouter()
-  const { user } = useAuth()
+  const { user, token} = useAuth()
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -74,7 +73,7 @@ export function BookingModal({ isOpen, onClose, accommodation }: BookingModalPro
         },
         {
           headers: {
-            Authorization: `Bearer ${user.token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         },

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { JSX, useEffect, useState } from "react"
 import {
   Search, Filter, Calendar, List, ChevronDown, Plus, Users, X,
   Music, Utensils, GraduationCap, Plane, Globe, Coffee, BookOpen
@@ -19,17 +19,34 @@ import { EventCalendarView } from "@/components/events/event-calendar-view"
 import { CreateEventDialog } from "@/components/events/create-event-dialog"
 
 import { mockUser } from "@/lib/data/mockUser"
+import { API_GET_ALL_EVENTS } from "@/utils/endpoints/config"
 
 export default function EventsPage() {
   const [activeFilters, setActiveFilters] = useState<string[]>([])
+  const [events, setEvents] = useState<any[]>([])
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [isCreateEventOpen, setIsCreateEventOpen] = useState(false)
 
-  const events = mockUser.events.map(e => ({
-    ...e,
-    date: new Date(e.date)
-  }))
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(API_GET_ALL_EVENTS) 
+        const data = await response.json()
+        const formattedEvents = data.map((e: any) => ({
+          ...e,
+          date: new Date(e.date),
+          attendeesCount: e.attendees || 0,
+          imageUrl: e.image || ""
+        }))
+        setEvents(formattedEvents)
+      } catch (error) {
+        console.error("Error fetching events:", error)
+      }
+    }
+
+    fetchEvents()
+  }, [])
 
   const filteredEvents = events.filter(event =>
     isSameDay(event.date, selectedDate) &&
@@ -62,7 +79,6 @@ export default function EventsPage() {
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-0 py-0">
-        {/* Header */}
         <section className="mb-8">
           <div className="relative bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full translate-x-1/2 -translate-y-1/2 blur-3xl" />
@@ -226,3 +242,7 @@ export default function EventsPage() {
     </div>
   )
 }
+function setEvents(formattedEvents: any) {
+  throw new Error("Function not implemented.")
+}
+

@@ -26,53 +26,30 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { AcommodationCard } from "@/components/housing/acommodation-card"
 import axios from "axios"
+import { AccommodationData } from "@/types/accommodation" // Importar el tipo desde types.ts
 
 import { API_ALL_ACOMMODATIONS, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
-
-interface Acommodation {
-  id: number
-  title: string
-  description: string
-  addres: string
-  city: string
-  country: string
-  pricePerMonth: number
-  numberOfRooms: number
-  bathrooms: number
-  squareMeters: number
-  hasWifi: boolean
-  ownetId: string
-  availableFrom: string
-  availableTo: string
-  images: string[]
-  publisher: string
-}
 
 export default function AcommodationsPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
-  const [acommodations, setAcommodations] = useState<Acommodation[]>([])
+  const [acommodations, setAcommodations] = useState<AccommodationData[]>([]) // Usar el tipo importado
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [sortField, setSortField] = useState<string | null>("")
   const [sortOrder, setSortOrder] = useState<string | null>("")
-  const [availableFrom, setAvailableFrom] = useState<string | null>("") 
+  const [availableFrom, setAvailableFrom] = useState<string | null>("")
   const [availableTo, setAvailableTo] = useState<string | null>("")
   const [country, setCountry] = useState<string | null>("")
   const [page, setPage] = useState<number>(1)
   const [limit, setLimit] = useState<number>(10)
-  
 
   const searchAcommodations = async () => {
+    const isoDate = new Date().toISOString()
+    const futureDate = new Date()
+    futureDate.setDate(futureDate.getDate() + 15)
+    const isoDate2 = futureDate.toISOString()
 
-      {/*Iso Date from today*/}
-      const isoDate = new Date().toISOString()
-
-      {/*Iso Date in 15 days*/}
-      const futureDate = new Date()
-      futureDate.setDate(futureDate.getDate() + 15)
-      const isoDate2 = futureDate.toISOString()
-
-    const searchParams = ({
+    const searchParams = {
       query: searchQuery,
       sortField: sortField,
       sortOrder: sortOrder,
@@ -80,8 +57,8 @@ export default function AcommodationsPage() {
       availableTo: isoDate2,
       country: country,
       page: page,
-      limit: limit
-    });
+      limit: limit,
+    }
 
     try {
       const token = localStorage.getItem("token")
@@ -90,12 +67,12 @@ export default function AcommodationsPage() {
           Authorization: `Bearer ${token}`,
         },
       })
-  
+
       const data = response.data
       const foundPlaces = data.items
-  
-      console.log("Alojamientos mediante busqueda:", foundPlaces)
-  
+
+      console.log("Alojamientos mediante búsqueda:", foundPlaces)
+
       if (Array.isArray(foundPlaces)) {
         setAcommodations(foundPlaces)
       } else {
@@ -110,17 +87,17 @@ export default function AcommodationsPage() {
 
   const fetchAcommodations = async () => {
     try {
-      const token = localStorage.getItem("token") // 👈 aún no se está usando, lo dejo si lo necesitas para autenticación
+      const token = localStorage.getItem("token")
       const response = await axios.get(API_ALL_ACOMMODATIONS, {
         headers: {
-          Authorization: `Bearer ${token}`, // 👈 solo si la API lo requiere
+          Authorization: `Bearer ${token}`,
         },
       })
-  
+
       const data = response.data
-  
+
       console.log("Alojamientos encontrados:", data)
-  
+
       if (Array.isArray(data)) {
         setAcommodations(data)
       } else {
@@ -132,7 +109,7 @@ export default function AcommodationsPage() {
       setAcommodations([])
     }
   }
-  
+
   useEffect(() => {
     fetchAcommodations()
   }, [])
@@ -144,8 +121,8 @@ export default function AcommodationsPage() {
       } else {
         fetchAcommodations()
       }
-    }, 400) // retrasa la búsqueda para evitar spamear peticiones
-  
+    }, 400)
+
     return () => clearTimeout(timeout)
   }, [searchQuery])
 
@@ -256,9 +233,7 @@ export default function AcommodationsPage() {
               ))}
               </div>
             ) : (
-              // Map View
               <div className="relative rounded-xl overflow-hidden border border-gray-200 h-[600px]">
-                {/* This would be replaced with an actual map component */}
                 <div className="absolute inset-0 bg-[#E7ECF0]">
                   <div className="absolute top-0 left-0 w-full h-full bg-[url('/placeholder.svg?height=600&width=1200')] opacity-20"></div>
                 </div>

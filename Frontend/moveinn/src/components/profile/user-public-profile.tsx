@@ -94,20 +94,20 @@ export function UserPublicProfile({ user }: { user: User }) {
 
   // Helper function to get category icon for events
   const getEventCategoryIcon = (category: number) => {
-    switch (category.toLowerCase()) {
-      case 1:
+    switch (category) {
+      case 0:
         return <Users className="h-3.5 w-3.5" />
-      case 2:
+      case 1:
         return <MapPin className="h-3.5 w-3.5" />
-      case "cultural":
+      case 2:
         return <Landmark className="h-3.5 w-3.5" />
-      case "academic":
+      case 3:
         return <BookOpen className="h-3.5 w-3.5" />
-      case "sports":
+      case 4:
         return <Bike className="h-3.5 w-3.5" />
-      case "workshop":
+      case 5:
         return <Tool className="h-3.5 w-3.5" />
-      case "party":
+      case 6:
         return <Music className="h-3.5 w-3.5" />
       default:
         return <Calendar className="h-3.5 w-3.5" />
@@ -266,7 +266,7 @@ export function UserPublicProfile({ user }: { user: User }) {
                       date: new Date(event.date).toISOString(),
                       location: event.address.split(",")[0] || "Location",
                       address: event.address,
-                      category: event.category || "Other",
+                      category: event.category || 0 ,
                       imageUrl: event.imageUrl || "/placeholder.svg",
                       attendeesCount: event.attendeesCount || 0,
                       maxAttendees: event.maxAttendees,
@@ -274,7 +274,7 @@ export function UserPublicProfile({ user }: { user: User }) {
                       tags: event.tags || [],
                       creatorId: event.creatorId || "Unknown", 
                     }}
-                    categoryIcon={getEventCategoryIcon(event.category || "Other")}
+                    categoryIcon={getEventCategoryIcon(event.category || 0 )}
                   />
                 ))}
               </div>
@@ -293,7 +293,7 @@ export function UserPublicProfile({ user }: { user: User }) {
                       date: new Date(event.date).toISOString(),
                       location: event.address.split(",")[0] || "Location",
                       address: event.address,
-                      category: event.category || "Other",
+                      category: event.category || 0 ,
                       imageUrl: event.imageUrl || "/placeholder.svg",
                       attendeesCount: event.attendeesCount || 0,
                       maxAttendees: event.maxAttendees,
@@ -301,7 +301,7 @@ export function UserPublicProfile({ user }: { user: User }) {
                       tags: event.tags || [],
                       creatorId: event.creatorId || "Unknown", 
                       }}
-                    categoryIcon={getEventCategoryIcon(event.category || "Other")}
+                    categoryIcon={getEventCategoryIcon(event.category || 0 )}
                   />
                 ))}
               </div>

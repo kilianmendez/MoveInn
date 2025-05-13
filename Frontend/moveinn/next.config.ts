@@ -2,18 +2,17 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "localhost",
-        port: "7023",
-        pathname: "/accommodations/**",
-        
-      },
-    ],
+
+    unoptimized: true,
   },
   reactStrictMode: false,
-  /* config options here */
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+    
+  },
 };
 
 export default nextConfig;

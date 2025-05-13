@@ -1,3 +1,4 @@
 #!/bin/bash
-echo "[BeforeInstall] Deteniendo el servicio backend …"
-sudo systemctl stop backend || true
+echo "[BeforeInstall] Deteniendo servicios..."
+sudo systemctl stop backend.service || true
+sudo systemctl stop frontend.service || true

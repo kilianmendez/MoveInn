@@ -238,11 +238,23 @@ export const AuthProvider = ({
 
       const decoded: DecodedToken = jwtDecode(accessToken)
       setUser({
-        id: decoded.id,
-        mail: decoded.email,
-        name: decoded.name,
-        phone: phone.toString(),
-      })
+              id: decoded.id,
+              mail: decoded.email,
+              name: decoded.name,
+              phone: phone.toString(),
+              countryFlag: "",
+              lastName: "",
+              role: 0,
+              biography: "",
+              school: "",
+              city: "",
+              degree: "",
+              nationality: "",
+              erasmusCountry: "",
+              erasmusDate: 0,
+              socialMedias: [],
+              avatarUrl: "", 
+            })
 
       router.push("/dashboard")
     } catch (err: any) {

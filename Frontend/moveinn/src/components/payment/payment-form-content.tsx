@@ -123,7 +123,7 @@ export function PaymentFormContent() {
           card,
           billing_details: {
             name: user?.name || "Guest",
-            email: user?.email,
+            email: user?.mail,
           },
         },
       })
@@ -339,7 +339,7 @@ export function PaymentFormContent() {
                         type="email"
                         className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-gray-700"
                         placeholder="email@example.com"
-                        defaultValue={user?.email || ""}
+                        defaultValue={user?.mail || ""}
                         required
                       />
                     </div>
