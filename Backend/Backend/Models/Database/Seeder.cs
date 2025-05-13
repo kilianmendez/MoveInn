@@ -49,8 +49,27 @@ namespace Backend.Models.Database
                     ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
-
+                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" }
+                    }
+                },
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Christian",
+                    LastName = "Rodriguez",
+                    Mail = "christian@gmail.com",
+                    Password = AuthService.HashPassword("passwordChristian"),
+                    Biography = "Biografía de Christian",
+                    Phone = "222222222",
+                    AvatarUrl = "default-avatar-url",
+                    Role = Role.Administrator,
+                    School = "Escuela de Christian",
+                    Degree = "Grado de Christian",
+                    Nationality = "Nacionalidad de Christian",
+                    SocialMedias = new List<SocialMediaLink>
+                    {
+                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
+                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeChristian" }
                     }
                 },
                 new User
@@ -60,14 +79,14 @@ namespace Backend.Models.Database
                     LastName = "Méndez Ávila",
                     Mail = "kilian@gmail.com",
                     Password = AuthService.HashPassword("passwordKilian"),
-                    Biography = "De erasmus en Turquia",
+                    Biography = "De erasmus en Barcelona",
                     Phone = "635893667",
                     AvatarUrl = "default-avatar-url",
                     Role = Role.Administrator,
                     School = "CPIFP Alan Turing",
                     Degree = "Web Aplication Development",
-                    City = "Izmir",
-                    ErasmusCountry = "Turkey",
+                    City = "Barcelona",
+                    ErasmusCountry = "Spain",
                     Nationality = "Spain",
                     ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
@@ -602,6 +621,54 @@ namespace Backend.Models.Database
             _dataContext.Reviews.AddRange(reviews);
             _dataContext.Forum.Add(forum);
             await _dataContext.SaveChangesAsync();
+
+            var specialities = new List<Speciality>
+            {
+                new Speciality { Id = Guid.NewGuid(), Name = "Pubs" },
+                new Speciality { Id = Guid.NewGuid(), Name = "Fiesta" },
+                new Speciality { Id = Guid.NewGuid(), Name = "Museums" },
+                new Speciality { Id = Guid.NewGuid(), Name = "Amusement Parks" },
+            };
+            _dataContext.Speciality.AddRange(specialities);
+
+            var hosts = new List<Hosts>
+            {
+                new Hosts
+                {
+                    Id          = Guid.NewGuid(),
+                    UserId      = users[0].Id,
+                    Reason      = "Me encanta organizar Pub Crawls, fiestas y visitas a museos",
+                    CreatedAt   = DateTime.UtcNow,
+                    Status      = RequestStatus.Approved,
+                    HostSince   = DateTime.UtcNow,
+                    UpdatedAt   = DateTime.UtcNow,
+                    Specialties = new List<Speciality>
+                    {
+                        specialities[0], 
+                        specialities[1], 
+                        specialities[2]  
+                    }
+                },
+                new Hosts
+                {
+                    Id          = Guid.NewGuid(),
+                    UserId      = users[1].Id,
+                    Reason      = "Quiero compartir mis rutas de fiesta y parques de atracciones",
+                    CreatedAt   = DateTime.UtcNow,
+                    Status      = RequestStatus.Approved,
+                    HostSince   = DateTime.UtcNow,
+                    UpdatedAt   = DateTime.UtcNow,
+                    Specialties = new List<Speciality>
+                    {
+                        specialities[1], 
+                        specialities[3]  
+                    }
+                }
+            };
+            _dataContext.Hosts.AddRange(hosts);
+            _dataContext.Events.AddRange(events);
+            await _dataContext.SaveChangesAsync();
+
         }
 
     }
