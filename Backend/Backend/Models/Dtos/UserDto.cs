@@ -34,7 +34,6 @@ namespace Backend.Models.Dtos
         public string Phone { get; set; }
 
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
-        public string Password { get; internal set; }
 
         public ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();
         public List<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
