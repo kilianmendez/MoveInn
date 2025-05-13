@@ -666,7 +666,7 @@ namespace Backend.Models.Database
                 }
             };
             _dataContext.Hosts.AddRange(hosts);
-            _dataContext.Events.AddRange(events);
+            //_dataContext.Events.AddRange(events);
             await _dataContext.SaveChangesAsync();
 
         }
