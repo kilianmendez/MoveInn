@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import Image from "next/image"
-import { MapPin, Calendar, Clock, Users, Heart, ExternalLink, Share2, Bike, BookOpen, Landmark, Music,  PenToolIcon as Tool} from "lucide-react"
+import { MapPin, Calendar, Clock, Users, Heart, ExternalLink, Share2, Bike, BookOpen, GraduationCap, Landmark, Music, PartyPopper, PenTool, Utensils } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -15,47 +15,58 @@ interface DetailedEventCardProps {
 }
 
 export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProps) {
-  const getCategoryColor = () => {
+  const getCategoryIcon = () => {
     switch (event.category) {
-      case 1:
-        return "from-[#B7F8C8]/30 to-foreground"
-      case 2:
-        return "from-[#4C69DD]/20 to-foreground"
-      case 3:
-        return "from-[#62C3BA]/30 to-foreground"
-      case 4:
-        return "from-[#4C69DD]/10 to-foreground"
-      case 5:
-        return "from-[#B7F8C8]/20 to-foreground"
-      case 6:
-        return "from-[#62C3BA]/20 to-foreground"
-      case 7:
-        return "from-[#0E1E40]/20 to-foreground"
+      case 0: // Trip
+        return <Bike className="h-4 w-4" />
+      case 1: // Social
+        return <Users className="h-4 w-4" />
+      case 2: // Cultural
+        return <Landmark className="h-4 w-4" />
+      case 3: // Food
+        return <Utensils className="h-4 w-4" />
+      case 4: // Academic
+        return <GraduationCap className="h-4 w-4" />
+      case 5: // Sports
+        return <BookOpen className="h-4 w-4" />
+      case 6: // Workshop
+        return <PenTool className="h-4 w-4" />
+      case 7: // Party
+        return <PartyPopper className="h-4 w-4" />
+      case 8: // Other
+        return <Music className="h-4 w-4" />
       default:
-        return "from-gray-100 to-foreground"
+        return null
     }
   }
-
+  
   const getCategoryBadgeColor = () => {
     switch (event.category) {
-      case 1:
+      case 0: // Trip
         return "bg-green-200 text-green-800"
-      case 2:
+      case 1: // Social
         return "bg-blue-200 text-blue-800"
-      case 3:
+      case 2: // Cultural
         return "bg-teal-200 text-teal-800"
-      case 4:
+      case 3: // Food
         return "bg-yellow-200 text-yellow-800"
-      case 5:
+      case 4: // Academic
         return "bg-orange-200 text-orange-800"
-      case 6:
+      case 5: // Sports
         return "bg-purple-200 text-purple-800"
-      case 7:
+      case 6: // Workshop
         return "bg-pink-200 text-pink-800"
+      case 7: // Party
+        return "bg-amber-200 text-amber-800"
+      case 8: // Other
+        return "bg-gray-200 text-gray-800"
       default:
         return "bg-gray-200 text-gray-800"
     }
   }
+  
+
+  
 
   // Calculate attendance percentage
   const attendancePercentage = (event.attendeesCount / event.maxAttendees) * 100
@@ -73,7 +84,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
           <Image src={eventImageUrl || "/placeholder.svg"} alt={event.title} fill className="object-cover" />
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-black/50 to-transparent"></div>
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
-            <Badge className={`${getCategoryBadgeColor()} flex items-center`}>
+            <Badge className={getCategoryBadgeColor()}>
               <span className="flex items-center">
                 {categoryIcon}
                 <span className="ml-1">{event.category}</span>
@@ -83,7 +94,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
           </div>
         </div>
 
-        <div className={`flex-1 bg-gradient-to-br ${getCategoryColor()}`}>
+        <div className={`flex-1 bg-gradient-to-br ${getCategoryIcon()}`}>
           <CardContent className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">

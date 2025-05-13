@@ -94,20 +94,20 @@ export function UserPublicProfile({ user }: { user: User }) {
 
   // Helper function to get category icon for events
   const getEventCategoryIcon = (category: number) => {
-    switch (category) {
+    switch (category.toLowerCase()) {
       case 1:
         return <Users className="h-3.5 w-3.5" />
       case 2:
         return <MapPin className="h-3.5 w-3.5" />
-      case 3:
+      case "cultural":
         return <Landmark className="h-3.5 w-3.5" />
-      case 4:
+      case "academic":
         return <BookOpen className="h-3.5 w-3.5" />
-      case 5:
+      case "sports":
         return <Bike className="h-3.5 w-3.5" />
-      case 6:
+      case "workshop":
         return <Tool className="h-3.5 w-3.5" />
-      case 7:
+      case "party":
         return <Music className="h-3.5 w-3.5" />
       default:
         return <Calendar className="h-3.5 w-3.5" />
