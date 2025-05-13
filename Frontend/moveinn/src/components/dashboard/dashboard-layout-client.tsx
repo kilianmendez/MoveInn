@@ -15,6 +15,7 @@ import {
   LogOutIcon,
   MoonIcon, 
   SunIcon,
+  ShieldIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -98,6 +99,14 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
                 badge={badge}
               />
             ))}
+
+            {user?.role === 0 && (
+              <SidebarItem
+                href="/dashboard/admin"
+                icon={<ShieldIcon className="h-5 w-5" />}
+                label="Admin"
+              />
+            )}
 
             <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
               <Button
