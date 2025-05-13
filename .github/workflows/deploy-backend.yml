@@ -2,7 +2,11 @@ name: Deploy MoveInn Backend
 
 on:
   push:
-    branches: [ main ]        
+    paths:
+      - 'Backend/**'          
+    branches:
+      - main
+     
 
 jobs:
   deploy:
