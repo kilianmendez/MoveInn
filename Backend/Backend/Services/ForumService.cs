@@ -43,17 +43,43 @@ public class ForumService : IForumService
                 forumDto.CreatorId = user.Id;
                 forumDto.CreatorName = user.Name;
                 forumDto.CreatorAvatar = user.AvatarUrl;
+                forumDto.CreatorNationatility = user.Nationality;
             }
             else
             {
                 forumDto.CreatorName = "Usuario desconocido";
                 forumDto.CreatorAvatar = "default-avatar.png";
+                forumDto.CreatorNationatility = "Nacionalidad desconocida";
             }
 
             forumDTOs.Add(forumDto);
         }
 
         return forumDTOs;
+    }
+
+    public async Task<ForumDTO> GetForumByIdAsync(Guid id)
+    {
+        var forum = await _unitOfWork.ForumRepository.GetForumByIdAsync(id);
+        var forumDto = ForumMapper.ToDto(forum);
+
+        var user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(forum.CreatedBy);
+
+        if (user != null)
+        {
+            forumDto.CreatorId = user.Id;
+            forumDto.CreatorName = user.Name;
+            forumDto.CreatorAvatar = user.AvatarUrl;
+            forumDto.CreatorNationatility = user.Nationality;
+        }
+        else
+        {
+            forumDto.CreatorName = "Unknown User";
+            forumDto.CreatorAvatar = "default-avatar.png";
+            forumDto.CreatorNationatility = "Unknown Nationality";
+        }
+
+        return forumDto;
     }
 
     public async Task<bool> CreateThreadAsync(CreateForumThreadDTO threadDto)
@@ -73,7 +99,29 @@ public class ForumService : IForumService
     public async Task<IEnumerable<ForumThreadDTO>> GetThreadsByForumIdAsync(Guid forumId)
     {
         var threads = await _unitOfWork.ForumRepository.GetThreadsByForumIdAsync(forumId);
-        var threadDtos = threads.Select(thread => ForumMapper.ToDto(thread)).ToList();
+        var threadDtos = new List<ForumThreadDTO>();
+
+        foreach (var thread in threads)
+        {
+            var dto = ForumMapper.ToDto(thread);
+            var user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(thread.CreatedBy);
+
+            if (user != null)
+            {
+                dto.CreatorName = user.Name;
+                dto.CreatorAvatar = user.AvatarUrl;
+                dto.CreatorNationatility = user.Nationality;
+            }
+            else
+            {
+                dto.CreatorName = "Unknown User";
+                dto.CreatorAvatar = "default-avatar.png";
+                dto.CreatorNationatility = "Unknown Nationality";
+            }
+
+            threadDtos.Add(dto);
+        }
+
         return threadDtos;
     }
 
@@ -94,7 +142,29 @@ public class ForumService : IForumService
     public async Task<IEnumerable<ForumMessageDTO>> GetMessagesByThreadIdAsync(Guid threadId)
     {
         var messages = await _unitOfWork.ForumRepository.GetMessagesByThreadIdAsync(threadId);
-        var messageDtos = messages.Select(ForumMapper.ToDto).ToList();
+        var messageDtos = new List<ForumMessageDTO>();
+
+        foreach (var msg in messages)
+        {
+            var dto = ForumMapper.ToDto(msg);
+
+            var user = await _unitOfWork.UserRepository.GetUserDataByIdAsync(msg.CreatedBy);
+            if (user != null)
+            {
+                dto.CreatorName = user.Name;
+                dto.CreatorAvatar = user.AvatarUrl;
+                dto.CreatorNationatility = user.Nationality;
+            }
+            else
+            {
+                dto.CreatorName = "Usuario desconocido";
+                dto.CreatorAvatar = "default-avatar.png";
+                dto.CreatorNationatility = "Nacionalidad desconocida";
+            }
+
+            messageDtos.Add(dto);
+        }
+
         return messageDtos;
     }
 

@@ -87,7 +87,7 @@ export default function HostsPage() {
     : hosts
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="min-h-screen">
 
       <main className="container mx-auto px-4 py-6">
         {/* Header Section */}
@@ -182,40 +182,40 @@ export default function HostsPage() {
           {/* Sidebar Filters */}
           <div className="space-y-6 order-2 xl:order-1 xl:col-span-1">
             {/* Quick Stats */}
-            <Card className="border-none shadow-md bg-foreground">
+            <Card className="border-none shadow-md bg-foreground py-0">
               <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Host Community</h2>
+                <h2 className="font-semibold text-text-secondary mb-3">Host Community</h2>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center w-full">
-                    <div className="text-xl font-bold text-[#4C69DD]">1,240</div>
-                    <div className="text-sm text-gray-600">Active Hosts</div>
+                    <div className="text-xl font-bold text-text">1,240</div>
+                    <div className="text-sm text-text-secondary">Active Hosts</div>
                   </div>
                   <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center w-full">
-                    <div className="text-xl font-bold text-[#4C69DD]">42</div>
-                    <div className="text-sm text-gray-600">Countries</div>
+                    <div className="text-xl font-bold text-text">42</div>
+                    <div className="text-sm text-text-secondary">Countries</div>
                   </div>
                   <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center">
-                    <div className="text-xl font-bold text-[#4C69DD]">156</div>
-                    <div className="text-sm text-gray-600">Universities</div>
+                    <div className="text-xl font-bold text-text">156</div>
+                    <div className="text-sm text-text-secondary">Universities</div>
                   </div>
                   <div className="bg-[#E7ECF0]/30 p-3 rounded-lg text-center">
-                    <div className="text-xl font-bold text-[#4C69DD]">28</div>
-                    <div className="text-sm text-gray-600">Languages</div>
+                    <div className="text-xl font-bold text-text">28</div>
+                    <div className="text-sm text-text-secondary">Languages</div>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             {/* Cities Filter */}
-            <Card className="border-none shadow-md bg-foreground">
+            <Card className="border-none shadow-md bg-foreground py-0">
               <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Popular Cities</h2>
+                <h2 className="font-semibold text-text-secondary mb-3">Popular Cities</h2>
                 <div className="space-y-2">
                   {cities.map((city) => (
                     <Button
                       key={city.name}
                       variant="outline"
-                      className={`w-full justify-between h-auto py-2 text-primary-dark ${
+                      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${
                         activeFilter === city.name ? "bg-[#4C69DD] text-white" : ""
                       }`}
                       onClick={() => setActiveFilter(activeFilter === city.name ? null : city.name)}
@@ -243,9 +243,9 @@ export default function HostsPage() {
             </Card>
 
             {/* Languages Filter */}
-            <Card className="border-none shadow-md bg-foreground">
+            <Card className="border-none shadow-md bg-foreground py-0">
               <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Languages</h2>
+                <h2 className="font-semibold text-text-secondary mb-3">Languages</h2>
                 <div className="flex flex-wrap gap-2">
                   {languages.map((language) => (
                     <Badge
@@ -267,15 +267,15 @@ export default function HostsPage() {
             </Card>
 
             {/* Expertise Filter */}
-            <Card className="border-none shadow-md bg-foreground">
+            <Card className="border-none shadow-md bg-foreground py-0">
               <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Areas of Expertise</h2>
+                <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
                 <div className="space-y-2">
                   {expertiseAreas.map((area) => (
                     <div
                       key={area.name}
-                      className={`flex items-center justify-between p-2 rounded-lg cursor-pointer ${
-                        activeFilter === area.name ? "bg-[#62C3BA] text-primary-dark" : "hover:bg-[#E7ECF0]/50"
+                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${
+                        activeFilter === area.name ? "bg-background text-primary-dark" : "bg-background hover:bg-background/50"
                       }`}
                       onClick={() => setActiveFilter(activeFilter === area.name ? null : area.name)}
                     >
@@ -294,25 +294,25 @@ export default function HostsPage() {
             </Card>
 
             {/* Become a Host */}
-            <Card className="border-none shadow-md bg-gradient-to-br from-[#FFBF00]/20 to-white">
+            <Card className="border-none shadow-md bg-gradient-to-br from-[#FFBF00]/20 to-foreground">
               <CardContent className="p-4">
-                <h2 className="font-semibold text-[#0E1E40] mb-3">Become a Host</h2>
-                <p className="text-sm text-gray-700 mb-4">
+                <h2 className="font-semibold text-text-secondary mb-3">Become a Host</h2>
+                <p className="text-sm text-text mb-4">
                   Help incoming Erasmus students navigate your city and university. Share your knowledge and make new
                   international friends!
                 </p>
                 <div className="space-y-2 mb-4">
                   <div className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-700">Earn recognition in your university</span>
+                    <span className="text-sm text-gray-500">Earn recognition in your university</span>
                   </div>
                   <div className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-700">Build your international network</span>
+                    <span className="text-sm text-gray-500">Build your international network</span>
                   </div>
                   <div className="flex items-start">
                     <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-700">Gain intercultural experience</span>
+                    <span className="text-sm text-gray-500">Gain intercultural experience</span>
                   </div>
                 </div>
                 <Button className="w-full bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90">
@@ -343,7 +343,7 @@ export default function HostsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredHosts.map((host) => (
                   <Link href={`/dashboard/hosts/${host.id}`} key={host.id}>
-                    <Card className="border-none shadow-md hover:shadow-lg transition-all h-full w-full rounded-md py-0">
+                    <Card className="border-none shadow-md hover:shadow-lg transition-all h-full w-full rounded-md py-0 bg-foreground">
                       <div className="relative">
                         <div className="h-48 bg-gradient-to-br from-[#4C69DD]/20 to-[#62C3BA]/20 rounded-t-md flex items-center justify-center">
                           <Avatar className="h-32 w-32 border-4 border-white">
@@ -369,18 +369,18 @@ export default function HostsPage() {
 
                       <CardContent className="p-4">
                         <div className="text-center mb-3">
-                          <h3 className="font-semibold text-[#0E1E40] text-lg">{host.name}</h3>
-                          <p className="text-gray-600 text-sm">{host.university}</p>
+                          <h3 className="font-semibold text-text text-lg">{host.name}</h3>
+                          <p className="text-gray-500 text-sm">{host.university}</p>
                           <div className="flex items-center justify-center mt-1">
                             <MapPin className="h-3 w-3 text-[#4C69DD] mr-1" />
-                            <span className="text-sm text-gray-600">{host.location}</span>
+                            <span className="text-sm text-gray-500">{host.location}</span>
                           </div>
                         </div>
 
                         <div className="flex items-center justify-center mb-3">
-                          <div className="flex items-center bg-[#E7ECF0]/50 px-2 py-1 rounded-full">
+                          <div className="flex items-center bg-background px-2 py-1 rounded-full">
                             <Star className="h-3 w-3 text-[#FFBF00] fill-[#FFBF00] mr-1" />
-                            <span className="font-medium">{host.rating}</span>
+                            <span className="font-medium text-text">{host.rating}</span>
                             <span className="text-gray-500 text-xs ml-1">({host.reviewCount})</span>
                           </div>
                         </div>
@@ -395,7 +395,7 @@ export default function HostsPage() {
                                   ? "border-[#4C69DD] text-[#4C69DD]"
                                   : index === 1
                                     ? "border-[#62C3BA] text-[#62C3BA]"
-                                    : "border-[#0E1E40] text-[#0E1E40]"
+                                    : "border-accent text-accent"
                               }`}
                             >
                               {language}
@@ -404,11 +404,11 @@ export default function HostsPage() {
                         </div>
 
                         <div className="space-y-2 mb-3">
-                          <div className="flex items-center text-xs text-gray-600">
+                          <div className="flex items-center text-xs text-gray-500">
                             <GraduationCap className="h-3 w-3 text-[#4C69DD] mr-1" />
                             <span>Helped {host.helpedStudents} students</span>
                           </div>
-                          <div className="flex items-center text-xs text-gray-600">
+                          <div className="flex items-center text-xs text-gray-500">
                             <Clock className="h-3 w-3 text-[#4C69DD] mr-1" />
                             <span>Responds {host.responseTime}</span>
                           </div>
@@ -416,7 +416,7 @@ export default function HostsPage() {
 
                         <div className="flex flex-wrap gap-1 mb-3">
                           {host.expertise.slice(0, 3).map((area) => (
-                            <Badge key={area} className="bg-[#E7ECF0] text-[#0E1E40] text-xs">
+                            <Badge key={area} className="bg-background text-text text-xs">
                               {area}
                             </Badge>
                           ))}
@@ -424,7 +424,7 @@ export default function HostsPage() {
                       </CardContent>
 
                       <CardFooter className="p-3 pt-0">
-                        <Button className="w-full bg-[#4C69DD] hover:bg-[#4C69DD]/90">
+                        <Button className="w-full bg-primary text-white hover:bg-primary/70">
                           <MessageCircle className="mr-2 h-4 w-4" />
                           Contact Host
                         </Button>
@@ -475,7 +475,7 @@ export default function HostsPage() {
                           <Star className="h-3 w-3 text-[#FFBF00] fill-[#FFBF00] mr-1" />
                           <span className="text-sm">{host.rating}</span>
                         </div>
-                        <Button size="sm" className="w-full h-7 text-xs bg-[#4C69DD]">
+                        <Button size="sm" className="w-full h-7 text-xs bg-background">
                           View Profile
                         </Button>
                       </div>

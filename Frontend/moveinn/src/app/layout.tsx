@@ -4,6 +4,7 @@ import "./globals.css"
 import { Providers } from "./providers"
 
 const inter = Inter({ subsets: ["latin"] })
+import { ThemeProvider } from "next-themes"
 
 export const metadata: Metadata = {
   title: "MoveInn",
@@ -18,7 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+          <Providers>{children}</Providers>
+        </ThemeProvider>
       </body>
     </html>
   )

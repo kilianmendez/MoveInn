@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss"
 
 const config: Config = {
+  darkMode: "class", // 👈 Habilita modo oscuro por clase
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -31,8 +32,8 @@ const config: Config = {
           light: "oklch(var(--accent-light))", /*Amarillo claro*/
           dark: "oklch(var(--accent-dark))", /*Amarillo oscuro*/
         },
-        "negative-red": "oklch(var(--negative-red))", /*Rojo dislike*/
-        "positive-green": "oklch(var(--positive-green))", /*Verde like*/
+        negativo: "oklch(var(--negativo))", /*Rojo dislike*/
+        positivo: "oklch(var(--positivo))", /*Verde like*/
       },
       borderRadius: {
         sm: "var(--radius-sm)", /*5px*/

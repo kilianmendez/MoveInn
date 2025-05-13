@@ -1,51 +1,55 @@
-﻿using Backend.Models.Database.Entities;
+﻿// Backend.Models.Mappers/AccommodationMapper.cs
+using Backend.Models.Database.Entities;
 using Backend.Models.Dtos;
+using System.Linq;
 
-namespace Backend.Models.Mappers;
-
-public class AccommodationMapper
+public static class AccommodationMapper
 {
-    public static AccommodationDTO ToDto(Accommodation accommodation)
+    public static AccommodationDTO ToDto(Accommodation a)
     {
-        if (accommodation == null) return null;
-
         return new AccommodationDTO
         {
-            Id = accommodation.Id,
-            Title = accommodation.Title,
-            Description = accommodation.Description,
-            Address = accommodation.Address,
-            City = accommodation.City,
-            Country = accommodation.Country,
-            PricePerMonth = accommodation.PricePerMonth,
-            NumberOfRooms = accommodation.NumberOfRooms,
-            Bathrooms = accommodation.Bathrooms,
-            SquareMeters = accommodation.SquareMeters,
-            HasWifi = accommodation.HasWifi,
-            OwnerId = accommodation.OwnerId,
-            AvailableFrom = accommodation.AvailableFrom,
-            AvailableTo = accommodation.AvailableTo
+            Id = a.Id,
+            Title = a.Title,
+            Description = a.Description,
+            Address = a.Address,
+            City = a.City,
+            Country = a.Country,
+            PricePerMonth = a.PricePerMonth,
+            NumberOfRooms = a.NumberOfRooms,
+            Bathrooms = a.Bathrooms,
+            SquareMeters = a.SquareMeters,
+            HasWifi = a.HasWifi,
+            OwnerId = a.OwnerId,
+            AvailableFrom = a.AvailableFrom,
+            AvailableTo = a.AvailableTo,
+            AcommodationType = a.AcommodationType,
+            Images = a.AccomodationImages
+                                 .Select(img => img.Url)
+                                 .ToList()
         };
     }
 
-    public static Accommodation ToEntity(AccommodationCreateDTO accommodation)
+    public static Accommodation ToEntity(AccommodationCreateDTO dto)
     {
         return new Accommodation
         {
             Id = Guid.NewGuid(),
-            Title = accommodation.Title,
-            Description = accommodation.Description,
-            Address = accommodation.Address,
-            City = accommodation.City,
-            Country = accommodation.Country,
-            PricePerMonth = accommodation.PricePerMonth,
-            NumberOfRooms = accommodation.NumberOfRooms,
-            Bathrooms = accommodation.Bathrooms,
-            SquareMeters = accommodation.SquareMeters,
-            HasWifi = accommodation.HasWifi,
-            OwnerId = accommodation.OwnerId,
-            AvailableFrom = accommodation.AvailableFrom,
-            AvailableTo = accommodation.AvailableTo
+            Title = dto.Title,
+            Description = dto.Description,
+            Address = dto.Address,
+            City = dto.City,
+            Country = dto.Country,
+            PricePerMonth = dto.PricePerMonth,
+            NumberOfRooms = dto.NumberOfRooms,
+            Bathrooms = dto.Bathrooms,
+            SquareMeters = dto.SquareMeters,
+            HasWifi = dto.HasWifi,
+            OwnerId = dto.OwnerId,
+            AvailableFrom = dto.AvailableFrom,
+            AvailableTo = dto.AvailableTo,
+            AcommodationType = dto.AcommodationType,
+
         };
     }
 }

@@ -24,6 +24,10 @@ namespace Backend.Models.Mappers
                 Nationality = user.Nationality,
                 ErasmusCountry = user.ErasmusCountry,
                 Phone = user.Phone,
+                Recommendations = user.Recommendations,
+                ParticipatingEvents = user.ParticipatingEvents,
+                CreatedEvents = user.CreatedEvents,
+                Accommodations = user.Accommodations,
                 ErasmusDate = (int)(DateTime.Now - user.ErasmusDate.ToDateTime(TimeOnly.MinValue)).TotalDays,
                 SocialMedias = user.SocialMedias
             .Select(sm => new SocialMediaLink
@@ -56,6 +60,10 @@ namespace Backend.Models.Mappers
                 ErasmusCountry = dto.ErasmusCountry,
                 ErasmusDate = DateOnly.FromDateTime(DateTime.Now).AddDays(-dto.ErasmusDate),
                 Password = password,
+                Accommodations = dto.Accommodations,
+                CreatedEvents = dto.CreatedEvents,
+                ParticipatingEvents = dto.ParticipatingEvents,
+                Recommendations = dto.Recommendations,
                 SocialMedias = dto.SocialMedias
             .Select(sm => new SocialMediaLink
             {

@@ -1,3 +1,7 @@
+import { AccommodationData } from "./accommodation";
+import { Event } from "./event";
+import { Recommendation } from "./recommendation";
+
 export interface SocialMedia {
   id: number
   socialMedia: number
@@ -26,29 +30,39 @@ export interface UserUpdateFormData {
   countryFlag?: string
   erasmusCountryFlag?: string
 }
+
+
 export interface User {
-  id: string
-  mail: string
-  name: string
-  phone: string
-  lastName?: string
-  biography?: string
-  school?: string
-  city?: string
-  degree?: string
-  nationality?: string
-  erasmusCountry?: string
-  erasmusDate?: string | number | null
-  avatarUrl?: string
-  countryFlag?: string
-  erasmusCountryFlag?: string
-  socialMedias?: Array<{
-    id: number
-    socialMedia: number
-    url: string
-  }>
-  [key: string]: any
+  countryFlag: any;
+  id: string;
+  name: string;
+  lastName: string;
+  mail: string;
+  role: number;
+  biography: string;
+  avatarUrl: string;
+  school: string;
+  city: string;
+  degree: string;
+  nationality: string;
+  erasmusDate: number;
+  erasmusCountry: string;
+  phone: string;
+  socialMedias: {
+    id: number;
+    socialMedia: number;
+    url: string;
+    userId: string;
+    user?: User;
+  }[];
+  password?: string;
+
+  accommodations?: AccommodationData[];
+  createdEvents?: Event[];
+  participatingEvents?: Event[];
+  recommendations?: Recommendation[];
 }
+
 
 export const SOCIAL_MEDIA_TYPES = {
   1: "Facebook",

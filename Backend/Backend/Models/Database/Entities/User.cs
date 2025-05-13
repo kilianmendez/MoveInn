@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Backend.Models.Database.Enum;
 
 namespace Backend.Models.Database.Entities
@@ -38,6 +36,12 @@ namespace Backend.Models.Database.Entities
         public ICollection<Accommodation> Accommodations { get; set; } = new List<Accommodation>();
         public List<SocialMediaLink> SocialMedias { get; set; } = new List<SocialMediaLink>();
         public List<Recommendation> Recommendations { get; set; } = new List<Recommendation>();
+
+        [InverseProperty(nameof(Event.Creator))]
+        public ICollection<Event> CreatedEvents { get; set; } = new List<Event>();
+
+        [InverseProperty(nameof(Event.Participants))]
+        public ICollection<Event> ParticipatingEvents { get; set; } = new List<Event>();
 
     }
 }

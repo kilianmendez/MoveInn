@@ -37,25 +37,25 @@ export function DetailedRecommendationCard({
     const getCategoryColor = () => {
       switch (categorySlug) {
         case "restaurant":
-          return "from-[#B7F8C8]/30 to-white"
+          return "from-[#B7F8C8]/30 to-foreground"
         case "cafeteria":
-          return "from-pink-100 to-white"
+          return "from-pink-100 to-foreground"
         case "museum":
-          return "from-[#4C69DD]/20 to-white"
+          return "from-[#4C69DD]/20 to-foreground"
         case "leisurezone":
-          return "from-amber-100 to-white"
+          return "from-amber-100 to-foreground"
         case "park":
-          return "from-green-100 to-white"
+          return "from-green-100 to-foreground"
         case "historicalsite":
-          return "from-yellow-100 to-white"
+          return "from-yellow-100 to-foreground"
         case "shopping":
-          return "from-purple-100 to-white"
+          return "from-purple-100 to-foreground"
         case "bar":
-          return "from-[#0E1E40]/20 to-white"
+          return "from-[#0E1E40]/20 to-foreground"
         case "other":
-          return "from-gray-200 to-white"
+          return "from-gray-200 to-foreground"
         default:
-          return "from-gray-200 to-white"
+          return "from-gray-200 to-foreground"
       }
     }
     
@@ -63,7 +63,7 @@ export function DetailedRecommendationCard({
     const getCategoryBadgeColor = () => {
       switch (categorySlug) {
         case "restaurant":
-          return "bg-secondary text-primary-dark"
+          return "bg-secondary text-green-900"
         case "cafeteria":
           return "bg-pink-200 text-pink-900"
         case "museum":
@@ -86,14 +86,14 @@ export function DetailedRecommendationCard({
     }
 
   return (
-    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground">
+    <Card className="flex gap-0 flex-col justify-between py-0 h-full min-h-[460px] overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-foreground border-none">
       <div className="relative h-48 w-full">
         <Image
           src={`https://${API_BASE}/` + recommendation.recommendationImages[0].url}
           alt={recommendation.title}
           fill
           unoptimized // 👈 desactiva el loader de imágenes
-          className="object-cover"
+          className="object-cover pb-0 mb-0"
         />
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 to-transparent"></div>
         <div className="absolute top-3 left-3 right-3 flex justify-between items-start">
@@ -110,15 +110,19 @@ export function DetailedRecommendationCard({
         </div>
       </div>
 
-      <CardContent className={`p-4 bg-gradient-to-br ${getCategoryColor()} flex-grow`}>
-        <h3 className="font-semibold text-lg text-[#0E1E40] mb-1">{recommendation.title}</h3>
+      <CardContent className={`p-0 pb-0 mt-0 bg-gradient-to-br ${getCategoryColor()}`}>
+        <div className="px-4 py-2 my-0">
+          <h3 className="font-semibold text-lg text-text mb-1">{recommendation.title}</h3>
 
-        <div className="flex items-start mb-3">
-          <MapPin className="h-4 w-4 text-gray-500 mt-0.5 flex-shrink-0 mr-1" />
-          <p className="text-xs text-gray-600">{recommendation.address}</p>
+          <div className="flex items-start">
+            <MapPin className="h-4 w-4 text-primary-dark mt-0.5 flex-shrink-0 mr-1" />
+            <p className="text-xs text-text-secondary">{recommendation.address}</p>
+          </div>
         </div>
+      </CardContent>
 
-        <p className="text-sm text-gray-700 mb-3 line-clamp-3">{recommendation.description}</p>
+      <CardContent className="pt-3 px-4 pb-4">
+        <p className="text-sm text-text mb-3 line-clamp-3">{recommendation.description}</p>
 
         {recommendation.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-2">
@@ -131,13 +135,13 @@ export function DetailedRecommendationCard({
         )}
       </CardContent>
 
-      <CardFooter className="p-3 bg-gray-50 flex justify-between">
+      <CardFooter className="p-3 bg-none flex justify-between">
         <Button variant="outline" size="sm" className="text-[#4C69DD] border-[#4C69DD]/30 hover:bg-[#4C69DD]/10">
           <Share2 className="h-3.5 w-3.5 mr-1" />
           Share
         </Button>
         <Link href={`/dashboard/recommendations/${recommendation.id}`}>
-          <Button size="sm" className="bg-[#4C69DD] hover:bg-[#4C69DD]/90">
+          <Button size="sm" className="text-white bg-[#4C69DD] hover:bg-[#4C69DD]/90">
             <ExternalLink className="h-3.5 w-3.5 mr-1" />
             View Details
           </Button>

@@ -121,7 +121,7 @@ export default function RecommendationDetailPage() {
   const categoryIcon = getCategoryIcon(recommendation.category)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="min-h-screen">
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <Link href="/dashboard/recommendations">
@@ -132,7 +132,7 @@ export default function RecommendationDetailPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-foreground rounded-xl shadow-md overflow-hidden">
           <div className="relative h-64 md:h-80">
             <Image
               src={recommendation.recommendationImages?.[0]?.url
@@ -169,7 +169,7 @@ export default function RecommendationDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-gray-500 border-gray-200 hover:bg-primary hover:text-white">
+              <Button variant="outline" size="sm" className="text-primary border-gray-200 hover:bg-primary hover:text-white">
                 <Share2 className="h-4 w-4 mr-1" />
                 Share
               </Button>
@@ -179,12 +179,12 @@ export default function RecommendationDetailPage() {
           <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
             <div className="px-4">
               <TabsList className="grid grid-cols-2 w-full max-w-md bg-background h-fit rounded-[5px] m-4">
-              <TabsTrigger value="overview" className="bg-background p-2 rounded-var(--radius-sm) text-text data-[state=active]:bg-white data-[state=active]:text-primary-dark">
+              <TabsTrigger value="overview" className="bg-background p-2 rounded-var(--radius-sm) text-text data-[state=active]:bg-foreground data-[state=active]:text-text">
                 Overview
               </TabsTrigger>
                 <TabsTrigger
                 value="photos"
-                className="bg-background p-2 rounded-var(--radius-sm) text-text data-[state=active]:bg-white data-[state=active]:text-primary-dark">
+                className="bg-background p-2 rounded-var(--radius-sm) text-text data-[state=active]:bg-foreground data-[state=active]:text-text">
                 Photos
                 </TabsTrigger>
               </TabsList>
@@ -193,8 +193,8 @@ export default function RecommendationDetailPage() {
             <TabsContent value="overview" className="p-4">
               <div className="space-y-6">
                 <div>
-                  <h2 className="text-lg font-semibold text-primary-dark mb-2 text-xl bold">About</h2>
-                  <p className="text-gray-700 whitespace-pre-line">{recommendation.description}</p>
+                  <h2 className="text-lg font-semibold text-text-secondary mb-2 text-xl bold">About</h2>
+                  <p className="text-text whitespace-pre-line">{recommendation.description}</p>
                 </div>
 
                 <div>
@@ -213,14 +213,14 @@ export default function RecommendationDetailPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-gray-500 mb-3">Contact Info</h3>
+                  <div className="bg-background p-4 rounded-lg">
+                    <h3 className="text-sm font-medium text-text-secondary mb-3">Contact Info</h3>
                     <div className="space-y-3">
                       <div className="flex items-start">
                         <MapPin className="h-4 w-4 text-[#4C69DD] mt-0.5 mr-2" />
                         <div>
-                          <p className="text-sm font-medium text-gray-700">Address</p>
-                          <p className="text-sm text-gray-600">{recommendation.address}</p>
+                          <p className="text-sm font-medium text-text-secondary">Address</p>
+                          <p className="text-sm text-text">{recommendation.address}</p>
                         </div>
                       </div>
                     </div>
@@ -251,8 +251,7 @@ export default function RecommendationDetailPage() {
         </div>
       </div>
       <div>
-      <div></div>
-      <Card className="border-none shadow-sm bg-foreground">
+      {/* <Card className="border-none shadow-sm bg-foreground">
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-[#0E1E40]">Contact Recommender</CardTitle>
@@ -283,7 +282,7 @@ export default function RecommendationDetailPage() {
                         Contact Host
                     </Button>
                 </CardFooter>
-                </Card>
+                </Card> */}
       </div>
     </div>
   )

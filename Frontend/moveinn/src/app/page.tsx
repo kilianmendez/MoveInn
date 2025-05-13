@@ -684,7 +684,7 @@ export default function Home() {
             Ready to Enhance Your Erasmus Experience?
           </h2>
           <p className="text-lg mb-8 max-w-3xl mx-auto text-[#0E1E40]">
-            Join thousands of students who are making the most of their time abroad with MoveIn.
+            Join thousands of students who are making the most of their time abroad with MoveInn.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button className="bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#0E1E40] px-8 py-6 text-lg font-bold">
@@ -709,7 +709,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <h3 className="text-2xl font-bold mb-4">
-                Move<span className="text-[#B7F8C8]">In</span>
+                Move<span className="text-[#B7F8C8]">Inn</span>
               </h3>
               <p className="text-sm opacity-80 mb-4">
                 Your all-in-one platform for making the most of your Erasmus experience.
@@ -835,7 +835,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-white/10 text-center text-sm opacity-60">
-            <p>© 2025 MoveIn. All rights reserved.</p>
+            <p>© 2025 MoveInn. All rights reserved.</p>
           </div>
         </div>
       </footer>

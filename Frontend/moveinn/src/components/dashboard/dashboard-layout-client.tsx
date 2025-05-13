@@ -5,26 +5,62 @@ import Link from "next/link"
 import {
   MenuIcon,
   HomeIcon,
-  Users2Icon,
   CalendarIcon,
   MessageCircleIcon,
   BookmarkIcon,
   MapPinIcon,
   UserIcon,
-  SettingsIcon,
-  HelpCircleIcon,
   GlobeIcon,
   SofaIcon,
+  LogOutIcon,
+  MoonIcon, 
+  SunIcon,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/authcontext"
+import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
+import { useTheme } from "next-themes"
 
 export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [showLogoutModal, setShowLogoutModal] = useState(false)
 
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
+
+  const { theme, setTheme } = useTheme()
+
+  const getRoleBadge = (role: number) => {
+    switch (role) {
+      case 0:
+        return (
+          <span className="text-xs font-medium text-yellow-600 bg-yellow-100 px-3 py-1 rounded-full shadow-sm border border-yellow-200">
+            Administrator
+          </span>
+        )
+      case 1:
+        return (
+          <span className="text-xs font-medium text-red-600 bg-red-100 px-3 py-1 rounded-full shadow-sm border border-red-200">
+            Banned
+          </span>
+        )
+      case 2:
+        return (
+          <span className="text-xs font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full shadow-sm border border-blue-200">
+            User
+          </span>
+        )
+      case 3:
+        return (
+          <span className="text-xs font-medium text-green-600 bg-green-100 px-3 py-1 rounded-full shadow-sm border border-green-200">
+            Host
+          </span>
+        )
+      default:
+        return null
+    }
+  }
 
   const mainNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
@@ -37,22 +73,18 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
     { label: "Profile", href: "/dashboard/profile", icon: UserIcon },
   ]
 
-  const settingsNav = [
-    { label: "Settings", href: "/dashboard/settings", icon: SettingsIcon },
-    { label: "Help Center", href: "/dashboard/help", icon: HelpCircleIcon },
-  ]
-
+  console.log(`${API_BASE_IMAGE_URL}${user?.avatarUrl}`)
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-white to-[#E7ECF0]/30">
+    <div className="flex min-h-screen bg-gradient-to-b from-foreground to-background">
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-full pt-16 transition-all duration-300 transform bg-foreground border-r border-gray-200",
+          "fixed top-0 left-0 z-40 h-full pt-16 transition-all duration-300 transform bg-foreground border-r border-gray-200 dark:border-gray-800",
           sidebarOpen ? "w-64 translate-x-0" : "w-64 -translate-x-full lg:translate-x-0"
         )}
       >
         {/* Sidebar title */}
-        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-white z-50">
+        <div className="absolute top-0 left-0 w-full h-16 flex items-center px-4 border-gray-200 bg-none z-50">
           <span className="text-4xl font-bold text-primary-dark tracking-wide">Move<span className="text-secondary">Inn</span></span>
         </div>
         <ScrollArea className="h-full px-3 py-4 pb-24">
@@ -67,38 +99,81 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
               />
             ))}
 
-            <div className="pt-4 mt-4 border-t border-gray-200">
-              {settingsNav.map(({ label, href, icon: Icon }) => (
-                <SidebarItem
-                  key={label}
-                  href={href}
-                  icon={<Icon className="h-5 w-5" />}
-                  label={label}
-                />
-              ))}
+            <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+              <Button
+                variant="ghost"
+                onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+                className="w-full justify-start text-text-secondary hover:bg-secondary/15 hover:text-primary-dark"
+              >
+                {theme === "light" ? (
+                  <MoonIcon className="h-5 w-5 mr-3" />
+                ) : (
+                  <SunIcon className="h-5 w-5 mr-3" />
+                )}
+                Toggle Theme
+              </Button>
             </div>
           </nav>
         </ScrollArea>
 
+        {/* Logout Button */}
+        <div className="absolute bottom-20 left-0 w-full px-3 py-2 bg-none">
+          <Button
+            onClick={() => setShowLogoutModal(true)}
+            variant="default"
+            className="w-full bg-foreground justify-start text-red-600 border-red-200 hover:bg-red-200/70"
+          >
+            <LogOutIcon className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
+
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 bg-white">
+        <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 dark:border-gray-700 bg-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <img
-                src={user?.avatar}
+                src={`${API_BASE_IMAGE_URL}${user?.avatarUrl}`}
                 alt="User Avatar"
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
-              <div className="flex flex-col">
-                <span className="text-sm font-medium text-gray-900">{user?.name}</span>
-                <span className="text-xs text-text-secondary">{user?.role}</span>
+              <div className="flex flex-col gap-2">
+                <span className="text-sm font-medium text-text">{user?.name}</span>
+                <span className="text-xs text-text-secondary">{getRoleBadge(user?.role)}</span>
               </div>
             </div>
+            
             <Button variant="ghost" size="icon" className="text-primary-dark hover:bg-accent-light/30">
               <UserIcon className="h-4 w-4" />
             </Button>
-          </div>
+          </div>  
         </div>
+
+        {/* MODAL */}
+        {showLogoutModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-foreground rounded-lg shadow-lg w-[90%] max-w-sm p-6">
+              <h2 className="text-lg font-semibold text-primary-dark mb-2">Confirm Logout</h2>
+              <p className="text-sm text-text-secondary mb-4">Are you sure you want to log out?</p>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" className="bg-foreground text-primary-dark hover:bg-gray-400" onClick={() => setShowLogoutModal(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="outline"
+                  className="bg-red-500 text-white hover:bg-red-600"
+                  onClick={() => {
+                    logout()
+                    setShowLogoutModal(false)
+                  }}
+                >
+                  Log Out
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
       </aside>
 
       {/* Overlay */}

@@ -12,6 +12,7 @@ public class ForumDTO
     public DateTime CreatedAt { get; set; }
     public Guid CreatorId { get; set; }
     public string CreatorName { get; set; } = string.Empty;
+    public string CreatorNationatility { get; set; } = string.Empty;
     public string CreatorAvatar { get; set; } = string.Empty;
 }
 
@@ -40,7 +41,10 @@ public class ForumThreadDTO
     public string Title { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public Guid CreatedBy { get; set; }
+    public Guid CreatorId { get; set; }
+    public string CreatorName { get; set; } = string.Empty;
+    public string CreatorNationatility { get; set; } = string.Empty;
+    public string CreatorAvatar { get; set; } = string.Empty;
 }
 
 public class CreateForumMessageDTO
@@ -57,6 +61,9 @@ public class ForumMessageDTO
     public Guid ThreadId { get; set; }
     public string Content { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
-    public Guid CreatedBy { get; set; }
+    public Guid CreatorId { get; set; }
+    public string CreatorName { get; set; } = string.Empty;
+    public string CreatorNationatility { get; set; } = string.Empty;
+    public string CreatorAvatar { get; set; } = string.Empty;
     public Guid? ParentMessageId { get; set; }
 }

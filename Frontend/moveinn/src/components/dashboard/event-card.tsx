@@ -41,7 +41,7 @@ export function EventCard({ title, date, location, attendees, category, joined }
 
     return (
         <div
-        className={`flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-[var(--radius-lg)] border border-gray-100 hover:border-gray-200 bg-gradient-to-r ${getCategoryColor()} transition-all hover:shadow-md`}
+        className={`flex flex-col md:flex-row items-start md:items-center gap-4 p-4 rounded-[var(--radius-lg)] hover:border-gray-200 bg-gradient-to-r ${getCategoryColor()} transition-all hover:shadow-md`}
         >
         <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${getCategoryIconColor()}`}>
             <CalendarIcon className="h-6 w-6" />
@@ -49,7 +49,7 @@ export function EventCard({ title, date, location, attendees, category, joined }
 
         <div className="flex-1">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
-            <h3 className="font-medium text-[#0E1E40]">{title}</h3>
+            <h3 className="font-medium text-text">{title}</h3>
             <Badge
                 className={
                 joined
@@ -65,7 +65,7 @@ export function EventCard({ title, date, location, attendees, category, joined }
             </Badge>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center text-sm text-gray-500 gap-y-1 sm:gap-x-4">
+            <div className="flex flex-col sm:flex-row sm:items-center text-sm text-text-secondary gap-y-1 sm:gap-x-4">
             <div className="flex items-center">
                 <CalendarIcon className="h-3.5 w-3.5 mr-1 flex-shrink-0" />
                 <span>{date}</span>

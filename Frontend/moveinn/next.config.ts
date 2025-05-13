@@ -8,9 +8,12 @@ const nextConfig: NextConfig = {
         hostname: "localhost",
         port: "7023",
         pathname: "/accommodations/**",
+        
       },
     ],
   },
+  reactStrictMode: false,
+  /* config options here */
 };
 
 export default nextConfig;

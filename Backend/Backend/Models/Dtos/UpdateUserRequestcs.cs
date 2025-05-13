@@ -24,7 +24,7 @@ namespace Backend.Models.Dtos
         public string? Nationality { get; set; }
         public string? City { get; set; }
         public string? ErasmusCountry { get; set; }
-        public DateOnly ErasmusDate { get; set; }
+        public DateOnly? ErasmusDate { get; set; }
 
         [Phone]
         public string? Phone { get; set; }

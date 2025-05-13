@@ -6,6 +6,7 @@ public interface IForumRepository
 {
     Task CreateReviewAsync(Forum forum);
     Task CreateThreadAsync(ForumThread forumThread);
+    Task<Forum> GetForumByIdAsync(Guid id);
     Task<IEnumerable<ForumThread>> GetThreadsByForumIdAsync(Guid forumId);
     Task<ForumThread?> GetThreadByIdAsync(Guid threadId);
     Task CreateMessageAsync(ForumMessages message);

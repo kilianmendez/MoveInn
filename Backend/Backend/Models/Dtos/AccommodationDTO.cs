@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Backend.Models.Database.Enum;
 
 namespace Backend.Models.Dtos;
 public class AccommodationDTO
@@ -21,4 +22,8 @@ public class AccommodationDTO
 
     [DataType(DataType.Date)]
     public DateTime AvailableTo { get; set; }
+    public List<string> Images { get; set; } = new();
+
+    public AcommodationType AcommodationType { get; set; }
+
 }

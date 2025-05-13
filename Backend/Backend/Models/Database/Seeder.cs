@@ -1,4 +1,7 @@
-﻿using Backend.Models.Database.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
 using Backend.Services;
 using Microsoft.EntityFrameworkCore;
@@ -9,7 +12,6 @@ namespace Backend.Models.Database
     {
         private readonly DataContext _dataContext;
 
-
         public Seeder(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -17,19 +19,19 @@ namespace Backend.Models.Database
 
         public async Task SeedAsync()
         {
+            // Si ya hay datos, no hacer nada
             if (await _dataContext.Users.AnyAsync())
-            {
                 return;
-            }
 
             await Seed();
             await _dataContext.SaveChangesAsync();
         }
 
-        public async Task Seed()
+        private async Task Seed()
         {
+            // 1) Usuarios
             var users = new List<User>
-                 {
+            {
                 new User
                 {
                     Id = Guid.NewGuid(),
@@ -39,7 +41,7 @@ namespace Backend.Models.Database
                     Password = AuthService.HashPassword("passwordYasir"),
                     Biography = "Living the Life",
                     Phone = "631387444",
-                    AvatarUrl = "default-avatar-url",
+                    AvatarUrl = "images/Yasir.jpeg",
                     Role = Role.Administrator,
                     School = "CPIFP Alan Turing",
                     Degree = "Web Aplication Development",
@@ -50,53 +52,60 @@ namespace Backend.Models.Database
                     SocialMedias = new List<SocialMediaLink>
                     {
                         new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yasiirr7" },
-
-                    }
-                },
-                new User
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Christian",
-                    LastName = "Rodriguez", 
-                    Mail = "christian@gmail.com",
-                    Password = AuthService.HashPassword("passwordChristian"),
-                    Biography = "Biografía de Christian",
-                    Phone = "222222222",
-                    AvatarUrl = "default-avatar-url",
-                    Role = Role.Administrator,
-                    School = "Escuela de Christian", 
-                    Degree = "Grado de Christian", 
-                    Nationality = "Nacionalidad de Christian",
-                    SocialMedias = new List<SocialMediaLink>
-                    {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeChristian" }
                     }
                 },
                 new User
                 {
                     Id = Guid.NewGuid(),
                     Name = "Kilian",
-                    LastName = "Méndez",
+                    LastName = "Méndez Ávila",
                     Mail = "kilian@gmail.com",
                     Password = AuthService.HashPassword("passwordKilian"),
-                    Biography = "Biografía de Kilian",
-                    Phone = "333333333",
-                    AvatarUrl = "default-avatar-url", 
-                    Role = Role.Administrator,
-                    School = "Escuela de Kilian", 
-                    Degree = "Grado de Kilian", 
-                    Nationality = "Nacionalidad de Kilian", 
+                    Biography = "De erasmus en Turquía",
+                    Phone = "635893667",
+                    AvatarUrl = "images/default-avatar-url.jpeg",
+                    Role = Role.Lessor,
+                    School = "CPIFP Alan Turing",
+                    Degree = "Web Aplication Development",
+                    City = "Izmir",
+                    ErasmusCountry = "Turkey",
+                    Nationality = "Spain",
+                    ErasmusDate = new DateOnly(2025, 3, 14),
                     SocialMedias = new List<SocialMediaLink>
                     {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/fakeKilian" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeKilian" }
+                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/ki_mendez" },
                     }
+                },
+                new User
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Christian",
+                    LastName = "Rodriguez Lara",
+                    Mail = "christian@gmail.com",
+                    Password = AuthService.HashPassword("passwordChristian"),
+                    Biography = "Hola Izmir!!!",
+                    Phone = "667896654",
+                    AvatarUrl = "images/default-avatar-url.jpeg",
+                    Role = Role.Administrator,
+                    School = "CPIFP Alan Turing",
+                    Degree = "Web Aplication Development",
+                    City = "Izmir",
+                    ErasmusCountry = "Turkey",
+                    Nationality = "Spain",
+                    ErasmusDate = new DateOnly(2025, 3, 14),
+                    SocialMedias = new List<SocialMediaLink>
+                    {
+                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/christian_rod" },
                     }
-                };
-            var recommendation1 = new Recommendation
+                }
+            };
+            _dataContext.Users.AddRange(users);
+
+            // 2) Recomendaciones
+            var rec1 = new Recommendation
             {
                 Id = Guid.NewGuid(),
+                UserId = users[0].Id,
                 Title = "La Cacharrería",
                 Description = "Cafetería con un estilo vintage ideal para desayunar tostadas gourmet y cafés especiales.",
                 Category = Category.Cafeteria,
@@ -107,20 +116,20 @@ namespace Backend.Models.Database
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
-                    new Image { Id = Guid.NewGuid(), Url = "recommendations/LaCacharreria.jpeg" },
+                    new Image { Id = Guid.NewGuid(), Url = "recommendations/LaCacharreria.jpeg" }
                 }
             };
-
-            var recommendation2 = new Recommendation
+            var rec2 = new Recommendation
             {
                 Id = Guid.NewGuid(),
+                UserId = users[1].Id,
                 Title = "El Pintón",
                 Description = "Restaurante moderno en el centro histórico que fusiona cocina andaluza con toques internacionales.",
                 Category = Category.Restaurant,
                 Address = "Calle Francos, 42, 41004 Sevilla",
                 City = "Sevilla",
                 Country = "Spain",
-                Rating = Backend.Models.Database.Enum.Rating.Four,
+                Rating = Rating.Four,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
@@ -128,17 +137,17 @@ namespace Backend.Models.Database
                     new Image { Id = Guid.NewGuid(), Url = "recommendations/ElPinton2.jpg" }
                 }
             };
-
-            var recommendation3 = new Recommendation
+            var rec3 = new Recommendation
             {
                 Id = Guid.NewGuid(),
+                UserId = users[2].Id,
                 Title = "Museo de Bellas Artes de Sevilla",
                 Description = "Una de las pinacotecas más importantes de España, con una colección destacada de pintura barroca.",
                 Category = Category.Museum,
                 Address = "Plaza del Museo, 9, 41001 Sevilla",
                 City = "Sevilla",
                 Country = "Spain",
-                Rating = Backend.Models.Database.Enum.Rating.Four,
+                Rating = Rating.Four,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
@@ -146,17 +155,17 @@ namespace Backend.Models.Database
                     new Image { Id = Guid.NewGuid(), Url = "recommendations/Museo2.jpg" }
                 }
             };
-
-            var recommendation4 = new Recommendation
+            var rec4 = new Recommendation
             {
                 Id = Guid.NewGuid(),
+                UserId = users[0].Id,
                 Title = "Parque de María Luisa",
                 Description = "Espacio verde emblemático de Sevilla, ideal para pasear y disfrutar de su exuberante vegetación.",
                 Category = Category.Park,
                 Address = "Av. de María Luisa, s/n, 41013 Sevilla",
                 City = "Sevilla",
                 Country = "Spain",
-                Rating = Backend.Models.Database.Enum.Rating.Four,
+                Rating = Rating.Four,
                 CreatedAt = DateTime.UtcNow,
                 RecommendationImages = new List<Image>
                 {
@@ -164,7 +173,9 @@ namespace Backend.Models.Database
                     new Image { Id = Guid.NewGuid(), Url = "recommendations/Parque2.jpg" }
                 }
             };
+            _dataContext.Recommendations.AddRange(rec1, rec2, rec3, rec4);
 
+            // 3) Alojamientos
             var accommodations = new List<Accommodation>
             {
                 new Accommodation
@@ -180,12 +191,12 @@ namespace Backend.Models.Database
                     Bathrooms = 1,
                     SquareMeters = 75,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 6, 1),
-                    AvailableTo = new DateTime(2025, 12, 25),
+                    AvailableFrom = new DateTime(2025,6,1),
+                    AvailableTo = new DateTime(2025,12,25),
                     OwnerId = users[0].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid1.jpg" },
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid2.jpg" },
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid3.jpg" },
                         new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Madrid4.jpg" }
@@ -196,7 +207,7 @@ namespace Backend.Models.Database
                     Id = Guid.NewGuid(),
                     Title = "Estudio pequeño en Retiro",
                     Description = "Acogedor estudio cerca del Parque del Retiro",
-                    Address = "Calle del Retiro n56",
+                    Address = "Calle del Retiro 56",
                     City = "Madrid",
                     Country = "Spain",
                     PricePerMonth = 1500.00m,
@@ -204,22 +215,22 @@ namespace Backend.Models.Database
                     Bathrooms = 1,
                     SquareMeters = 40,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 6, 1),
-                    AvailableTo = new DateTime(2025, 12, 31),
+                    AvailableFrom = new DateTime(2025,6,1),
+                    AvailableTo = new DateTime(2025,12,31),
                     OwnerId = users[1].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda2.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MadridSegunda3.jpg" }
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Retiro1.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Retiro2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Retiro3.jpg" }
                     }
                 },
                 new Accommodation
                 {
                     Id = Guid.NewGuid(),
-                    Title = "Apartamento Clasico en Barcelona",
+                    Title = "Apartamento clásico en Barcelona",
                     Description = "Amplio apartamento con vistas a la Sagrada Familia",
-                    Address = "Camí de les Vinyes 789",
+                    Address = "Carrer de Mallorca, 401",
                     City = "Barcelona",
                     Country = "Spain",
                     PricePerMonth = 1800.00m,
@@ -227,96 +238,27 @@ namespace Backend.Models.Database
                     Bathrooms = 2,
                     SquareMeters = 120,
                     HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableFrom = new DateTime(2025,1,1),
+                    AvailableTo = new DateTime(2025,5,31),
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona2.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Barcelona3.jpg" }
-                    }
-                },
-
-                new Accommodation
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Residencia Moderna en Barcelona",
-                    Description = "Amplio apartamento remodelado con vistas a Paseig de Gracia",
-                    Address = "Camí de les corts 21",
-                    City = "Barcelona",
-                    Country = "Spain",
-                    PricePerMonth = 1800.00m,
-                    NumberOfRooms = 3,
-                    Bathrooms = 2,
-                    SquareMeters = 120,
-                    HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
-                    OwnerId = users[2].Id,
-                    AccomodationImages = new List<ImageAccommodation>
-                    {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda2.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BarcelonaSegunda3.jpg" }
-                    }
-                },
-
-                new Accommodation
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Casa Tradicional a las afueras de Churriana",
-                    Description = "Apartamento en zona alta de churriana",
-                    Address = "Calle los laureles n9",
-                    City = "Malaga",
-                    Country = "Spain",
-                    PricePerMonth = 1800.00m,
-                    NumberOfRooms = 3,
-                    Bathrooms = 2,
-                    SquareMeters = 120,
-                    HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
-                    OwnerId = users[2].Id,
-                    AccomodationImages = new List<ImageAccommodation>
-                    {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga2.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/Malaga3.jpg" }
-                    }
-                },
-
-                new Accommodation
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Piso Costero en la Costa del Sol",
-                    Description = "Apartamento en linea costera de Benalmadena",
-                    Address = "Calle las Rosas n12",
-                    City = "Malaga",
-                    Country = "Spain",
-                    PricePerMonth = 1800.00m,
-                    NumberOfRooms = 3,
-                    Bathrooms = 2,
-                    SquareMeters = 120,
-                    HasWifi = true,
-                    AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
-                    OwnerId = users[2].Id,
-                    AccomodationImages = new List<ImageAccommodation>
-                    {
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda2.jpg" },
-                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/MalagaSegunda3.jpg" }
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BCN1.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BCN2.jpg" },
+                        new ImageAccommodation { Id = Guid.NewGuid(), Url = "accommodations/BCN3.jpg" }
                     }
                 }
             };
+            _dataContext.Accommodations.AddRange(accommodations);
+
+            // 4) Reservas
             var reservations = new List<Reservation>
             {
                 new Reservation
                 {
                     Id = Guid.NewGuid(),
-                    StartDate = new DateTime(2025, 07, 01),
-                    EndDate = new DateTime(2025, 07, 10),
+                    StartDate = new DateTime(2025,7,1),
+                    EndDate = new DateTime(2025,7,10),
                     TotalPrice = 1200.00m,
                     Status = ReservationStatus.Pending,
                     UserId = users[0].Id,
@@ -325,8 +267,8 @@ namespace Backend.Models.Database
                 new Reservation
                 {
                     Id = Guid.NewGuid(),
-                    StartDate = new DateTime(2025, 08, 01),
-                    EndDate = new DateTime(2025, 08, 05),
+                    StartDate = new DateTime(2025,8,1),
+                    EndDate = new DateTime(2025,8,5),
                     TotalPrice = 1500.00m,
                     Status = ReservationStatus.Confirmed,
                     UserId = users[1].Id,
@@ -335,8 +277,8 @@ namespace Backend.Models.Database
                 new Reservation
                 {
                     Id = Guid.NewGuid(),
-                    StartDate = new DateTime(2025, 09, 01),
-                    EndDate = new DateTime(2025, 09, 03),
+                    StartDate = new DateTime(2025,9,1),
+                    EndDate = new DateTime(2025,9,3),
                     TotalPrice = 1800.00m,
                     Status = ReservationStatus.Cancelled,
                     UserId = users[2].Id,
@@ -345,14 +287,17 @@ namespace Backend.Models.Database
                 new Reservation
                 {
                     Id = Guid.NewGuid(),
-                    StartDate = new DateTime(2025, 06, 01),
-                    EndDate = new DateTime(2025, 06, 15),
+                    StartDate = new DateTime(2025,6,1),
+                    EndDate = new DateTime(2025,6,15),
                     TotalPrice = 2000.00m,
                     Status = ReservationStatus.Completed,
                     UserId = users[0].Id,
                     AccommodationId = accommodations[1].Id
                 }
             };
+            _dataContext.Reservations.AddRange(reservations);
+
+            // 5) Reseñas
             var reviews = new List<Review>
             {
                 new Review
@@ -362,7 +307,7 @@ namespace Backend.Models.Database
                     Content = "El alojamiento superó mis expectativas y la atención fue impecable.",
                     Rating = Rating.Five,
                     CreatedAt = DateTime.UtcNow,
-                    ReservationId = reservations[3].Id, 
+                    ReservationId = reservations[3].Id,
                     UserId = reservations[3].UserId
                 },
                 new Review
@@ -386,13 +331,16 @@ namespace Backend.Models.Database
                     UserId = reservations[2].UserId
                 }
             };
-            var forum = new Forum
+            _dataContext.Reviews.AddRange(reviews);
+
+            // 6) Foros, hilos y mensajes
+            var forum1 = new Forum
             {
                 Id = Guid.NewGuid(),
                 Title = "Foro de Prueba",
                 Description = "Este es un foro para pruebas.",
                 Country = "Spain",
-                Category = ForumCategory.Otro,
+                Category = ForumCategory.Other,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = users[0].Id,
                 Threads = new List<ForumThread>()
@@ -401,105 +349,74 @@ namespace Backend.Models.Database
             var thread1 = new ForumThread
             {
                 Id = Guid.NewGuid(),
-                ForumId = forum.Id,
+                ForumId = forum1.Id,
                 Title = "Hilo simple",
                 Content = "Este hilo tiene mensajes directos al hilo.",
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = users[1].Id,
                 Posts = new List<ForumMessages>()
             };
-
-            var message1_thread1 = new ForumMessages
+            thread1.Posts.Add(new ForumMessages
             {
                 Id = Guid.NewGuid(),
                 ThreadId = thread1.Id,
-                Content = "Mensaje 1 en hilo simple",
+                Content = "Primer mensaje",
                 CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[2].Id,
-                ParentMessageId = null
-            };
+                CreatedBy = users[2].Id
+            });
+            forum1.Threads.Add(thread1);
 
-            var message2_thread1 = new ForumMessages
+            var forum2 = new Forum
             {
                 Id = Guid.NewGuid(),
-                ThreadId = thread1.Id,
-                Content = "Mensaje 2 en hilo simple",
+                Title = "My First Culture Shock in Germany!",
+                Description = "My first days in Germany were full of surprises…",
+                Country = "Germany",
+                Category = ForumCategory.CulturalAndSocialIntegration,
                 CreatedAt = DateTime.UtcNow,
                 CreatedBy = users[0].Id,
-                ParentMessageId = null
+                Threads = new List<ForumThread>()
             };
 
-            thread1.Posts.Add(message1_thread1);
-            thread1.Posts.Add(message2_thread1);
-
-            var thread2 = new ForumThread
+            var events = new List<Event>
             {
-                Id = Guid.NewGuid(),
-                ForumId = forum.Id,
-                Title = "Hilo con respuestas anidadas",
-                Content = "Este hilo tiene mensajes y respuestas anidadas.",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[1].Id,
-                Posts = new List<ForumMessages>()
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    CreatorId = users[0].Id,
+                    Title = "Weekend Trip to Montserrat",
+                    Date = new DateTime(2025,9,19,9,0,0),
+                    Location = "Meeting at Plaça Catalunya",
+                    Address = "Plaça Catalunya, Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 30,
+                    
+                    Category = EventCategory.Trip,
+                    Description = "Join us for a day trip to the beautiful mountain of Montserrat!",
+                    ImageUrl = "events/montserrat-trip.jpg",
+                    Tags = new List<string> { "Hiking", "Nature", "Adventure" },
+                    Participants = new List<User> { users[1], users[2] }
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    CreatorId = users[1].Id,
+                    Title = "City Food Tour",
+                    Date = new DateTime(2025,10,5,11,30,0),
+                    Location = "Plaza Mayor",
+                    Address = "Plaza Mayor, Madrid",
+                    AttendeesCount = 0,
+                    MaxAttendees = 100, 
+                    Category = EventCategory.Food,
+                    Description = "Degustación de tapas por los mejores bares de la ciudad.",
+                    ImageUrl = "events/food-tour.jpg",
+                    Tags = new List<string> { "Food", "Culture", "Tour" },
+                    Participants = new List<User> { users[0] }
+                }
             };
+            _dataContext.Events.AddRange(events);
 
-            var messageA_thread2 = new ForumMessages
-            {
-                Id = Guid.NewGuid(),
-                ThreadId = thread2.Id,
-                Content = "Mensaje A en hilo con respuestas anidadas",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[2].Id,
-                ParentMessageId = null
-            };
-
-            var messageB_thread2 = new ForumMessages
-            {
-                Id = Guid.NewGuid(),
-                ThreadId = thread2.Id,
-                Content = "Mensaje B en hilo con respuestas anidadas",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[0].Id,
-                ParentMessageId = null
-            };
-
-            var messageC_thread2 = new ForumMessages
-            {
-                Id = Guid.NewGuid(),
-                ThreadId = thread2.Id,
-                Content = "Mensaje C, respuesta a mensaje B",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[2].Id,
-                ParentMessageId = messageB_thread2.Id
-            };
-
-            var messageD_thread2 = new ForumMessages
-            {
-                Id = Guid.NewGuid(),
-                ThreadId = thread2.Id,
-                Content = "Mensaje D, respuesta a mensaje A",
-                CreatedAt = DateTime.UtcNow,
-                CreatedBy = users[1].Id,
-                ParentMessageId = messageA_thread2.Id
-            };
-
-            thread2.Posts.Add(messageA_thread2);
-            thread2.Posts.Add(messageB_thread2);
-            thread2.Posts.Add(messageC_thread2);
-            thread2.Posts.Add(messageD_thread2);
-
-            forum.Threads.Add(thread1);
-            forum.Threads.Add(thread2);
-
-            _dataContext.Users.AddRange(users);
-            _dataContext.Recommendations.AddRange(recommendation1, recommendation2);
-            _dataContext.Accommodations.AddRange(accommodations);
-            _dataContext.Reservations.AddRange(reservations);
-            _dataContext.Reviews.AddRange(reviews);
-            _dataContext.Forum.Add(forum);
-            await _dataContext.SaveChangesAsync();
+            _dataContext.Forum.AddRange(forum1, forum2);
         }
-
     }
-
 }

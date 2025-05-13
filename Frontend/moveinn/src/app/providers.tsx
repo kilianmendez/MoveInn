@@ -1,12 +1,19 @@
 "use client";
 
+import React, { ReactNode } from "react";
 import { AuthProvider } from "@/context/authcontext";
-import type { ReactNode } from "react";
+import { WebsocketProvider } from "@/context/WebSocketContext";
 
-export function Providers({ children }: { children: ReactNode }) {
+interface ProvidersProps {
+  children: ReactNode;
+}
+
+export function Providers({ children }: ProvidersProps) {
   return (
-    <>
-      <AuthProvider>{children}</AuthProvider>
-    </>
+    <AuthProvider>
+      <WebsocketProvider>
+        {children}
+      </WebsocketProvider>
+    </AuthProvider>
   );
 }

@@ -40,33 +40,33 @@ export function AcommodationCard({ acommodation }: AcommodationCard) {
       {/* Contenido */}
       <CardContent className="p-4 flex flex-col flex-1 pt-0">
         {/* Título */}
-        <h3 className="font-semibold text-[#0E1E40] text-lg mb-1">
+        <h3 className="font-semibold text-text-secondary text-lg mb-1">
           {acommodation.title}
         </h3>
 
         {/* Ubicación */}
-        <div className="text-gray-600 text-sm mb-2 flex items-center">
+        <div className="text-gray-500 text-sm mb-2 flex items-center">
           <MapPin className="h-3 w-3 text-[#4C69DD] mr-1" />
           {acommodation.city}, {acommodation.country}
         </div>
 
         {/* Descripción truncada */}
-        <p className="text-sm text-gray-500 mb-3 line-clamp-3">
+        <p className="text-sm text-text mb-3 line-clamp-3">
           {acommodation.description}
         </p>
 
         {/* Info adicional + precio */}
         <div className="mt-auto">
           <div className="flex gap-2 mb-4">
-            <Badge>
+            <Badge className="text-white">
               {acommodation.numberOfRooms}
               <BedIcon className="ml-1 h-4 w-4" />
             </Badge>
-            <Badge>
+            <Badge className="text-white bg-accent">
               {acommodation.bathrooms}
               <BathIcon className="ml-1 h-4 w-4" />
             </Badge>
-            <Badge>
+            <Badge className="text-white bg-secondary-greenblue">
               {acommodation.squareMeters} m²
             </Badge>
           </div>
