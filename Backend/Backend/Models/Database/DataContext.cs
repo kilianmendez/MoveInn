@@ -27,6 +27,8 @@ public class DataContext : DbContext
     public DbSet<ForumThread> ForumsThread { get; set; }
     public DbSet<ForumMessages> ForumsMessages { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<Event> Events { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

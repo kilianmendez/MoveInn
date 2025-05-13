@@ -251,7 +251,6 @@ namespace Backend.Models.Database
             };
             _dataContext.Accommodations.AddRange(accommodations);
 
-            // 4) Reservas
             var reservations = new List<Reservation>
             {
                 new Reservation
