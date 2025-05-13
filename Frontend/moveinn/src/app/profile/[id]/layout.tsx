@@ -2,7 +2,7 @@ import { Metadata } from 'next';
 
 interface LayoutProps {
     children: React.ReactNode;
-    params: { id: string };
+    params: Promise<{ id: string }>;
 }
 
 export async function generateMetadata(): Promise<Metadata> {

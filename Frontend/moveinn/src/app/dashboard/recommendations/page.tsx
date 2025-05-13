@@ -77,7 +77,7 @@ export default function RecommendationsPage() {
 
   const handleSearch = async () => {
     try {
-      const token = localStorage.getItem("token") // 👈 get token from storage
+      const token = localStorage.getItem("accessToken") 
   
       const body = {
         query: "",

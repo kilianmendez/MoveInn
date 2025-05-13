@@ -139,7 +139,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
               />
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-text">{user?.name}</span>
-                <span className="text-xs text-text-secondary">{getRoleBadge(user?.role)}</span>
+                <span className="text-xs text-text-secondary">{getRoleBadge(user?.role ?? -1)}</span>
               </div>
             </div>
             
