@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Accommodation Details | MoveInn",
   description: "View detailed information about this accommodation",
 }
-
+// Comentario
 export default function AccommodationLayout({
   children,
 }: {
