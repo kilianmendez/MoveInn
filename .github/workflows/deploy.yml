@@ -35,7 +35,7 @@ jobs:
         run: |
           aws deploy create-deployment \
             --application-name      MoveInnBackend \
-            --deployment-group-name MoveInnProd \
+            --deployment-group-name MoveInnBackend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Backend auto-deploy @${{ github.sha }}" \
