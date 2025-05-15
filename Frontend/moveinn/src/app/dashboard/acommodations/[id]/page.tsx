@@ -215,7 +215,7 @@ export default function AccommodationDetailsPage() {
               </div>
 
             </div>
-
+{/* hola */}
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-text-secondary">Security deposit</span>
