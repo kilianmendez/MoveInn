@@ -1,57 +1,40 @@
-name: Deploy MoveInn (Backend + Frontend)
+name: Deploy MoveInn
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'Backend/**'
       - 'Frontend/**'
 
-permissions:
-  contents: read
-
 jobs:
-  configure-aws:
-    name: Configure AWS
+  deploy:
     runs-on: ubuntu-22.04
-    outputs:
-      aws-region: us-east-1
     steps:
-      - name: Configure AWS Credentials
+      - uses: actions/checkout@v4
+
+      - name: Configurar AWS
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region:            us-east-1
-        
 
-  deploy-backend:
-    name: Deploy Backend
-    needs: configure-aws
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Backend CodeDeploy
+      - name: Deploy Backend
         run: |
           aws deploy create-deployment \
-            --application-name MoveInnBackend \
+            --application-name      MoveInnBackend \
             --deployment-group-name MoveInnBackend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Backend auto-deploy @${{ github.sha }}" \
             --region us-east-1
 
-  deploy-frontend:
-    name: Deploy Frontend
-    needs: configure-aws
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-      - name: Frontend CodeDeploy
+      - name: Deploy Frontend
         run: |
           aws deploy create-deployment \
-            --application-name MoveInnFrontend \
+            --application-name      MoveInnFrontend \
             --deployment-group-name MoveInnFrontend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
