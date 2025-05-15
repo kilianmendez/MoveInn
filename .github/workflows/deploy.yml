@@ -34,12 +34,12 @@ jobs:
       - name: Backend CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name      MoveInnBackend \
+            --application-name MoveInnBackend \
             --deployment-group-name MoveInnBackend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Backend auto-deploy @${{ github.sha }}" \
-            --region ${{ needs.configure-aws.outputs.aws-region }}
+            --region us-east-1
 
   deploy-frontend:
     name: Deploy Frontend
@@ -50,9 +50,9 @@ jobs:
       - name: Frontend CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name      MoveInnFrontend \
+            --application-name MoveInnFrontend \
             --deployment-group-name MoveInnFrontend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Frontend auto-deploy @${{ github.sha }}" \
-            --region ${{ needs.configure-aws.outputs.aws-region }}
+            --region us-east-1
