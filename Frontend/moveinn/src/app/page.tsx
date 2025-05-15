@@ -552,7 +552,7 @@ export default function Home() {
                 </CardContent>
               </Card>
             </TabsContent>
-
+/**/
             <TabsContent value="profiles">
               <Card className="border-none shadow-md">
                 <CardHeader>
