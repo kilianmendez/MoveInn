@@ -24,8 +24,8 @@ jobs:
       - name: Deploy Backend
         run: |
           aws deploy create-deployment \
-            --application-name      MoveInnBackend \
-            --deployment-group-name MoveInnBackend \
+            --application-name MoveInnBackend \
+            --deployment-group-name MoveInnProd \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Backend auto-deploy @${{ github.sha }}" \
@@ -34,7 +34,7 @@ jobs:
       - name: Deploy Frontend
         run: |
           aws deploy create-deployment \
-            --application-name      MoveInnFrontend \
+            --application-name MoveInnFrontend \
             --deployment-group-name MoveInnFrontend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
