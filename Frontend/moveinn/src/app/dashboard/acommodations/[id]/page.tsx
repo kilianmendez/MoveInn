@@ -213,7 +213,6 @@ export default function AccommodationDetailsPage() {
                 <span className="text-3xl font-bold text-primary-dark">€{accommodation.pricePerMonth}</span>
                 <span className="text-text-secondary ml-1">/month</span>
               </div>
-/*hola*/
             </div>
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
