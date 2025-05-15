@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "[ApplicationStart] Iniciando backend..."
+echo "[ApplicationStart] Iniciando Backend…"
 sudo systemctl daemon-reload
-sudo systemctl start backend.service
 sudo systemctl enable backend.service
+sudo systemctl start backend.service

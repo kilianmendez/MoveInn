@@ -1,4 +1,6 @@
 #!/bin/bash
-echo "[ApplicationStart] Iniciando frontend..."
-sudo systemctl reload apache
-sudo systemctl enable apache
+echo "[ApplicationStart] Iniciando Frontend…"
+sudo systemctl reload apache2
+
+sudo systemctl enable frontend.service
+sudo systemctl start frontend.service

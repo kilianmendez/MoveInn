@@ -1,0 +1,58 @@
+name: Deploy MoveInn (Backend + Frontend)
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Backend/**'
+      - 'Frontend/**'
+
+permissions:
+  contents: read
+
+jobs:
+  configure-aws:
+    name: Configure AWS
+    runs-on: ubuntu-22.04
+    outputs:
+      aws-region: us-east-1
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region:            us-east-1
+
+  deploy-backend:
+    name: Deploy Backend
+    needs: configure-aws
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Backend CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name      MoveInnBackend \
+            --deployment-group-name MoveInnProd \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
+            --description "Backend auto-deploy @${{ github.sha }}" \
+            --region ${{ needs.configure-aws.outputs.aws-region }}
+
+  deploy-frontend:
+    name: Deploy Frontend
+    needs: configure-aws
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Frontend CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name      MoveInnFrontend \
+            --deployment-group-name MoveInnFrontend \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
+            --description "Frontend auto-deploy @${{ github.sha }}" \
+            --region ${{ needs.configure-aws.outputs.aws-region }}
