@@ -1,6 +1,5 @@
-#!/bin/bash
-echo "[ApplicationStart] Iniciando Frontend…"
+#!/usr/bin/env bash
+set -e
+# Asegura que Apache sirve del folder correcto
+sudo a2ensite frontend.conf
 sudo systemctl reload apache2
-
-sudo systemctl enable frontend.service
-sudo systemctl start frontend.service

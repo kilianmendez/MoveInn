@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: Frontend/moveinn/
-    destination: /var/www/frontend
+    destination: /home/ubuntu/app/frontend_src
 
   - source: Backend/Backend/bin/Release/net8.0/publish/
     destination: /var/www/backend
