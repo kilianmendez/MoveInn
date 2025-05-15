@@ -206,7 +206,6 @@ export default function AccommodationDetailsPage() {
           </div>
         </div>
 
-        {/* Right column - Booking card */}
         <div className="md:col-span-1">
           <div className="bg-foreground rounded-lg shadow-lg p-6 border border-background sticky top-6">
             <div className="flex items-center justify-between mb-4">
