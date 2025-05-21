@@ -55,26 +55,6 @@ namespace Backend.Models.Database
                 new User
                 {
                     Id = Guid.NewGuid(),
-                    Name = "Christian",
-                    LastName = "Rodriguez",
-                    Mail = "christian@gmail.com",
-                    Password = AuthService.HashPassword("passwordChristian"),
-                    Biography = "Biografía de Christian",
-                    Phone = "222222222",
-                    AvatarUrl = "default-avatar-url",
-                    Role = Role.Administrator,
-                    School = "Escuela de Christian",
-                    Degree = "Grado de Christian",
-                    Nationality = "Nacionalidad de Christian",
-                    SocialMedias = new List<SocialMediaLink>
-                    {
-                        new SocialMediaLink { SocialMedia = SocialMedia.Facebook, Url = "https://facebook.com/fakeChristian" },
-                        new SocialMediaLink { SocialMedia = SocialMedia.X, Url = "https://x.com/fakeChristian" }
-                    }
-                },
-                new User
-                {
-                    Id = Guid.NewGuid(),
                     Name = "Kilian",
                     LastName = "Méndez Ávila",
                     Mail = "kilian@gmail.com",
