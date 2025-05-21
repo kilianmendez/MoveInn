@@ -1,14 +1,17 @@
-name: Deploy MoveInn
+name: Deploy MoveInn Frontend
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
     paths:
-      - 'Backend/**'
       - 'Frontend/**'
 
+permissions:
+  contents: read
+
 jobs:
-  deploy:
+  deploy-frontend:
+    name: Deploy Frontend
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -18,25 +21,15 @@ jobs:
         with:
           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
           aws-region:            us-east-1
-
-      - name: Deploy Backend
-        run: |
-          aws deploy create-deployment \
-            --application-name MoveInnBackend \
-            --deployment-group-name MoveInnProd \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --description "Backend auto-deploy @${{ github.sha }}" \
-            --region us-east-1
 
       - name: Deploy Frontend
         run: |
           aws deploy create-deployment \
-            --application-name MoveInnFrontend \
+            --application-name     MoveInnFrontend \
             --deployment-group-name MoveInnFrontend-Prod \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --description "Frontend auto-deploy @${{ github.sha }}" \
-            --region us-east-1
+            --github-location      repository=${{ github.repository }},commitId=${{ github.sha }} \
+            --description          "Frontend auto-deploy @${{ github.sha }}" \
+            --region               us-east-1
