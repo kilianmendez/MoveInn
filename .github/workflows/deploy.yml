@@ -26,7 +26,7 @@ jobs:
           aws deploy create-deployment \
             --application-name MoveInnBackend \
             --deployment-group-name MoveInnProd \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Backend auto-deploy @${{ github.sha }}" \
             --region us-east-1
@@ -36,7 +36,7 @@ jobs:
           aws deploy create-deployment \
             --application-name MoveInnFrontend \
             --deployment-group-name MoveInnFrontend-Prod \
-            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
             --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
             --description "Frontend auto-deploy @${{ github.sha }}" \
             --region us-east-1
