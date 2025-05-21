@@ -214,7 +214,6 @@ export default function AccommodationDetailsPage() {
                 <span className="text-text-secondary ml-1">/month</span>
               </div>
             </div>
-            {/*  */}
             <div className="space-y-3 mb-6">
               <div className="flex justify-between">
                 <span className="text-text-secondary">Security deposit</span>

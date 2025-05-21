@@ -27,9 +27,9 @@ jobs:
       - name: Deploy Frontend
         run: |
           aws deploy create-deployment \
-            --application-name     MoveInnFrontend \
+            --application-name MoveInnFrontend \
             --deployment-group-name MoveInnFrontend-Prod \
             --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --github-location      repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --description          "Frontend auto-deploy @${{ github.sha }}" \
-            --region               us-east-1
+            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
+            --description "Frontend auto-deploy @${{ github.sha }}" \
+            --region us-east-1
