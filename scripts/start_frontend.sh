@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
 APP_DIR=/var/www/Frontend
-pm2 delete frontend || true
-pm2 start npm --name frontend --prefix "$APP_DIR" -- start
+
+if ! pm2 -v >/dev/null 2>&1; then
+  npm i -g pm2@latest
+fi
+
+cd "$APP_DIR"
+pm2 delete frontend || true               
+
+pm2 start "npm run start" --name frontend
+
 pm2 save
-echo "[ApplicationStart] Frontend funcionando bajo PM2"
