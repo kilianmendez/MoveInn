@@ -1,24 +1,18 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail                # corta si algo falla
 
-if ! command -v node >/dev/null 2>&1 || [ "$(node -v | cut -d. -f1 | tr -d v)" -lt 18 ]; then
+APP_DIR=/var/www/Frontend        # tu destino definitivo
+
+# 1- Asegúrate de tener Node (18+) y pm2; si ya están, estos pasos se saltan
+if ! command -v node &>/dev/null; then
   curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
   sudo apt-get install -y nodejs build-essential
 fi
+command -v pm2 &>/dev/null || sudo npm i -g pm2
 
-# PM2 global
-sudo npm i -g pm2
+# 2- Construir Next.js
+cd "$APP_DIR"
+npm ci --omit=dev                # instala deps sin paquetes de dev
+npm run build                    # genera .next/ y public/
 
-# Limpiar destino y preparar carpetas
-sudo rm -rf /var/www/Frontend
-mkdir -p /var/www/Frontend
-
-# Mover código y compilar
-mv /home/ubuntu/app/frontend_src /home/ubuntu/app/frontend_build
-cd /home/ubuntu/app/frontend_build
-
-npm ci --omit=dev
-npm run build  
-
-# Copiar artefactos y dependencias
-cp -R .next public package.json node_modules ecosystem.config.js /var/www/frontend
+echo "[BeforeInstall] Build completado en $APP_DIR"

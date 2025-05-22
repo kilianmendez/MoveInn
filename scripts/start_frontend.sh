@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 set -e
-# Asegura que Apache sirve del folder correcto
-sudo a2ensite frontend.conf
-sudo systemctl reload apache2
+
+APP_DIR=/var/www/Frontend
+
+# (re)iniciar con pm2
+pm2 delete frontend || true                      # ignora si no existía
+pm2 start npm --name frontend --prefix "$APP_DIR" -- start
+pm2 save                                         # guarda la lista para reboot
+
+echo "[ApplicationStart] Frontend en marcha bajo PM2"
