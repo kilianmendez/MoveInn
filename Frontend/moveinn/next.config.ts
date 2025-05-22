@@ -7,17 +7,12 @@ const nextConfig: NextConfig = {
     unoptimized: true,
   },
   reactStrictMode: false,
-<<<<<<< Updated upstream
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
     
-=======
-  eslint: {
-    ignoreDuringBuilds: true,
->>>>>>> Stashed changes
   },
 };
 
