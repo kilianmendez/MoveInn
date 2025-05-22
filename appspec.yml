@@ -6,7 +6,6 @@ files:
     destination: /var/www/Frontend
     file_exists_behavior: OVERWRITE
 
-
   # - source: Backend/Backend/bin/Release/net8.0/publish/
   #   destination: /var/www/backend
 
