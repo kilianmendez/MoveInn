@@ -112,7 +112,6 @@ export default function AccommodationDetailsPage() {
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-6xl">
-      {/* Header with title and rating */}
       <div className="flex justify-between items-center mb-2">
         <h1 className="text-2xl font-bold text-primary">{accommodation.title}</h1>
         <div className="flex items-center bg-accent-light px-2 py-1 rounded-md">
