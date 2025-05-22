@@ -111,6 +111,7 @@ export default function AccommodationDetailsPage() {
   }
 
   return (
+
     <div className="container mx-auto px-4 py-4 max-w-6xl">
       <div className="flex justify-between items-center mb-2">
         <h1 className="text-2xl font-bold text-primary">{accommodation.title}</h1>
@@ -139,7 +140,6 @@ export default function AccommodationDetailsPage() {
             <span className="text-gray-500">No images available</span>
           </div>
         )}
-        {/*  */}
         <button
           onClick={handlePrevImage}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-foreground rounded-full p-2 shadow-md hover:bg-background transition-colors"
