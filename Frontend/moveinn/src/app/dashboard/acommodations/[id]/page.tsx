@@ -253,7 +253,6 @@ export default function AccommodationDetailsPage() {
         </div>
       </div>
 
-      {/* Booking Modal */}
       {accommodation && (
         <BookingModal
           isOpen={isBookingModalOpen}
