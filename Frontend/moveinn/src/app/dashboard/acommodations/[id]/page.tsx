@@ -141,7 +141,6 @@ export default function AccommodationDetailsPage() {
             <span className="text-gray-500">No images available</span>
           </div>
         )}
-        {/*  */}
         <button
           onClick={handlePrevImage}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-foreground rounded-full p-2 shadow-md hover:bg-background transition-colors"
