@@ -121,7 +121,6 @@ export default function AccommodationDetailsPage() {
         </div>
       </div>
 
-      {/* Address */}
       <div className="flex items-center text-text-secondary mb-4">
         <MapPin className="h-4 w-4 mr-1" />
         <span>{accommodation.address}</span>
