@@ -142,7 +142,6 @@ export default function AccommodationDetailsPage() {
           </div>
         )}
 
-        {/* Image navigation buttons */}
         <button
           onClick={handlePrevImage}
           className="absolute left-4 top-1/2 -translate-y-1/2 bg-foreground rounded-full p-2 shadow-md hover:bg-background transition-colors"
