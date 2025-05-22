@@ -3,7 +3,7 @@ os: linux
 
 files:
   - source: Frontend/moveinn/
-    destination: /var/www/Frontend
+    destination:  /home/ubuntu/app/frontend_src
     file_exists_behavior: OVERWRITE
 
   # - source: Backend/Backend/bin/Release/net8.0/publish/
