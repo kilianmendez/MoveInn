@@ -22,14 +22,13 @@ jobs:
           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
-          aws-region:            us-east-1
 
       - name: Deploy Frontend
         run: |
           aws deploy create-deployment \
             --application-name MoveInnFrontend \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
             --deployment-group-name MoveInnFrontend-Prod \
-            --deployment-config-name CodeDeployDefault.AllAtOnce \
-            --github-location repository=${{ github.repository }},commitId=${{ github.sha }} \
-            --description "Frontend auto-deploy @${{ github.sha }}" \
-            --region us-east-1
+            --github-location "repository=${{ github.repository }},commitId=${{ github.sha }}" \
+            --region us-east-1 \
+            --description "Frontend Deploy"
