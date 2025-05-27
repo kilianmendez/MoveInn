@@ -17,10 +17,18 @@ export const API_GET_USER = (id) => `${API_USER}/${id}`;
 export const API_UPDATE_USER = (id) => `${API_USER}/Update/${id}`;
 export const API_DELETE_USER = (id) => `${API_USER}/Delete/${id}`;
 export const API_UPDATE_SOCIALMEDIA = (id) => `${API_USER}/${id}/SocialMedias`;
+
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_ALL_RECOMMENDATION = `${API_RECOMMENDATION}/AllRecommendations`;
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
+export const API_DELETE_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
+export const API_CREATE_RECOMMENDATION = `${API_RECOMMENDATION}`;
 
+export const API_EVENTS = `${API_BASE_URL}/Event`;
+export const API_CREATE_EVENT = `${API_BASE_URL}/Event`;
+export const API_DELETE_EVENT = (id) => `${API_EVENTS}/${id}`;
+export const API_JOIN_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/join?userId=${userId}`;  
+export const API_LEAVE_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/leave?userId=${userId}`;
 
 const API_RESERVATION = `${API_BASE_URL}/Reservation`;
 export const API_GET_RESERVATION = (id) => `${API_RESERVATION}/${id}`;
@@ -30,6 +38,7 @@ export const API_DELETE_RESERVATION = (id) => `${API_RESERVATION}/Delete/${id}`;
 
 
 const API_ACCOMMODATION = `${API_BASE_URL}/Accommodations`;
+export const API_ALL_ACCOMMODATION = `${API_ACCOMMODATION}/AllAccommodations`;
 export const API_GET_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/${id}`;
 export const API_CREATE_ACCOMMODATION = `${API_ACCOMMODATION}/CreateAccommodation`;
 export const API_UPDATE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Update/${id}`;
@@ -60,3 +69,10 @@ export const API_FORUM_POST_RESPONSE_TO_THREAD = `${API_FORUMS}/createMessageInT
 const API_LOCATION = `${API_BASE_URL}/Location`;
 export const API_GET_COUNTRYSEARCH = (query) => `${API_LOCATION}/CountriesSearch?query=${query}`;
 export const API_GET_CITYSEARCH = (country, query) =>`${API_LOCATION}/CitiesSearch?country=${country}&query=${query}`;
+
+const API_HOSTS = `${API_BASE_URL}/Hosts`;
+export const API_GET_HOSTS = `${API_HOSTS}`;
+export const API_HOST_POST_REQUEST = `${API_HOSTS}`;
+export const API_HOST_GET_REQUESTS = `${API_HOSTS}/requests`;
+export const API_HOST_REQUEST_ACCEPT = (id) => `${API_HOSTS}/${id}/approve`;
+export const API_HOST_REQUEST_REJECT = (id) => `${API_HOSTS}/${id}/reject`;

@@ -11,10 +11,16 @@ import { useAuth } from "@/context/authcontext";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { API_GET_ALL_USERS } from "@/utils/endpoints/config";
+import { API_GET_ALL_USERS, API_GET_HOSTS } from "@/utils/endpoints/config";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { HostRequests } from "@/components/admin/host-requests";
+import { HostsTable } from "@/components/admin/hosts-table";
+import { UsersTable } from "@/components/admin/users-table";
+import { RecommendationsTable } from "@/components/admin/recommendations-table"
+import { EventsTable } from "@/components/admin/events-table"
+import { AccommodationsTable } from "@/components/admin/accommodations-table";
 
 interface User {
   id: string;
@@ -39,6 +45,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [hosts, setHosts] = useState<any[]>([]);
 
   useEffect(() => {
     if (!user || user.role !== 0) {
@@ -47,23 +54,31 @@ export default function AdminPage() {
   }, [user]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchUsersAndHosts = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(API_GET_ALL_USERS, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setUsers(response.data);
+        const token = localStorage.getItem("token")
+  
+        const [usersRes, hostsRes] = await Promise.all([
+          axios.get(API_GET_ALL_USERS, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get(API_GET_HOSTS, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ])
+  
+        setUsers(usersRes.data)
+        setHosts(hostsRes.data)
       } catch (error) {
-        console.error("Error fetching users:", error);
-        setUsers([]);
+        console.error("Error fetching users or hosts:", error)
+        setUsers([])
+        setHosts([])
       }
-    };
-
-    fetchUsers();
-  }, []);
+    }
+  
+    fetchUsersAndHosts()
+  }, [])
+  
 
   if (!user || user.role !== 0) return null;
 
@@ -144,7 +159,7 @@ export default function AdminPage() {
 
       <div className="container mx-auto py-8 space-y-8">
         {/* Welcome Banner */}
-        <section className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
+        <section className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
           <div className="relative z-10">
@@ -154,11 +169,11 @@ export default function AdminPage() {
         </section>
 
         {/* Quick Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           <Card className="bg-foreground border-none shadow-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-text">
-                <UsersIcon className="h-5 w-5 text-secondary" />
+                <UsersIcon className="h-5 w-5 text-secondary-greenblue dark:text-secondary" />
                 Total Users
               </CardTitle>
               <CardDescription className="text-text-secondary">Manage registered users</CardDescription>
@@ -169,51 +184,24 @@ export default function AdminPage() {
           </Card>
 
           <Card className="bg-foreground border-none shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text">
-                <UserCogIcon className="h-5 w-5 text-secondary" />
-                Hosts
-              </CardTitle>
-              <CardDescription className="text-text-secondary">Approve or remove host accounts</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-text">28</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-foreground border-none shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text">
-                <ActivityIcon className="h-5 w-5 text-secondary" />
-                Activity Logs
-              </CardTitle>
-              <CardDescription className="text-text-secondary">Recent platform actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-text">542</p>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-foreground border-none shadow-md">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-text">
-                <Settings2Icon className="h-5 w-5 text-secondary" />
-                Settings
-              </CardTitle>
-              <CardDescription className="text-text-secondary">Platform preferences</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full text-primary-dark border-primary-dark hover:bg-primary hover:text-white">
-                Go to Settings
-              </Button>
-            </CardContent>
-          </Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-text">
+              <UserCogIcon className="h-5 w-5 text-secondary-greenblue dark:text-secondary" />
+              Hosts
+            </CardTitle>
+            <CardDescription className="text-text-secondary">Approve or remove host accounts</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold text-text">{hosts.length}</p>
+          </CardContent>
+        </Card>
         </section>
 
+        
         {/* Admin Tabs */}
         <section>
           <Tabs defaultValue="users" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4 bg-foreground border-none rounded-lg p-1 text-text">
+            <TabsList className="grid w-full grid-cols-5 bg-foreground border-none rounded-lg p-1 text-text">
               <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="users">
                 Users
               </TabsTrigger>
@@ -226,69 +214,47 @@ export default function AdminPage() {
               <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="housing">
                 Housing
               </TabsTrigger>
+              <TabsTrigger value="hosts" className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg">Hosts</TabsTrigger> {/* ✅ nueva pestaña */}
             </TabsList>
 
             <TabsContent value="users">
+              <UsersTable renderRoleBadge={(role) => <RoleBadge role={role} />} />
+            </TabsContent>
+
+            <TabsContent value="recommendations">
+              <RecommendationsTable />
+            </TabsContent>
+            <TabsContent value="events">
+              <EventsTable />
+            </TabsContent>
+            <TabsContent value="housing">
+              <AccommodationsTable />
+            </TabsContent>
+            <TabsContent value="hosts" className="space-y-4">
               <Card className="bg-foreground border-none shadow-md">
                 <CardHeader>
-                  <CardTitle className="text-xl text-text">User List</CardTitle>
-                  <CardDescription className="text-text-secondary">Manage user roles and view details</CardDescription>
+                  <CardTitle className="text-xl text-text">Host Requests</CardTitle>
+                  <CardDescription className="text-text-secondary">
+                    Review and manage incoming host requests
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left text-text">
-                      <thead className="text-xs uppercase text-text-secondary border-b border-gray-200 dark:border-gray-700">
-                        <tr>
-                          <th className="px-4 py-3">Name</th>
-                          <th className="px-4 py-3">Email</th>
-                          <th className="px-4 py-3">Role</th>
-                          <th className="px-4 py-3">City</th>
-                          <th className="px-4 py-3">Erasmus Country</th>
-                          <th className="px-4 py-3">Phone</th>
-                          <th className="px-4 py-3">Biography</th>
-                          <th className="px-4 py-3">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-  {users.map((u) => (
-    <tr key={u.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-accent/10">
-      <td className="px-4 py-3 font-medium">{u.name} {u.lastName}</td>
-      <td className="px-4 py-3">{u.mail}</td>
-      <td className="px-4 py-3"><RoleBadge role={u.role} /></td>
-      <td className="px-4 py-3">{u.city}</td>
-      <td className="px-4 py-3">{u.erasmusCountry}</td>
-      <td className="px-4 py-3">{u.phone}</td>
-      <td className="px-4 py-3 max-w-[200px] truncate overflow-hidden text-ellipsis whitespace-nowrap">{u.biography}</td>
-      <td className="px-4 py-3">
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-white dark:border-gray-700 bg-primary hover:bg-primary/70 hover:text-white"
-          onClick={() => handleEditClick(u)}
-        >
-          <PencilIcon className="mr-1 h-4 w-4" />
-          Edit
-        </Button>
-      </td>
-    </tr>
-  ))}
-</tbody>
-
-                    </table>
-                  </div>
+                  <HostRequests />
+                </CardContent>
+              </Card>
+              <Card className="bg-foreground border-none shadow-md">
+                <CardHeader>
+                  <CardTitle className="text-xl text-text">All Hosts</CardTitle>
+                  <CardDescription className="text-text-secondary">
+                    Review and manage all hosts
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <HostsTable />
                 </CardContent>
               </Card>
             </TabsContent>
 
-            <TabsContent value="recommendations">
-              <p className="text-text">Recommendations management interface coming soon...</p>
-            </TabsContent>
-            <TabsContent value="events">
-              <p className="text-text">Events management interface coming soon...</p>
-            </TabsContent>
-            <TabsContent value="housing">
-              <p className="text-text">Housing management interface coming soon...</p>
-            </TabsContent>
           </Tabs>
         </section>
       </div>

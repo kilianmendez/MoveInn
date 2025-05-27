@@ -78,17 +78,17 @@ export function EventCard({ title, date, location, attendees, category, joined }
           </Badge>
         </div>
 
-        <div className="flex flex-wrap sm:flex-nowrap text-sm text-text-secondary gap-y-1 gap-x-4">
-          <div className="flex items-center min-w-[150px]">
-            <CalendarIcon className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
+        <div className="flex flex-wrap sm:flex-nowrap text-sm text-gray-800 dark:text-text-secondary gap-y-1 gap-x-4">
+          <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
+            <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="truncate">{date}</span>
           </div>
-          <div className="flex items-center min-w-[150px]">
-            <MapPinIcon className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
+          <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
+            <MapPinIcon className="h-3.5 w-3.5 flex-shrink-0" />
             <span className="truncate">{truncate(location)}</span>
           </div>
-          <div className="flex items-center">
-            <Users2Icon className="h-3.5 w-3.5 ml-1 flex-shrink-0" />
+          <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
+            <Users2Icon className="h-3.5 w-3.5 flex-shrink-0" />
             <span>{attendees}</span>
           </div>
         </div>

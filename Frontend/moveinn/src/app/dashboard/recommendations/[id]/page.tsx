@@ -151,7 +151,7 @@ export default function RecommendationDetailPage() {
       <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <Link href="/dashboard/recommendations">
-            <Button variant="ghost" className="text-[#4C69DD] hover:bg-[#4C69DD]/10">
+            <Button variant="ghost" className="text-primary dark:text-text-secondary hover:bg-primary/10">
               <ChevronLeft className="h-4 w-4 mr-1" />
               Back to Recommendations
             </Button>
@@ -240,14 +240,18 @@ export default function RecommendationDetailPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-background p-4 rounded-lg">
-                    <h3 className="text-sm font-medium text-text-secondary mb-3">Contact Info</h3>
+                  <div className="bg-background py-1 px-3 rounded-lg w-fit">
+                    
                     <div className="space-y-3">
                       <div className="flex items-start">
                         <MapPin className="h-4 w-4 text-[#4C69DD] mt-0.5 mr-2" />
                         <div>
-                          <p className="text-sm font-medium text-text-secondary">Address</p>
-                          <p className="text-sm text-text">{recommendation.address}</p>
+                        <p className="text-gray-500 dark:text-gray-400 mb-1 text-xs">
+                          Recomended by{" "}
+                          <span className="font-semibold text-primary dark:text-text-secondary">
+                            {recommendation.userId === "00000000-0000-0000-0000-000000000000" ? "system" : recommendation.userId}
+                          </span>
+                        </p>
                         </div>
                       </div>
                     </div>

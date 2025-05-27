@@ -14,7 +14,9 @@ export interface AccommodationData {
   availableTo: string
   ownerId: string
   images: string[]
+  acommodationType: number
 }
+
 export interface AcommodationCard {
     acommodation: AccommodationData
   }

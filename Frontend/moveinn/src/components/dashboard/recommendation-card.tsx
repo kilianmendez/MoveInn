@@ -120,9 +120,9 @@ export function RecommendationCard({
         <p className="text-sm text-text mb-3 line-clamp-3">{description}</p>
       </div>
 
-      <div className="flex items-center text-xs bg-foreground px-2 py-1 rounded-full w-fit">
+      <div className="flex items-center text-xs bg-background/70 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
         <MapPinIcon className="h-3 w-3 mr-1 text-primary" />
-        <span className="text-gray-400">Recommended by {recommenderName}</span>
+        <span className="text-gray-500 dark:text-text-secondary">Recommended by {recommenderName}</span>
       </div>
     </div>
   )

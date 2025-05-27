@@ -31,7 +31,7 @@ import { DashboardAcommodationCard } from "@/components/dashboard/dashboard-acom
 import { HostCard } from "@/components/dashboard/host-card"
 import axios from "axios"
 import { useAuth } from "@/context/authcontext"
-import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
+import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION, API_ALL_ACOMMODATIONS } from "@/utils/endpoints/config"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -131,7 +131,8 @@ interface Recommendation {
 export default function DashboardPage() {
     const { user } = useAuth()
     const [recommendations, setRecommendations] = useState<Recommendation[]>([])
-    const [acomodations, setAcomodations] = useState<Acommodation[]>([])
+    // const [acomodations, setAcomodations] = useState<Acommodation[]>([])
+    const [acommodations, setAcommodations] = useState<Acommodation[]>([])
 
     const getRecommendations = async () => {
         try {
@@ -169,27 +170,22 @@ export default function DashboardPage() {
         }
     }
 
-    const getAcomodations = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(API_SEARCH_ACOMMODATION, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        const data = response.data.items
-        if (Array.isArray(data)) {
-          setAcomodations(data)
-        } else if (Array.isArray(data.acomodations)) {
-          setAcomodations(data.acomodations)
-        } else {
-          setAcomodations([])
+    const fetchAcommodations = async () => {
+        try {
+          const token = localStorage.getItem("token")
+          const response = await axios.get(API_ALL_ACOMMODATIONS, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          setAcommodations(Array.isArray(response.data) ? response.data : [])
+        } catch (err) {
+          console.error("Error fetching accommodations:", err)
+          setAcommodations([])
         }
-      } catch (error) {
-        console.error("Error fetching acomodations:", error)
-        setAcomodations([])
-      }
     }
+
+    useEffect(() => {
+        fetchAcommodations()
+    }, [])
 
     useEffect(() => {
         getRecommendations()
@@ -218,7 +214,7 @@ export default function DashboardPage() {
                     <div>
                         {/* Cambiar a futuro Ciudad de Erasmus y dias */}
                         <p className="text-sm text-white/70">Days in {user?.city}</p>
-                        <p className="text-4xl font-bold text-primary">{user?.erasmusDate}</p>
+                        <p className="text-4xl font-bold text-accent">{user?.erasmusDate}</p>
                     </div>
                     </div>
                 </div>
@@ -242,7 +238,7 @@ export default function DashboardPage() {
             </section>
 
             {/* Quick Stats */}
-            <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#B7F8C8]/10">
                 <CardContent className="p-6">
                 <div className="flex items-center justify-between">
@@ -298,7 +294,7 @@ export default function DashboardPage() {
                 </div>
                 </CardContent>
             </Card>
-            </section>
+            </section> */}
 
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -403,7 +399,7 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {acomodations.map((acommodation) => (
+                    {acommodations.map((acommodation) => (
                         <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
                     ))}
                     </div>
