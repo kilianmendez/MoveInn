@@ -21,15 +21,15 @@ hooks:
   AfterInstall:
     - location: scripts/after_install_frontend.sh
       timeout: 600
-      runas: ubuntu        
+      runas: root        
     - location: scripts/after_install_backend.sh
       timeout: 600
-      runas: ubuntu   
+      runas: root   
   ApplicationStart:
     - location: scripts/start_frontend.sh
       timeout: 120
-      runas: ubuntu 
+      runas: root 
     - location: scripts/start_backend.sh
       timeout: 120
-      runas: ubuntu               
+      runas: root               
 
