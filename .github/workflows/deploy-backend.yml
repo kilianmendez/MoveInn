@@ -1,0 +1,35 @@
+name: Deploy MoveInn Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Backend/**'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-frontend:
+    name: Deploy Backend
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configurar AWS
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token:     ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: us-east-1
+
+      - name: Deploy Backend
+        run: |
+          aws deploy create-deployment \
+            --application-name MoveInnBackend \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name MoveInnProd \
+            --github-location "repository=${{ github.repository }},commitId=${{ github.sha }}" \
+            --region us-east-1 \
+            --description "Backend Deploy"
