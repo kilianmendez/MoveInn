@@ -8,7 +8,7 @@ public static class FileHelper
         string directory = Path.GetDirectoryName(relativePath);
         string absoluteDirectory = Path.Combine(WWWROOT_FOLDER, directory);
         Directory.CreateDirectory(absoluteDirectory);
-// 
+
         string absolutePath = Path.Combine(WWWROOT_FOLDER, relativePath);
         await File.WriteAllBytesAsync(absolutePath, bytes);
     }
