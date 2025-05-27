@@ -12,7 +12,7 @@ public static class FileHelper
         string absolutePath = Path.Combine(WWWROOT_FOLDER, relativePath);
         await File.WriteAllBytesAsync(absolutePath, bytes);
     }
-
+// 
     public static async Task SaveAsync(Stream stream, string relativePath)
     {
         using MemoryStream streamAux = new MemoryStream();

@@ -29,7 +29,7 @@ jobs:
           aws deploy create-deployment \
             --application-name MoveInnBackend \
             --deployment-config-name CodeDeployDefault.OneAtATime \
-            --deployment-group-name MoveInnProd \
+            --deployment-group-name MoveInnBackend-Prod \
             --github-location "repository=${{ github.repository }},commitId=${{ github.sha }}" \
             --region us-east-1 \
             --description "Backend Deploy"
