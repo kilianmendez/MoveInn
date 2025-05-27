@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SRC_ROOT=/Backend/Backend
-PUBLISH_DIR=$SRC_ROOT/Backend/publish     
+PUBLISH_DIR=$SRC_ROOT/publish     
 DEST=/var/www/backend
 
 echo "[AfterInstall] Sincronizando artefacto publicado…"
