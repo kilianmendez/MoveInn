@@ -1044,6 +1044,111 @@ namespace Backend.Models.Database
                 ParentMessageId = messageA_thread2.Id
             };
 
+            var forumPosts = new List<Forum>
+            {
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "How to apply for TIE as an Erasmus student?",
+                    Description = "A guide based on my personal experience with getting the residence card in Spain.",
+                    Country = "Spain",
+                    Category = ForumCategory.ProceduresAndDocumentation,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[0].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "University life in Barcelona - what to expect?",
+                    Description = "Sharing how my classes are structured and tips for surviving your first month.",
+                    Country = "Spain",
+                    Category = ForumCategory.UniversityAndAcademicLife,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[1].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Culture shock in Germany 🇩🇪",
+                    Description = "From silence on the metro to bread with every meal. What surprised you the most?",
+                    Country = "Germany",
+                    Category = ForumCategory.CulturalAndSocialIntegration,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[2].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "How to get an Erasmus+ scholarship top-up?",
+                    Description = "Tips and links to apply for additional financial aid in Portugal.",
+                    Country = "Portugal",
+                    Category = ForumCategory.ScholarshipsAndFinances,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[3].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Public transport in Prague: best student cards",
+                    Description = "I compared all the options and here's what I found works best.",
+                    Country = "Czech Republic",
+                    Category = ForumCategory.MobilityAndTransportation,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[4].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Best nightlife spots in Lisbon 🍻",
+                    Description = "Bairro Alto or Pink Street? Share your favorite places to go out!",
+                    Country = "Portugal",
+                    Category = ForumCategory.LeisureTourismAndNightlife,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[5].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "June Erasmus Meetup – who’s in?",
+                    Description = "Let's organize a picnic or beach day. Drop your ideas here!",
+                    Country = "Spain",
+                    Category = ForumCategory.MeetupsAndEvents,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[6].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "10 things I wish I packed before Erasmus",
+                    Description = "Trust me, you'll thank yourself for bringing these essentials...",
+                    Country = "Italy",
+                    Category = ForumCategory.TipsAndExperiences,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[7].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Can I extend my Erasmus stay?",
+                    Description = "I heard it’s possible. Has anyone done it and how did it go?",
+                    Country = "France",
+                    Category = ForumCategory.FAQ,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[8].Id
+                },
+                new Forum
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Random reflections after 2 months abroad",
+                    Description = "Some thoughts about independence, growth, and unexpected lessons.",
+                    Country = "Spain",
+                    Category = ForumCategory.Other,
+                    CreatedAt = DateTime.UtcNow,
+                    CreatedBy = users[9].Id
+                }
+            };
+
+            _dataContext.Forum.AddRange(forumPosts);
             thread2.Posts.Add(messageA_thread2);
             thread2.Posts.Add(messageB_thread2);
             thread2.Posts.Add(messageC_thread2);
@@ -1058,7 +1163,7 @@ namespace Backend.Models.Database
             _dataContext.Accommodations.AddRange(accommodations);
             _dataContext.Reservations.AddRange(reservations);
             _dataContext.Reviews.AddRange(reviews);
-            _dataContext.Forum.Add(forum);
+            _dataContext.Forum.AddRange(forum,forum2);
             await _dataContext.SaveChangesAsync();
 
             var specialities = new List<Speciality>
