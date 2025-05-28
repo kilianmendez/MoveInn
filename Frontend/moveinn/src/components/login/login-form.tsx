@@ -30,7 +30,7 @@ export default function LoginForm() {
   return (
     <div className="w-full max-w-md">
       <Link href="/" passHref>
-        <Button variant="ghost" className="text-sm hover:bg-primary/10">
+        <Button variant="ghost" className="text-sm hover:bg-primary/10 dark:text-text-secondary">
           ← Back to Landing
         </Button>
       </Link>
@@ -45,7 +45,7 @@ export default function LoginForm() {
         <p className="text-text-secondary">Sign in to continue your Erasmus journey</p>
       </div>
 
-      <div className="border border-gray-200 rounded-lg p-6 bg-foreground shadow-sm">
+      <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-foreground shadow-sm">
         <h2 className="font-semibold text-lg mb-1 text-text">Login to your account</h2>
         <p className="text-sm text-text-secondary mb-6">
           Enter your credentials to access your account
@@ -63,7 +63,7 @@ export default function LoginForm() {
               Email
             </label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none dark:border-text-secondary">
                 {/* Icono de correo */}
                 <Mail className="h-5 w-5 text-text-secondary" />
               </div>
@@ -72,7 +72,7 @@ export default function LoginForm() {
                 name="email"
                 type="email"
                 placeholder="your.email@gmail.com"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text text-sm"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text text-sm dark:border-text-secondary"
                 required
               />
             </div>
@@ -92,7 +92,7 @@ export default function LoginForm() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text text-sm"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm placeholder-text-secondary/60 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text text-sm dark:border-text-secondary"
                 required
               />
               <button

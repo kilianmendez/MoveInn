@@ -44,7 +44,7 @@ export default function RegisterForm() {
   return (
     <div className="w-full max-w-md">
       <Link href="/" passHref>
-        <Button variant="ghost" className="text-sm hover:bg-primary/10">
+        <Button variant="ghost" className="text-sm hover:bg-primary/10 dark:text-text-secondary">
           ← Back to Landing
         </Button>
       </Link>
@@ -57,7 +57,7 @@ export default function RegisterForm() {
         <p className="text-text-secondary">Create your account in just a few steps</p>
       </div>
 
-      <div className="border border-gray-200 rounded-lg p-6 bg-foreground shadow-sm">
+      <div className="border border-gray-200 dark:border-gray-800 rounded-lg p-6 bg-foreground shadow-sm">
         <h2 className="font-semibold text-lg mb-1 text-text">Create your account</h2>
         <p className="text-sm text-text-secondary mb-6">
           Join the MoveInn community and start your Erasmus journey
@@ -89,7 +89,7 @@ export default function RegisterForm() {
                 name="name"
                 type="text"
                 placeholder="John Doe"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-text-secondary rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
                 required
               />
             </div>
@@ -109,7 +109,7 @@ export default function RegisterForm() {
                 name="phone"
                 type="tel"
                 placeholder="655555555"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-text-secondary rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
                 required
               />
             </div>
@@ -129,7 +129,7 @@ export default function RegisterForm() {
                 name="mail"
                 type="email"
                 placeholder="your.email@gmail.com"
-                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-text-secondary rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
                 required
               />
             </div>
@@ -149,7 +149,7 @@ export default function RegisterForm() {
                 name="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-text-secondary rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
                 required
               />
               <button
@@ -176,7 +176,7 @@ export default function RegisterForm() {
                 name="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder="••••••••••••"
-                className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-text-secondary rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary text-text"
                 required
               />
               <button
