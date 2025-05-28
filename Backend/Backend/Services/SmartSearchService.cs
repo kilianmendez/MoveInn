@@ -158,6 +158,45 @@ public class SmartSearchService
         return dtos;
     }
 
+    public async Task<IEnumerable<EventDto>> SearchEventsAsync(string query)
+    {
+        List<Event> result;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            result = await _context.Events.ToListAsync();
+        }
+        else
+        {
+            var queryKeys = GetKeys(ClearText(query));
+            result = new List<Event>();
+            var events = await _context.Events.ToListAsync();
+
+            foreach (var ev in events)
+            {
+                var itemKeys = GetKeys(ClearText(ev.Title + " " + ev.Description));
+                if (IsMatch(queryKeys, itemKeys))
+                    result.Add(ev);
+            }
+        }
+
+        return result.Select(e => new EventDto
+        {
+            Id = e.Id,
+            Title = e.Title,
+            Date = e.Date,
+            Location = e.Location,
+            Address = e.Address,
+            AttendeesCount = e.AttendeesCount,
+            MaxAttendees = e.MaxAttendees,
+            Category = e.Category,
+            Description = e.Description,
+            ImageUrl = e.ImageUrl,
+            Tags = e.Tags.ToList()
+        });
+    }
+
+
     private bool IsMatch(string[] queryKeys, string[] itemKeys)
     {
         bool isMatch = false;
