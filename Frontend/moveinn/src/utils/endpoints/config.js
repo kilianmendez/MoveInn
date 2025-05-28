@@ -32,6 +32,7 @@ export const API_LEAVE_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/le
 
 const API_RESERVATION = `${API_BASE_URL}/Reservation`;
 export const API_GET_RESERVATION = (id) => `${API_RESERVATION}/${id}`;
+export const API_GET_RESERVATIONS_BY_USER = (userId) => `${API_RESERVATION}/user/${userId}`;
 export const API_CREATE_RESERVATION = `${API_RESERVATION}/CreateReservation`;
 export const API_UPDATE_RESERVATION = (id) => `${API_RESERVATION}/Update/${id}`;
 export const API_DELETE_RESERVATION = (id) => `${API_RESERVATION}/Delete/${id}`;
@@ -44,17 +45,18 @@ export const API_CREATE_ACCOMMODATION = `${API_ACCOMMODATION}/CreateAccommodatio
 export const API_UPDATE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Update/${id}`;
 export const API_DELETE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Delete/${id}`;
 export const API_GET_UNAVAILABLEDATESBYACCOMMODATION = (id) => `${API_ACCOMMODATION}/UnavailableDates/${id}`;
-
-
-const API_PAYMENT = `${API_BASE_URL}/Payment`;
-export const API_CREATE_PAYMENT = `${API_PAYMENT}/CreatePaymentIntent`;
-export const API_GET_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
-
-
 const API_ACOMMODATION = `${API_BASE_URL}/Accommodations`;
 export const API_SEARCH_ACOMMODATION = `${API_ACOMMODATION}/SearchAccommodation`;
 export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
 export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
+
+const API_REVIEWS = `${API_BASE_URL}/Reviews`;
+export const API_GET_REVIEWS = (id) => `${API_REVIEWS}/accommodation/${id}`;
+export const API_CREATE_REVIEW = `${API_REVIEWS}`;
+
+const API_PAYMENT = `${API_BASE_URL}/Payment`;
+export const API_CREATE_PAYMENT = `${API_PAYMENT}/CreatePaymentIntent`;
+export const API_GET_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
 
 
 const API_FORUMS = `${API_BASE_URL}/Forum`;
@@ -64,6 +66,8 @@ export const API_FORUM_MESSAGES_BY_THREAD_ID = (threadId) => `${API_FORUMS}/mess
 export const API_FORUM_POST_FORUM = `${API_FORUMS}/forum`;
 export const API_FORUM_POST_THREAD = `${API_FORUMS}/thread`;
 export const API_FORUM_POST_RESPONSE_TO_THREAD = `${API_FORUMS}/createMessageInThread`;
+export const API_FORUM_SEARCH_FORUMS = `${API_FORUMS}/SearchForums`;
+export const API_FORUM_COUNTRIES = `${API_FORUMS}/countries` 
 
 
 const API_LOCATION = `${API_BASE_URL}/Location`;

@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import Flag from 'react-world-flags'
 import axios from "axios"
-import { API_ALL_FORUMS, API_BASE_IMAGE_URL, API_FORUM_POST_FORUM } from "@/utils/endpoints/config"
+import { API_ALL_FORUMS, API_BASE_IMAGE_URL, API_FORUM_POST_FORUM, API_FORUM_SEARCH_FORUMS, API_FORUM_COUNTRIES } from "@/utils/endpoints/config"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuth } from "@/context/authcontext"
 import { motion, AnimatePresence } from 'framer-motion'
@@ -86,6 +86,12 @@ export default function ForumsPage() {
   const [isCreatingForum, setIsCreatingForum] = useState(false);
   const [showCreateForum, setShowCreateForum] = useState(false)
   const [countrySearch, setCountrySearch] = useState('');
+  const [page, setPage] = useState(0)
+  const [totalForums, setTotalForums] = useState(0)
+  const limit = 5
+  const [forumCountries, setForumCountries] = useState<string[]>([])
+  const [searchTerm, setSearchTerm] = useState("")
+
 
 
   const { user } = useAuth()
@@ -93,29 +99,53 @@ export default function ForumsPage() {
   const getForums = async () => {
     try {
       const token = localStorage.getItem("token")
-      const response = await axios.get(API_ALL_FORUMS, {
+      const response = await axios.post(API_FORUM_SEARCH_FORUMS, {
+        page: page + 1,             // el backend espera páginas empezando en 1
+        limit,
+        query: searchTerm.trim(),
+        country: activeFilter ?? "", // filtrado por país (opcional)
+        sortField: "createdAt",
+        sortOrder: "desc"
+      }, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      setForums(Array.isArray(response.data) ? response.data : [])
-    } catch {
+
+      console.log(response.data)
+  
+      setForums(Array.isArray(response.data?.items) ? response.data.items : [])
+      setTotalForums(response.data?.totalItems || 0)
+    } catch (error) {
+      console.error("Error fetching forums", error)
       setForums([])
     }
   }
+
+  const loadForumCountries = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const response = await axios.get(API_FORUM_COUNTRIES, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setForumCountries(Array.isArray(response.data) ? response.data : [])
+    } catch (error) {
+      console.error("Error loading countries:", error)
+      setForumCountries([])
+    }
+  }
+  
 
   const getCountryCode = (countryName: string) => {
     return countries.getAlpha2Code(countryName, 'en') || "UN"
   }
   
-  const uniqueCountries = Array.from(new Set(forums.map(f => f.country)))
-    .map(name => ({
-      name,
-      code: getCountryCode(name),
-    }))
-    .filter(c => c.code !== "UN")
-  
-  const filteredCountries = uniqueCountries.filter(c =>
-    c.name.toLowerCase().includes(countrySearch.toLowerCase())
-  )
+  const filteredCountries = forumCountries
+  .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
+  .map(name => ({
+    name,
+    code: getCountryCode(name),
+  }))
+  .filter(c => c.code !== "UN")
+
 
     const handleCreateForum = async () => {
       if (!newForumTitle.trim() || !newForumDescription.trim()) {
@@ -154,13 +184,32 @@ export default function ForumsPage() {
       }
     }
 
-  useEffect(() => { getForums() }, [])
+    useEffect(() => {
+      const fetchCountries = async () => {
+        try {
+          const token = localStorage.getItem("token")
+          const res = await axios.get(API_FORUM_COUNTRIES, {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          setForumCountries(res.data || [])
+          console.log("Loaded forum countries:", res.data)
+        } catch (err) {
+          console.error("Error fetching forum countries", err)
+        }
+      }
+    
+      fetchCountries()
+    }, [])
+    
+
+  useEffect(() => { getForums(); loadForumCountries() }, [page,activeFilter, searchTerm])
 
   const filteredForums = forums.filter(forum => {
-    const matchCountry = activeFilter ? forum.country.toLowerCase() === activeFilter.toLowerCase() : true
-    const matchCategory = activeCategory !== null ? forum.category === activeCategory : true
-    return matchCountry && matchCategory
+    return activeCategory !== null ? forum.category === activeCategory : true
   })
+  
+  
+
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 py-6">
@@ -183,9 +232,15 @@ export default function ForumsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search forums..."
-                  className="pl-10 bg-white/10 text-white placeholder:text-white/60 border-white/20 focus:bg-white/20"
-                />
+  placeholder="Search forums..."
+  value={searchTerm}
+  onChange={(e) => {
+    setSearchTerm(e.target.value)
+    setPage(0) // reiniciar paginación
+  }}
+  className="pl-10 bg-white/10 text-white placeholder:text-white/60 border-white/20 focus:bg-white/20"
+/>
+
               </div>
             </div>
           </div>
@@ -205,19 +260,24 @@ export default function ForumsPage() {
 />
 
 <div className={`space-y-2 ${filteredCountries.length > 10 ? 'max-h-64 overflow-y-auto pr-1' : ''}`}>
-  {filteredCountries.map((country) => (
-    <Button
-      key={country.name}
-      variant="outline"
-      className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD]/20" : ""} cursor-pointer`}
-      onClick={() => setActiveFilter(activeFilter === country.name ? null : country.name)}
-    >
-      <div className="flex items-center">
-        <Flag code={country.code} style={{ width: 24, height: 16 }} />
-        <span className="ml-2"> {country.name}</span>
-      </div>
-    </Button>
-  ))}
+{filteredCountries.map((country) => (
+  <Button
+    key={country.name}
+    variant="outline"
+    className={`w-full justify-between h-auto py-2 border-none text-primary-dark ${activeFilter === country.name ? "bg-[#4C69DD]/20" : ""} cursor-pointer`}
+    onClick={() => {
+      const newFilter = activeFilter === country.name ? null : country.name
+      setActiveFilter(newFilter)
+      setPage(0) // 👈 reinicia paginación al cambiar país
+    }}
+  >
+    <div className="flex items-center">
+      <Flag code={country.code} style={{ width: 24, height: 16 }} />
+      <span className="ml-2"> {country.name}</span>
+    </div>
+  </Button>
+))}
+
 </div>
 
               </CardContent>
@@ -229,12 +289,17 @@ export default function ForumsPage() {
                 <div className="flex flex-wrap gap-2">
                   {Object.entries(categoryLabels).map(([id, label]) => (
                     <Badge
-                      key={id}
-                      onClick={() => setActiveCategory(activeCategory === Number(id) ? null : Number(id))}
-                      className={`cursor-pointer px-3 py-1 rounded-md text-xs font-medium ${forumCategoryBadgeColors[Number(id)]} ${activeCategory === Number(id) ? "ring-2 ring-offset-2 ring-[#0E1E40]" : ""}`}
-                    >
-                      {label}
-                    </Badge>
+                    key={id}
+                    onClick={() => {
+                      const newCategory = activeCategory === Number(id) ? null : Number(id)
+                      setActiveCategory(newCategory)
+                      setPage(0) // 👈 esto reinicia la paginación al cambiar de categoría
+                    }}
+                    className={`cursor-pointer px-3 py-1 rounded-md text-xs font-medium ${forumCategoryBadgeColors[Number(id)]} ${activeCategory === Number(id) ? "ring-2 ring-offset-2 ring-[#0E1E40]" : ""}`}
+                  >
+                    {label}
+                  </Badge>
+                  
                   ))}
                 </div>
               </CardContent>
@@ -381,6 +446,23 @@ export default function ForumsPage() {
                 </Link>
               ))}
             </div>
+
+            {totalForums > limit && (
+  <div className="mt-6 flex justify-center gap-2 flex-wrap">
+    {Array.from({ length: Math.ceil(totalForums / limit) }, (_, i) => (
+      <Button
+        key={i}
+        onClick={() => setPage(i)}
+        variant={i === page ? "default" : "outline"}
+        className={`border-primary dark:border-text-secondary text-primary dark:text-text-secondary min-w-[36px] h-9 px-3 py-1 text-sm ${i === page ? "bg-[#4C69DD] text-white" : ""}`}
+      >
+        {i + 1}
+      </Button>
+    ))}
+  </div>
+)}
+
+
 
             {filteredForums.length === 0 && (
               <div className="text-center py-12">
