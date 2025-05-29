@@ -96,45 +96,41 @@ const filteredCountries = availableCountries
   })
   const [isPosting, setIsPosting] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const token = localStorage.getItem("token")
   
-        const payload: any = {
-          query: searchQuery,
-          sortField: "pricePerMonth",
-          sortOrder: "asc",
-          availableFrom: availableFrom ? new Date(availableFrom).toISOString() : null,
-          availableTo: availableTo ? new Date(availableTo).toISOString() : null,
-          country: selectedCountry,
-          page: currentPage,
-          limit: limit,
-        }
-
-        console.log("selectedType", selectedType)
+  const fetchAcommodations = async () => {
+    try {
+      const token = localStorage.getItem("token")
   
-        payload.accommodationType = selectedType !== "" ? parseInt(selectedType) : null
-
-  
-        const res = await axios.post(API_SEARCH_ACOMMODATION, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-  
-        console.log("Search result:", res.data)
-  
-        setAcommodations(res.data.items)
-        setTotalPages(res.data.totalPages)
-      } catch (err) {
-        console.error("Error fetching accommodations:", err)
-        toast.error("Failed to load accommodations")
+      const payload: any = {
+        query: searchQuery,
+        sortField: "pricePerMonth",
+        sortOrder: "asc",
+        availableFrom: availableFrom ? new Date(availableFrom).toISOString() : null,
+        availableTo: availableTo ? new Date(availableTo).toISOString() : null,
+        country: selectedCountry,
+        page: currentPage,
+        limit: limit,
       }
-    }
   
-    fetchData()
+      payload.accommodationType = selectedType !== "" ? parseInt(selectedType) : null
+  
+      const res = await axios.post(API_SEARCH_ACOMMODATION, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+  
+      setAcommodations(res.data.items)
+      setTotalPages(res.data.totalPages)
+    } catch (err) {
+      console.error("Error fetching accommodations:", err)
+      toast.error("Failed to load accommodations")
+    }
+  }
+  
+  useEffect(() => {
+    fetchAcommodations()
   }, [searchQuery, selectedCountry, selectedType, availableFrom, availableTo, currentPage, limit])
   
+
   useEffect(() => {
     const fetchCountries = async () => {
       try {
@@ -195,6 +191,12 @@ const filteredCountries = availableCountries
       toast.success("Accommodation created successfully")
       setShowCreateForm(false)
       setImageFiles([])
+      if (!availableCountries.includes(newAcommodation.country)) {
+        setAvailableCountries(prev => [...prev, newAcommodation.country])
+      }
+      
+      await fetchAcommodations()
+      
     } catch (err) {
       console.error("Error creating accommodation:", err)
       toast.error("Error creating accommodation")
@@ -454,23 +456,21 @@ const filteredCountries = availableCountries
         </section>
 
         {/* Paginación */}
-        <div className="flex justify-center items-center gap-4 mt-8">
-          <Button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-          >
-            Previous
-          </Button>
-          <span className="text-sm text-text-secondary">
-            Page {currentPage} of {totalPages}
-          </span>
-          <Button
-            disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-          >
-            Next
-          </Button>
-        </div>
+        {totalPages > 1 && (
+  <div className="mt-6 flex justify-center gap-2 flex-wrap">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <Button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        variant={i + 1 === currentPage ? "default" : "outline"}
+        className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === currentPage ? "bg-primary text-white" : ""}`}
+      >
+        {i + 1}
+      </Button>
+    ))}
+  </div>
+)}
+
       </main>
     </div>
   )

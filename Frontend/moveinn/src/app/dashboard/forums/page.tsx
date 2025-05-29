@@ -100,15 +100,16 @@ export default function ForumsPage() {
     try {
       const token = localStorage.getItem("token")
       const response = await axios.post(API_FORUM_SEARCH_FORUMS, {
-        page: page + 1,             // el backend espera páginas empezando en 1
+        page: page + 1,
         limit,
         query: searchTerm.trim(),
-        country: activeFilter ?? "", // filtrado por país (opcional)
+        country: activeFilter ?? "",
+        category: activeCategory !== null ? activeCategory : null,
         sortField: "createdAt",
         sortOrder: "desc"
       }, {
         headers: { Authorization: `Bearer ${token}` },
-      })
+      })      
 
       console.log(response.data)
   
@@ -202,14 +203,8 @@ export default function ForumsPage() {
     }, [])
     
 
-  useEffect(() => { getForums(); loadForumCountries() }, [page,activeFilter, searchTerm])
-
-  const filteredForums = forums.filter(forum => {
-    return activeCategory !== null ? forum.category === activeCategory : true
-  })
+  useEffect(() => { getForums(); loadForumCountries() }, [page,activeFilter, activeCategory, searchTerm])
   
-  
-
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 py-6">
@@ -232,14 +227,14 @@ export default function ForumsPage() {
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-  placeholder="Search forums..."
-  value={searchTerm}
-  onChange={(e) => {
-    setSearchTerm(e.target.value)
-    setPage(0) // reiniciar paginación
-  }}
-  className="pl-10 bg-white/10 text-white placeholder:text-white/60 border-white/20 focus:bg-white/20"
-/>
+                placeholder="Search forums..."
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value)
+                  setPage(0)
+                }}
+                className="pl-10 bg-white/10 text-white placeholder:text-white/60 border-white/20 focus:bg-white/20"
+              />
 
               </div>
             </div>
@@ -268,7 +263,7 @@ export default function ForumsPage() {
     onClick={() => {
       const newFilter = activeFilter === country.name ? null : country.name
       setActiveFilter(newFilter)
-      setPage(0) // 👈 reinicia paginación al cambiar país
+      setPage(0)
     }}
   >
     <div className="flex items-center">
@@ -309,7 +304,7 @@ export default function ForumsPage() {
             {(activeFilter || activeCategory !== null) && (
               <div className="mb-4 flex items-center gap-2 flex-wrap">
                 {activeFilter && (
-                  <Badge className="bg-[#4C69DD]/10 text-[#4C69DD] hover:bg-[#4C69DD]/20 px-3 py-1" onClick={() => setActiveFilter(null)}>
+                  <Badge className="bg-[#4C69DD]/10 text-[#4C69DD] dark:bg-text-secondary/10 dark:text-text-secondary hover:bg-[#4C69DD]/20 px-3 py-1" onClick={() => setActiveFilter(null)}>
                     {activeFilter}
                     <X className="ml-1 h-3 w-3" />
                   </Badge>
@@ -411,7 +406,7 @@ export default function ForumsPage() {
             </AnimatePresence>
 
             <div className="flex flex-col gap-4 w-full">
-              {filteredForums.map((forum) => (
+              {forums.map((forum) => (
                 <Link href={`/dashboard/forums/${forum.id}`} key={forum.id}>
                   <Card className="flex py-0 flex-col justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
                     <CardContent className="p-0 flex flex-col flex-grow bg-foreground rounded-md">
@@ -464,15 +459,16 @@ export default function ForumsPage() {
 
 
 
-            {filteredForums.length === 0 && (
-              <div className="text-center py-12">
-                <h3 className="text-xl font-medium text-text mb-2">No forums found</h3>
-                <p className="text-text-secondary mb-6">Try adjusting your search or filters.</p>
-                <Button className="text-white" onClick={() => { setActiveFilter(null); setActiveCategory(null); }}>
-                  Clear Filters
-                </Button>
-              </div>
-            )}
+{forums.length === 0 && (
+  <div className="text-center py-12">
+    <h3 className="text-xl font-medium text-text mb-2">No forums found</h3>
+    <p className="text-text-secondary mb-6">Try adjusting your search or filters.</p>
+    <Button className="text-white" onClick={() => { setActiveFilter(null); setActiveCategory(null); }}>
+      Clear Filters
+    </Button>
+  </div>
+)}
+
           </div>
         </div>
       </main>

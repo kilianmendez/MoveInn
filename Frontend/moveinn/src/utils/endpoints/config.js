@@ -23,6 +23,8 @@ export const API_ALL_RECOMMENDATION = `${API_RECOMMENDATION}/AllRecommendations`
 export const API_SEARCH_RECOMMENDATION = `${API_RECOMMENDATION}/SearchRecommendation`;
 export const API_DELETE_RECOMMENDATION = (id) => `${API_RECOMMENDATION}/${id}`;
 export const API_CREATE_RECOMMENDATION = `${API_RECOMMENDATION}`;
+export const API_RECOMMENDATION_COUNTRIES = `${API_RECOMMENDATION}/countries`;
+export const API_RECOMMENDATION_CITIES = (country) => `${API_RECOMMENDATION}/cities/${country}`;
 
 export const API_EVENTS = `${API_BASE_URL}/Event`;
 export const API_CREATE_EVENT = `${API_BASE_URL}/Event`;

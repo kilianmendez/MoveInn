@@ -21,12 +21,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import axios from "axios"
-import { API_CREATE_RECOMMENDATION, API_SEARCH_RECOMMENDATION } from "@/utils/endpoints/config"
+import { API_CREATE_RECOMMENDATION, API_RECOMMENDATION_CITIES, API_RECOMMENDATION_COUNTRIES, API_SEARCH_RECOMMENDATION } from "@/utils/endpoints/config"
 import { DetailedRecommendationCard } from "@/components/recommendations/detailed-recommendation-card"
 import { Recommendation, categories } from "@/types/recommendation"
 import { AnimatePresence, motion } from "framer-motion"
 import { useAuth } from "@/context/authcontext"
 import { toast } from "sonner"
+import Flag from 'react-world-flags'
+import countries from 'i18n-iso-countries'
+import enLocale from 'i18n-iso-countries/langs/en.json'
+
+countries.registerLocale(enLocale)
+
 
 type CategoryName = keyof typeof categories
 type CategoryId = (typeof categories)[CategoryName]
@@ -67,6 +73,11 @@ const getCategoryName = (categoryId: number): string => {
   return categoryByNumber[categoryId as CategoryId] || "Other"
 }
 
+const getCountryCode = (countryName: string) => {
+  return countries.getAlpha2Code(countryName, 'en') || 'UN'
+}
+
+
 
 export default function RecommendationsPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([])
@@ -88,6 +99,15 @@ export default function RecommendationsPage() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limit] = useState(6)
+
+  const [availableCountries, setAvailableCountries] = useState<string[]>([])
+  const [countrySearch, setCountrySearch] = useState("")
+  const [availableCities, setAvailableCities] = useState<string[]>([])
+
+
   const { user } = useAuth()
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -101,7 +121,6 @@ export default function RecommendationsPage() {
       setFormData(prev => ({ ...prev, files: Array.from(files) }))
     }
   }
-  
   
   const handleSubmit = async () => {
     try {
@@ -171,21 +190,56 @@ export default function RecommendationsPage() {
       setIsSubmitting(false)
     }
   }
+
+  const fetchCountries = async () => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await axios.get(API_RECOMMENDATION_COUNTRIES, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setAvailableCountries(res.data)
+    } catch (err) {
+      console.error("Error fetching countries:", err)
+    }
+  }
+  
+  const fetchCities = async (country: string) => {
+    try {
+      const token = localStorage.getItem("token")
+      const res = await axios.get(API_RECOMMENDATION_CITIES(country), {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setAvailableCities(res.data)
+    } catch (err) {
+      console.error("Error fetching cities:", err)
+      setAvailableCities([])
+    }
+  }
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetchCities(selectedCountry)
+      setSelectedCity("")
+    } else {
+      setAvailableCities([])
+    }
+  }, [selectedCountry])
+  
+  
   
   const fetchRecommendations = async () => {
     try {
       const token = localStorage.getItem("token")
-      const body = {
-        query: "",
+      const response = await axios.post(API_SEARCH_RECOMMENDATION, {
+        query: searchQuery,
         sortField: "",
         sortOrder: "",
-        country: "",
-        city: "",
-        page: 1,
-        limit: 100,
-      }
-  
-      const response = await axios.post(API_SEARCH_RECOMMENDATION, body, {
+        country: selectedCountry,
+        city: selectedCity,
+        category: selectedCategory ? categories[selectedCategory as CategoryName] : null,
+        page: currentPage,
+        limit: limit,
+      }, {
         headers: { Authorization: `Bearer ${token}` },
       })
   
@@ -194,15 +248,20 @@ export default function RecommendationsPage() {
         : response.data.recommendations ?? []
   
       setRecommendations(data)
+      setTotalPages(response.data.totalPages || 1)
     } catch (error) {
       console.error("Error fetching recommendations:", error)
       setRecommendations([])
     }
   }
-  
 
   useEffect(() => {
     fetchRecommendations()
+  }, [searchQuery, selectedCountry, selectedCity, selectedCategory, currentPage])  
+
+  useEffect(() => {
+    fetchRecommendations()
+    fetchCountries()
   }, [])
 
   const uniqueCountries = Array.from(new Set(recommendations.map((r) => r.country).filter(Boolean)))
@@ -244,10 +303,23 @@ export default function RecommendationsPage() {
           <h1 className="text-2xl md:text-3xl font-bold mb-2">Local Recommendations</h1>
           <p className="text-white/80">Discover great places recommended by students and hosts</p>
         </div>
-        <Button className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 mt-4 md:mt-0">
-          <Plus className="mr-2 h-4 w-4" />
-          Add Recommendation
-        </Button>
+        <Button
+  onClick={() => setShowCreateForm(prev => !prev)}
+  className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 mt-4 md:mt-0"
+>
+  {showCreateForm ? (
+    <>
+      <X className="mr-2 h-4 w-4" />
+      Close Form
+    </>
+  ) : (
+    <>
+      <Plus className="mr-2 h-4 w-4" />
+      Add Recommendation
+    </>
+  )}
+</Button>
+
       </div>
       <div className="relative flex">
         <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
@@ -394,44 +466,70 @@ export default function RecommendationsPage() {
   )}
 </AnimatePresence>
 
+<section className="mb-6">
+  <div className="bg-foreground p-4 rounded-lg shadow-sm">
+    <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
+
+    <Input
+      placeholder="Search countries..."
+      value={countrySearch}
+      onChange={(e) => setCountrySearch(e.target.value)}
+      className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
+    />
+
+    <div className={`flex flex-wrap gap-2 ${availableCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
+      {availableCountries
+        .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
+        .map(name => {
+          const code = getCountryCode(name)
+          if (code === "UN") return null // evita países sin código válido
+
+          return (
+            <Button
+              key={name}
+              variant="outline"
+              className={`
+                flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
+                ${selectedCountry === name
+                  ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
+                  : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
+              `}
+              onClick={() => {
+                const newCountry = selectedCountry === name ? "" : name
+                setSelectedCountry(newCountry)
+                setCurrentPage(1)
+              }}
+            >
+              <Flag code={code} style={{ width: 20, height: 14 }} />
+              {name}
+            </Button>
+          )
+        })}
+    </div>
+  </div>
+</section>
+
+
+
 
       <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-text mb-1">Country</label>
-          <select
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-background text-text"
-            value={selectedCountry || "all"}
-            onChange={(e) => {
-              const val = e.target.value
-              setSelectedCountry(val === "all" ? "" : val)
-              setSelectedCity("")
-            }}
-          >
-            <option value="all">All countries</option>
-            {uniqueCountries.map((country) => (
-              <option key={country} value={country}>
-                {country}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div>
+  <label className="block text-sm font-medium text-text mb-1">City</label>
+  <select
+    className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-background text-text"
+    value={selectedCity || "all"}
+    onChange={(e) => setSelectedCity(e.target.value === "all" ? "" : e.target.value)}
+    disabled={!selectedCountry}
+  >
+    <option value="all">All cities</option>
+    {availableCities.map((city) => (
+      <option key={city} value={city}>
+        {city}
+      </option>
+    ))}
+  </select>
+</div>
 
-        <div>
-          <label className="block text-sm font-medium text-text mb-1">City</label>
-          <select
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-background text-text"
-            value={selectedCity || "all"}
-            onChange={(e) => setSelectedCity(e.target.value === "all" ? "" : e.target.value)}
-            disabled={!selectedCountry}
-          >
-            <option value="all">All cities</option>
-            {currentCities.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
-          </select>
-        </div>
 
         <div>
           <label className="block text-sm font-medium text-text mb-1">Category</label>
@@ -451,14 +549,50 @@ export default function RecommendationsPage() {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((rec) => (
-          <DetailedRecommendationCard
-            key={rec.id}
-            recommendation={rec}
-            categoryIcon={getCategoryIcon(rec.category)}
-          />
-        ))}
-      </section>
+  {recommendations.map((rec) => (
+    <DetailedRecommendationCard
+      key={rec.id}
+      recommendation={rec}
+      categoryIcon={getCategoryIcon(rec.category)}
+    />
+  ))}
+</section>
+
+{recommendations.length === 0 && (
+  <div className="text-center py-12">
+    <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+      <MapPin className="h-8 w-8 text-gray-400" />
+    </div>
+    <h3 className="text-xl font-medium text-gray-700 mb-2">No recommendations found</h3>
+    <p className="text-gray-500 mb-6">Try changing your filters or search terms.</p>
+    <Button onClick={() => {
+      setSelectedCategory("")
+      setSelectedCity("")
+      setSelectedCountry("")
+      setSearchQuery("")
+    }}>
+      Clear all filters
+    </Button>
+  </div>
+)}
+
+{totalPages > 1 && (
+  <div className="mt-8 flex justify-center gap-2 flex-wrap">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <Button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        variant={currentPage === i + 1 ? "default" : "outline"}
+        className={`min-w-[36px] h-9 px-3 py-1 text-sm ${
+          currentPage === i + 1 ? "bg-[#4C69DD] text-white" : "border-primary dark:border-text-secondary text-primary dark:text-text-secondary"
+        }`}
+      >
+        {i + 1}
+      </Button>
+    ))}
+  </div>
+)}
+
 
       {filtered.length === 0 && (
         <div className="text-center py-12">
