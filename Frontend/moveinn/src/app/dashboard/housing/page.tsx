@@ -1,3 +1,4 @@
+// Nuevo archivo actualizado con filtros y paginación desde el backend
 "use client"
 
 import { useState, useEffect } from "react"
@@ -7,16 +8,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AcommodationCard } from "@/components/housing/acommodation-card"
 import axios from "axios"
-import { API_ALL_ACOMMODATIONS, API_CREATE_ACCOMMODATION } from "@/utils/endpoints/config"
+import { API_ACCOMMODATION_COUNTRIES, API_CREATE_ACCOMMODATION, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authcontext"
+import Flag from 'react-world-flags'
+import countries from 'i18n-iso-countries'
+import enLocale from 'i18n-iso-countries/langs/en.json'
+
+countries.registerLocale(enLocale)
 
 interface Acommodation {
-  id: number
+  id: string
   title: string
   description: string
-  addres: string
+  address: string
   city: string
   country: string
   pricePerMonth: number
@@ -24,7 +30,7 @@ interface Acommodation {
   bathrooms: number
   squareMeters: number
   hasWifi: boolean
-  ownetId: string
+  ownerId: string
   availableFrom: string
   availableTo: string
   images: string[]
@@ -32,15 +38,45 @@ interface Acommodation {
   acommodationType: number
 }
 
+const getCountryCode = (countryName: string) => {
+  return countries.getAlpha2Code(countryName, 'en') || 'UN'
+}
+
+
+const getFlagEmoji = (countryName: string) => {
+  const countryCode = countries.getAlpha2Code(countryName, 'en')
+  if (!countryCode) return ''
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char => 127397 + char.charCodeAt(0))
+  return String.fromCodePoint(...codePoints)
+}
+
 export default function AcommodationsPage() {
-
   const { user } = useAuth()
-
   const [acommodations, setAcommodations] = useState<Acommodation[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("")
   const [selectedCity, setSelectedCity] = useState("")
   const [selectedType, setSelectedType] = useState("")
+  const [availableFrom, setAvailableFrom] = useState("")
+  const [availableTo, setAvailableTo] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const [limit] = useState(6)
+
+  const [availableCountries, setAvailableCountries] = useState<string[]>([])
+
+  const [countrySearch, setCountrySearch] = useState("")
+const filteredCountries = availableCountries
+  .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
+  .map(name => ({
+    name,
+    code: getCountryCode(name)
+  }))
+  .filter(c => c.code !== "UN")
+
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [newAcommodation, setNewAcommodation] = useState({
     title: "",
@@ -61,6 +97,59 @@ export default function AcommodationsPage() {
   const [isPosting, setIsPosting] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem("token")
+  
+        const payload: any = {
+          query: searchQuery,
+          sortField: "pricePerMonth",
+          sortOrder: "asc",
+          availableFrom: availableFrom ? new Date(availableFrom).toISOString() : null,
+          availableTo: availableTo ? new Date(availableTo).toISOString() : null,
+          country: selectedCountry,
+          page: currentPage,
+          limit: limit,
+        }
+
+        console.log("selectedType", selectedType)
+  
+        payload.accommodationType = selectedType !== "" ? parseInt(selectedType) : null
+
+  
+        const res = await axios.post(API_SEARCH_ACOMMODATION, payload, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+  
+        console.log("Search result:", res.data)
+  
+        setAcommodations(res.data.items)
+        setTotalPages(res.data.totalPages)
+      } catch (err) {
+        console.error("Error fetching accommodations:", err)
+        toast.error("Failed to load accommodations")
+      }
+    }
+  
+    fetchData()
+  }, [searchQuery, selectedCountry, selectedType, availableFrom, availableTo, currentPage, limit])
+  
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const res = await axios.get(API_ACCOMMODATION_COUNTRIES, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setAvailableCountries(res.data)
+      } catch (err) {
+        console.error("Error fetching countries:", err)
+      }
+    }
+  
+    fetchCountries()
+  }, [])
 
   const handleCreate = async () => {
     try {
@@ -75,13 +164,13 @@ export default function AcommodationsPage() {
       formData.append("City", newAcommodation.city)
       formData.append("Country", newAcommodation.country)
       formData.append("PricePerMonth", String(Number(newAcommodation.pricePerMonth)))
-formData.append("NumberOfRooms", String(parseInt(newAcommodation.numberOfRooms.toString())))
-formData.append("Bathrooms", String(parseInt(newAcommodation.bathrooms.toString())))
-formData.append("SquareMeters", String(parseInt(newAcommodation.squareMeters.toString())))
-formData.append("AcommodationType", String(parseInt(newAcommodation.acommodationType.toString())))
+      formData.append("NumberOfRooms", String(parseInt(newAcommodation.numberOfRooms.toString())))
+      formData.append("Bathrooms", String(parseInt(newAcommodation.bathrooms.toString())))
+      formData.append("SquareMeters", String(parseInt(newAcommodation.squareMeters.toString())))
+      formData.append("AcommodationType", String(parseInt(newAcommodation.acommodationType.toString())))
 
-formData.append("AvailableFrom", new Date(newAcommodation.availableFrom).toISOString())
-formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString())
+      formData.append("AvailableFrom", new Date(newAcommodation.availableFrom).toISOString())
+      formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString())
 
       formData.append("OwnerId", ownerId)
       formData.append("AcommodationType", newAcommodation.acommodationType.toString())
@@ -114,71 +203,26 @@ formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString
     }
   }
   
-
-  useEffect(() => {
-    const fetchAcommodations = async () => {
-      try {
-        const token = localStorage.getItem("token")
-        const response = await axios.get(API_ALL_ACOMMODATIONS, {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-        setAcommodations(Array.isArray(response.data) ? response.data : [])
-      } catch (err) {
-        console.error("Error fetching accommodations:", err)
-        setAcommodations([])
-      }
-    }
-
-    fetchAcommodations()
-  }, [])
-
-  // Generar países únicos
-  const uniqueCountries = Array.from(new Set(acommodations.map((a) => a.country).filter(Boolean)))
-
-  // Agrupar ciudades por país
-  const citiesByCountry: Record<string, string[]> = {}
-  acommodations.forEach((a) => {
-    if (a.country && a.city) {
-      if (!citiesByCountry[a.country]) {
-        citiesByCountry[a.country] = []
-      }
-      if (!citiesByCountry[a.country].includes(a.city)) {
-        citiesByCountry[a.country].push(a.city)
-      }
-    }
-  })
-
-  const currentCities = selectedCountry ? citiesByCountry[selectedCountry] || [] : []
-
-  const filtered = acommodations.filter((a) => {
-    const matchesSearch =
-      a.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.description.toLowerCase().includes(searchQuery.toLowerCase())
-
-    const matchesCountry = selectedCountry ? a.country === selectedCountry : true
-    const matchesCity = selectedCity ? a.city === selectedCity : true
-    const matchesType = selectedType ? a.acommodationType === parseInt(selectedType) : true
-
-    return matchesSearch && matchesCountry && matchesCity && matchesType
-  })
+  
 
   return (
     <div className="min-h-screen">
       <main className="container mx-auto px-4 py-6">
         <section className="mb-8">
-          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 text-white relative overflow-hidden">
-            <div className="relative z-10">
-              <h1 className="text-3xl font-bold mb-2">Find Accommodations</h1>
-              <p className="text-white/80">Choose your perfect place to stay</p>
-              <div className="relative mt-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  placeholder="Search for houses, flats, or rooms..."
-                  className="pl-10 bg-white/10 border-white/20 text-white"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
+          <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 text-white">
+            <h1 className="text-3xl font-bold mb-2">Find Accommodations</h1>
+            <p className="text-white/80">Choose your perfect place to stay</p>
+            <div className="relative mt-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Input
+                placeholder="Search for houses, flats, or rooms..."
+                className="pl-10 bg-white/10 border-white/20 text-white"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  setCurrentPage(1)
+                }}
+              />
             </div>
           </div>
         </section>
@@ -199,7 +243,7 @@ formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString
           </div>
         </div>
 
-      <AnimatePresence>
+        <AnimatePresence>
         {showCreateForm && (
           <motion.div
             key="createAccommodationForm"
@@ -315,55 +359,57 @@ formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString
         )}
       </AnimatePresence>
 
+        {/* Bloque de países con banderas y búsqueda */}
+<section className="mb-6">
+  <div className="bg-foreground p-4 rounded-lg shadow-sm">
+    <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
+
+    <Input
+      placeholder="Search countries..."
+      value={countrySearch}
+      onChange={(e) => setCountrySearch(e.target.value)}
+      className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
+    />
+
+    <div className={`flex flex-wrap gap-2 ${filteredCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
+      {filteredCountries.map((country) => (
+        <Button
+        key={country.name}
+        variant="outline"
+        className={`
+          flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
+          ${selectedCountry === country.name
+            ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
+            : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
+        `}
+        onClick={() => {
+          const newCountry = selectedCountry === country.name ? "" : country.name
+          setSelectedCountry(newCountry)
+          setCurrentPage(1)
+        }}
+      >
+        <Flag code={getCountryCode(country.name)} style={{ width: 20, height: 14 }} />
+        {country.name}
+      </Button>
+      
+      ))}
+    </div>
+  </div>
+</section>
+
+
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-          {/* Country */}
-          <div>
-            <label className="block text-sm font-medium text-text mb-1">Country</label>
-            <select
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-background text-text"
-              value={selectedCountry || "all"}
-              onChange={(e) => {
-                const val = e.target.value
-                setSelectedCountry(val === "all" ? "" : val)
-                setSelectedCity("")
-              }}
-            >
-              <option value="all">All countries</option>
-              {uniqueCountries.map((country) => (
-                <option key={country} value={country}>
-                  {country}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* City */}
-          <div>
-            <label className="block text-sm font-medium text-text mb-1">City</label>
-            <select
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-md bg-background px-3 py-2 text-text"
-              value={selectedCity || "all"}
-              onChange={(e) => setSelectedCity(e.target.value === "all" ? "" : e.target.value)}
-              disabled={!selectedCountry}
-            >
-              <option value="all">All cities</option>
-              {currentCities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Type */}
           <div>
             <label className="block text-sm font-medium text-text mb-1">Accommodation Type</label>
             <select
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-md bg-background px-3 py-2 text-text"
-              value={selectedType || "all"}
-              onChange={(e) => setSelectedType(e.target.value === "all" ? "" : e.target.value)}
+              className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
+              value={selectedType || ""}
+              onChange={(e) => {
+                setSelectedType(e.target.value === "" ? "" : e.target.value)
+                setCurrentPage(1)
+              }}
             >
-              <option value="all">All Types</option>
+              <option value="">All Types</option>
               <option value="0">Room</option>
               <option value="1">House</option>
               <option value="2">Apartment</option>
@@ -371,15 +417,60 @@ formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString
               <option value="4">Others</option>
             </select>
           </div>
+          <div>
+  <label className="block text-sm font-medium text-text mb-1">Available From</label>
+  <input
+    type="date"
+    className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text"
+    value={availableFrom}
+    onChange={(e) => {
+      setAvailableFrom(e.target.value)
+      setCurrentPage(1)
+    }}
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-medium text-text mb-1">Available To</label>
+  <input
+    type="date"
+    className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text"
+    value={availableTo}
+    onChange={(e) => {
+      setAvailableTo(e.target.value)
+      setCurrentPage(1)
+    }}
+  />
+</div>
+
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((acommodation) => (
+          {acommodations.map((acommodation) => (
             <Link href={`/dashboard/housing/${acommodation.id}`} key={acommodation.id}>
               <AcommodationCard acommodation={acommodation} />
             </Link>
           ))}
         </section>
+
+        {/* Paginación */}
+        <div className="flex justify-center items-center gap-4 mt-8">
+          <Button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-text-secondary">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+          >
+            Next
+          </Button>
+        </div>
       </main>
     </div>
   )

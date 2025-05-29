@@ -93,9 +93,9 @@ export default function AccommodationDetailsPage() {
           headers: { Authorization: `Bearer ${token}` }
         })
         const allReservations: Reservation[] = res.data
+        console.log("All reservations:", allReservations)
         setReservations(allReservations)
-  
-        // ¿Tiene una reserva para este alojamiento?
+
         const match = allReservations.some(r => r.accommodationId === id)
         setHasReservationHere(match)
       } catch (err) {
@@ -145,7 +145,8 @@ export default function AccommodationDetailsPage() {
     const fetchReviews = async () => {
       try {
         const res = await axios.get(API_GET_REVIEWS(id))
-        setReviews(res.data)
+        const data = Array.isArray(res.data) ? res.data : []
+        setReviews(data)
       } catch (err) {
         console.error("Error fetching reviews", err)
       }
@@ -196,8 +197,15 @@ export default function AccommodationDetailsPage() {
 
   const type = typeMap[accommodation.acommodationType] ?? typeMap[4]
   const userReservationsForThisAccommodation = reservations.filter(
-    (r) => r.accommodationId === id
-  )  
+    (r) => r.accommodationId === id && r.status === 3
+  )
+
+  const completedReservations = reservations.filter(
+    (r) => r.accommodationId === id && r.status === 3
+  )
+  const canSubmitReview = completedReservations.length > 0
+  const hasUserAlreadyReviewed = Array.isArray(reviews) && reviews.some(r => r.user.name === user?.name && r.user.lastName === user?.lastName)
+
   const imageUrl = accommodation.accomodationImages?.[currentImageIndex]?.url
     ? `${API_BASE_IMAGE_URL}${accommodation.accomodationImages[currentImageIndex].url}`
     : "/placeholder.svg"
@@ -379,9 +387,13 @@ export default function AccommodationDetailsPage() {
       ))}
     </div>
     
-{hasReservationHere && (
+    {hasReservationHere && (
   <div className="mt-6">
-    {!showReviewForm ? (
+    {hasUserAlreadyReviewed ? (
+      <p className="text-sm text-green-700 bg-green-100 px-4 py-2 rounded-md border border-green-300 w-fit">
+        Thanks for your feedback!
+      </p>
+    ) : !showReviewForm ? (
       <Button
         className="bg-primary hover:bg-primary/90 text-white"
         onClick={() => setShowReviewForm(true)}
@@ -389,101 +401,109 @@ export default function AccommodationDetailsPage() {
         Write a Review
       </Button>
     ) : (
-      <div className="space-y-4 bg-foreground p-6 mt-4 rounded-lg border border-border dark:border-gray-800">
-        <div>
-          <label className="text-sm font-medium text-text">Title</label>
-          <input
-            type="text"
-            value={reviewForm.title}
-            onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
-            className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
-          />
-        </div>
+      <>
+        {canSubmitReview ? (
+          <div className="space-y-4 bg-foreground p-6 mt-4 rounded-lg border border-border dark:border-gray-800">
+            <div>
+              <label className="text-sm font-medium text-text">Title</label>
+              <input
+                type="text"
+                value={reviewForm.title}
+                onChange={(e) => setReviewForm({ ...reviewForm, title: e.target.value })}
+                className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
+              />
+            </div>
 
-        <div>
-          <label className="text-sm font-medium text-text">Content</label>
-          <textarea
-            value={reviewForm.content}
-            onChange={(e) => setReviewForm({ ...reviewForm, content: e.target.value })}
-            className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
-            rows={4}
-          />
-        </div>
+            <div>
+              <label className="text-sm font-medium text-text">Content</label>
+              <textarea
+                value={reviewForm.content}
+                onChange={(e) => setReviewForm({ ...reviewForm, content: e.target.value })}
+                className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
+                rows={4}
+              />
+            </div>
 
-        <div>
-          <label className="text-sm font-medium text-text">Rating (1–5)</label>
-          <input
-            type="number"
-            min={1}
-            max={5}
-            value={reviewForm.rating}
-            onChange={(e) => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
-            className="w-20 mt-1 ml-2 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
-          />
-        </div>
+            <div>
+              <label className="text-sm font-medium text-text">Rating (1–5)</label>
+              <input
+                type="number"
+                min={1}
+                max={5}
+                value={reviewForm.rating}
+                onChange={(e) => setReviewForm({ ...reviewForm, rating: Number(e.target.value) })}
+                className="w-20 mt-1 ml-2 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
+              />
+            </div>
 
-        <div>
-          <label className="text-sm font-medium text-text">Select Reservation</label>
-          <select
-            value={reviewForm.reservationId}
-            onChange={(e) => setReviewForm({ ...reviewForm, reservationId: e.target.value })}
-            className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
-          >
-            <option value="">Choose one</option>
-            {userReservationsForThisAccommodation.map((r) => (
-              <option key={r.id} value={r.id}>
-                {new Date(r.startDate).toLocaleDateString()} – {new Date(r.endDate).toLocaleDateString()}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div>
+              <label className="text-sm font-medium text-text">Select Reservation</label>
+              <select
+                value={reviewForm.reservationId}
+                onChange={(e) => setReviewForm({ ...reviewForm, reservationId: e.target.value })}
+                className="w-full mt-1 p-2 rounded-md border border-gray-300 dark:border-text-secondary text-sm text-text"
+              >
+                <option value="">Choose one</option>
+                {userReservationsForThisAccommodation.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {new Date(r.startDate).toLocaleDateString()} – {new Date(r.endDate).toLocaleDateString()}
+                  </option>
+                ))}
+              </select>
+            </div>
 
-        <div className="flex gap-2">
-          <Button
-            className="bg-primary hover:bg-accent text-white"
-            onClick={async () => {
-              const token = localStorage.getItem("token")
-              try {
-                await axios.post(API_CREATE_REVIEW, {
-                  title: reviewForm.title,
-                  content: reviewForm.content,
-                  rating: reviewForm.rating,
-                  reservationId: reviewForm.reservationId,
-                  userId: user?.id,
-                }, {
-                  headers: { Authorization: `Bearer ${token}` }
-                })
+            <div className="flex gap-2">
+              <Button
+                className="bg-primary hover:bg-accent text-white"
+                onClick={async () => {
+                  const token = localStorage.getItem("token")
+                  try {
+                    await axios.post(API_CREATE_REVIEW, {
+                      title: reviewForm.title.trim(),
+                      content: reviewForm.content.trim(),
+                      rating: reviewForm.rating,
+                      reservationId: reviewForm.reservationId,
+                      userId: user?.id,
+                    }, {
+                      headers: { Authorization: `Bearer ${token}` }
+                    })
 
-                // Reset form
-                setShowReviewForm(false)
-                setReviewForm({ title: "", content: "", rating: 1, reservationId: "" })
+                    setShowReviewForm(false)
+                    setReviewForm({ title: "", content: "", rating: 1, reservationId: "" })
 
-                // Refresh reviews
-                const res = await axios.get(API_GET_REVIEWS(id))
-                setReviews(res.data)
-              } catch (err) {
-                console.error("Error submitting review", err)
-              }
-            }}
-          >
-            Submit Review
-          </Button>
+                    const res = await axios.get(API_GET_REVIEWS(id))
+                    setReviews(res.data)
+                  } catch (err) {
+                    console.error("Error submitting review", err)
+                  }
+                }}
+              >
+                Submit Review
+              </Button>
 
-          <Button
-            variant="outline"
-            className="bg-red-500 hover:bg-red-600 text-white"
-            onClick={() => {
-              setShowReviewForm(false)
-              setReviewForm({ title: "", content: "", rating: 1, reservationId: "" })
-            }}
-          >
-            Cancel
-          </Button>
-        </div>
-      </div>
+              <Button
+                variant="outline"
+                className="bg-red-500 hover:bg-red-600 text-white"
+                onClick={() => {
+                  setShowReviewForm(false)
+                  setReviewForm({ title: "", content: "", rating: 1, reservationId: "" })
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-yellow-100 border border-yellow-300 text-yellow-800 p-4 mt-4 rounded-md text-sm">
+            You’ll be able to submit your review once your stay is completed.
+          </div>
+        )}
+      </>
     )}
   </div>
 )}
+
+
 
   </div>
 )}

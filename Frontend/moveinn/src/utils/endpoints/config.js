@@ -47,6 +47,7 @@ export const API_DELETE_ACCOMMODATION = (id) => `${API_ACCOMMODATION}/Delete/${i
 export const API_GET_UNAVAILABLEDATESBYACCOMMODATION = (id) => `${API_ACCOMMODATION}/UnavailableDates/${id}`;
 const API_ACOMMODATION = `${API_BASE_URL}/Accommodations`;
 export const API_SEARCH_ACOMMODATION = `${API_ACOMMODATION}/SearchAccommodation`;
+export const API_ACCOMMODATION_COUNTRIES = `${API_ACOMMODATION}/countries`;
 export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
 export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
 
