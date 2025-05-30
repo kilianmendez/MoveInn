@@ -338,7 +338,7 @@ export default function RecommendationsPage() {
   className="mt-6 mb-4 flex items-center justify-between cursor-pointer rounded-lg px-4 py-3 bg-gradient-to-r from-accent-light dark:from-accent/70 to-foreground hover:bg-accent/80 border border-dashed border-accent"
   onClick={() => setShowCreateForm(prev => !prev)}
 >
-  <div className="flex items-center gap-2 text-[#0E1E40]">
+  <div className="flex items-center gap-2 text-text">
     {showCreateForm ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
     <span className="font-medium">{showCreateForm ? "Hide Form" : "Create Recommendation"}</span>
   </div>
@@ -563,9 +563,9 @@ export default function RecommendationsPage() {
     <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
       <MapPin className="h-8 w-8 text-gray-400" />
     </div>
-    <h3 className="text-xl font-medium text-gray-700 mb-2">No recommendations found</h3>
-    <p className="text-gray-500 mb-6">Try changing your filters or search terms.</p>
-    <Button onClick={() => {
+    <h3 className="text-xl font-medium text-primary dark:text-text-secondary mb-2">No recommendations found</h3>
+    <p className="text-text mb-6">Try changing your filters or search terms.</p>
+    <Button className="bg-primary text-white" onClick={() => {
       setSelectedCategory("")
       setSelectedCity("")
       setSelectedCountry("")
@@ -594,23 +594,7 @@ export default function RecommendationsPage() {
 )}
 
 
-      {filtered.length === 0 && (
-        <div className="text-center py-12">
-          <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-            <MapPin className="h-8 w-8 text-gray-400" />
-          </div>
-          <h3 className="text-xl font-medium text-gray-700 mb-2">No recommendations found</h3>
-          <p className="text-gray-500 mb-6">Try changing your filters or search terms.</p>
-          <Button onClick={() => {
-            setSelectedCategory("")
-            setSelectedCity("")
-            setSelectedCountry("")
-            setSearchQuery("")
-          }}>
-            Clear all filters
-          </Button>
-        </div>
-      )}
+      
     </div>
   )
 }

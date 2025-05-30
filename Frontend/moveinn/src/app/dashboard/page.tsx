@@ -20,6 +20,8 @@ import {
     Plus,
     X,
     Map,
+    CalendarX,
+    SearchX,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,7 +33,7 @@ import { DashboardAcommodationCard } from "@/components/dashboard/dashboard-acom
 import { HostCard } from "@/components/dashboard/host-card"
 import axios from "axios"
 import { useAuth } from "@/context/authcontext"
-import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION, API_ALL_ACOMMODATIONS } from "@/utils/endpoints/config"
+import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION, API_ALL_ACOMMODATIONS, API_SEARCH_EVENTS } from "@/utils/endpoints/config"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 
@@ -134,23 +136,73 @@ export default function DashboardPage() {
     // const [acomodations, setAcomodations] = useState<Acommodation[]>([])
     const [acommodations, setAcommodations] = useState<Acommodation[]>([])
 
+    interface Event {
+      id: string
+      title: string
+      description: string
+      location: string
+      date: string
+      category: string
+      tags: string[]
+      attendeesCount: number
+      joined: boolean
+    }
+    
+    const [events, setEvents] = useState<Event[]>([])
+    
+    const fetchEvents = async () => {
+      try {
+        const token = localStorage.getItem("token")
+        const response = await axios.post(
+          API_SEARCH_EVENTS,
+          {
+            page: 1,
+            limit: 4,
+            query: "",
+            location: "",
+            category: "",
+            tags: [],
+            sortField: "",
+            sortOrder: "",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        console.log("Eventos encontrados:", response.data.items)
+        setEvents(response.data.items || [])
+      } catch (error) {
+        console.error("Error fetching events:", error)
+        setEvents([])
+      }
+    }
+    
+    useEffect(() => {
+      if (user?.city) {
+        fetchEvents()
+      }
+    }, [user])
+    
+
     const getRecommendations = async () => {
         try {
-          const token = localStorage.getItem("token") // 👈 get token from storage
+          const token = localStorage.getItem("token")
 
           const body = {
             query: "",
             sortField: "",
             sortOrder: "",
-            country: "Spain",
-            city: "",
+            country: user?.country,
+            city: user?.city,
             page: 1,
             limit: 4,
           }
   
           const response = await axios.post(API_SEARCH_RECOMMENDATION, body, {
             headers: {
-              Authorization: `Bearer ${token}`, // 👈 add Authorization header
+              Authorization: `Bearer ${token}`,
             },
           })
       
@@ -170,22 +222,54 @@ export default function DashboardPage() {
         }
     }
 
-    const fetchAcommodations = async () => {
-        try {
-          const token = localStorage.getItem("token")
-          const response = await axios.get(API_ALL_ACOMMODATIONS, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          setAcommodations(Array.isArray(response.data) ? response.data : [])
-        } catch (err) {
-          console.error("Error fetching accommodations:", err)
+    const searchAcommodations = async () => {
+      console.log("Buscando acomodaciones para:", user?.city, user?.erasmusCountry)
+      try {
+        const token = localStorage.getItem("token")
+    
+        const body = {
+          query: "",
+          sortField: "",
+          sortOrder: "",
+          accommodationType: null,
+          availableFrom: null,
+          availableTo: null,
+          country: user?.erasmusCountry,
+          city: user?.city,
+          page: 1,
+          limit: 4,
+        }
+
+        console.log("Body de la busqueda:", body)
+    
+        const response = await axios.post(API_SEARCH_ACOMMODATION, body, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+        const data = response.data.items
+        console.log("Acomodaciones encontradas:", data)
+    
+        if (Array.isArray(data)) {
+          setAcommodations(data)
+        } else if (Array.isArray(data.accommodations)) {
+          setAcommodations(data.accommodations)
+        } else {
           setAcommodations([])
         }
+      } catch (error) {
+        console.error("Error fetching accommodations:", error)
+        setAcommodations([])
+      }
     }
+    
 
     useEffect(() => {
-        fetchAcommodations()
-    }, [])
+      if (user?.city && user?.erasmusCountry) {
+        searchAcommodations()
+      }
+    }, [user])
+    
 
     useEffect(() => {
         getRecommendations()
@@ -220,18 +304,24 @@ export default function DashboardPage() {
                 </div>
                 
                 <div className="mt-6 md:mt-0 flex flex-col items-start gap-2 space-y-3 md:space-y-0 md:space-x-3">
+                    <Link href="/dashboard/events">
                     <Button className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold">
                         <PlusCircleIcon className="mr-2 h-4 w-4" />
                         Create Event
                     </Button>
+                    </Link>
+                    <Link href="/dashboard/recommendations">
                     <Button variant="outline" className="bg-white/10 border-none text-white hover:bg-white/10">
                         <MapPinIcon className="mr-2 h-4 w-4" />
                         Explore The City
                     </Button>
+                    </Link>
+                    <Link href="/dashboard/findpeople">
                     <Button variant="outline" className="bg-white/10 border-none text-white hover:bg-white/10">
                         <UsersIcon className="mr-2 h-4 w-4" />
                         Make New Friends
                     </Button>
+                    </Link>
                 </div>
                 </div>
             </div>
@@ -307,81 +397,43 @@ export default function DashboardPage() {
                     <CardTitle className="text-xl text-text">Upcoming Events</CardTitle>
                     <CardDescription className="text-text-secondary">Events you&apos;ve joined or might be interested in</CardDescription>
                     </div>
+                    <Link href="dashboard/events">
                     <Button variant="ghost" className="dark:text-text-secondary">
                     View all <ChevronRightIcon className="ml-1 h-4 w-4"/>
                     </Button>
+                    </Link>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                     <CardContent>
-  <div className="space-y-4">
-    <EventCard
-      title="Language Exchange Night"
-      date="Today, 7:00 PM"
-      location="Café del Mar, Barcelona"
-      attendees={18}
-      category="Social"
-      joined={true}
-    />
-    <EventCard
-      title="Weekend Trip to Montserrat"
-      date="Today, 9:00 AM"
-      location="Plaça Catalunya"
-      attendees={24}
-      category="Trip"
-      joined={true}
-    />
-    <EventCard
-      title="International Food Festival"
-      date="Tomorrow, 6:30 PM"
-      location="University Campus"
-      attendees={42}
-      category="Cultural"
-      joined={false}
-    />
-    <EventCard
-      title="AI in Education: A Debate"
-      date="Sunday, 10:00 AM"
-      location="Tech Hub, Barcelona"
-      attendees={16}
-      category="Academic"
-      joined={true}
-    />
-    <EventCard
-      title="Sunset Beach Volleyball"
-      date="Sunday, 6:00 PM"
-      location="Barceloneta Beach"
-      attendees={20}
-      category="Sports"
-      joined={true}
-    />
-    <EventCard
-      title="Photography Workshop: City at Night"
-      date="Sunday, 8:00 PM"
-      location="Plaza Real"
-      attendees={12}
-      category="Workshop"
-      joined={false}
-    />
-    <EventCard
-      title="Neon Party at Apolo"
-      date="Sunday, 11:00 PM"
-      location="Sala Apolo, Barcelona"
-      attendees={80}
-      category="Party"
-      joined={false}
-    />
-  </div>
-</CardContent>
+                      <div className="space-y-4">
+                        {events.length > 0 ? (
+                          events.map((event) => (
+                            <EventCard
+                              key={event.id}
+                              eventId={event.id}
+                              title={event.title}
+                              date={event.date}
+                              location={event.location}
+                              attendeesCount={event.attendeesCount}
+                              category={event.category}
+                              joined={event.joined}
+                            />
+                          ))
+                        ) : (
+                          <div className="text-center text-md text-text py-4">
+                            <CalendarX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+                            No events found in{" "}
+                            <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span>.
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+
 
                     </div>
                 </CardContent>
-                <CardFooter className="border-t pt-4">
-                    <Button variant="outline" className="w-full bg-foreground border-primary-dark text-primary-dark hover:bg-primary hover:text-white">
-                    <PlusCircleIcon className="mr-2 h-4 w-4" />
-                    Create New Event
-                    </Button>
-                </CardFooter>
+                
                 </Card>
 
                 {/* Housing */}
@@ -398,12 +450,21 @@ export default function DashboardPage() {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {acommodations.map((acommodation) => (
-                        <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
-                    ))}
-                    </div>
-                </CardContent>
+  {acommodations.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {acommodations.map((acommodation) => (
+        <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
+      ))}
+    </div>
+  ) : (
+    <div className="text-center text-md text-text py-4">
+      <SearchX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+      No housing options available in{" "}
+      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> at the moment.
+    </div>
+  )}
+</CardContent>
+
                 </Card>
 
                 {/* Local Recommendations */}
@@ -420,12 +481,27 @@ export default function DashboardPage() {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {recommendations.map((recommendation) => (
-                        <RecommendationCard key={recommendation.id} name={recommendation.title} category={getCategoryName(recommendation.category)} rating={recommendation.rating} description={recommendation.description} recommendedBy={recommendation.userId} />
-                    ))}
-                    </div>
-                </CardContent>
+  {recommendations.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {recommendations.map((recommendation) => (
+        <RecommendationCard
+          key={recommendation.id}
+          name={recommendation.title}
+          category={getCategoryName(recommendation.category)}
+          rating={recommendation.rating}
+          description={recommendation.description}
+          recommendedBy={recommendation.userId}
+        />
+      ))}
+    </div>
+  ) : (
+    <div className="text-center text-md text-text py-4">
+      <CalendarX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+      No recommendations found in <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> yet. Be the first to recommend something!
+    </div>
+  )}
+</CardContent>
+
                 </Card>
             </div>
 

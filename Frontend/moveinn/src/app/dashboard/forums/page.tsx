@@ -330,15 +330,15 @@ export default function ForumsPage() {
             >
               <div className="flex items-center gap-2">
                 {showCreateForum ? (
-                  <ChevronUp className="h-4 w-4 text-[#0E1E40]" />
+                  <ChevronUp className="h-4 w-4 text-text" />
                 ) : (
-                  <ChevronDown className="h-4 w-4 text-[#0E1E40]" />
+                  <ChevronDown className="h-4 w-4 text-text" />
                 )}
-                <span className="text-sm font-medium text-[#0E1E40]">
+                <span className="text-sm font-medium text-text">
                   {showCreateForum ? "Hide Forum Form" : "Create Forum Post"}
                 </span>
               </div>
-              <span className="text-xs text-gray-700 dark:text-gray-300">{user?.erasmusCountry || "Your country"}</span>
+              <span className="text-xs text-text">{user?.erasmusCountry || "Your country"}</span>
             </div>
 
             <AnimatePresence>

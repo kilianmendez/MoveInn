@@ -130,7 +130,7 @@ export function ChatWindow({ contact, onSend }: ChatWindowProps) {
   // Render con separadores
   let lastDateLabel = ""
   return (
-    <div className="flex-1 flex flex-col">
+    <div className="flex-1 flex flex-col min-h-0">
       {/* Mensajes */}
 <div className="flex-1 overflow-y-auto px-4 py-2 space-y-3">
   {messages.length === 0 ? (

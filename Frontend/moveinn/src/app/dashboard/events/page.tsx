@@ -6,7 +6,7 @@ import {
   Music, Utensils, GraduationCap, Plane, Globe, Coffee, BookOpen, MapPin, Upload,
   CalendarOff
 } from "lucide-react"
-import { format, addDays, isSameDay } from "date-fns"
+import { format, addDays, isSameDay, isAfter } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -21,9 +21,10 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from "axios"
-import { API_EVENTS, API_CREATE_EVENT } from "@/utils/endpoints/config"
+import { API_EVENTS, API_CREATE_EVENT, API_GET_USER_EVENTS } from "@/utils/endpoints/config"
 import { v4 as uuidv4 } from "uuid"
 import { useAuth } from "@/context/authcontext"
+import { toast } from "sonner"
 
 
 export default function EventsPage() {
@@ -47,24 +48,36 @@ export default function EventsPage() {
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
 
+  const { user } = useAuth()
+
 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(API_EVENTS)
-        const data = response.data.map((event: any) => ({
+        const [allEventsRes, userEventsRes] = await Promise.all([
+          axios.get(API_EVENTS),
+          axios.get(API_GET_USER_EVENTS(user?.id))
+        ])
+  
+        const joinedIds = new Set(userEventsRes.data.map((e: any) => e.id))
+  
+        const data = allEventsRes.data.map((event: any) => ({
           ...event,
-          date: new Date(event.date) // convertir string a Date para isSameDay
+          date: new Date(event.date),
+          joined: joinedIds.has(event.id)
         }))
-        console.log(data)
+  
         setEvents(data)
       } catch (error) {
         console.error("Failed to fetch events:", error)
       }
     }
   
-    fetchEvents()
-  }, [])
+    if (user?.id) {
+      fetchEvents()
+    }
+  }, [user?.id])
+  
 
   const filteredEvents = events.filter(event =>
     isSameDay(event.date, selectedDate) &&
@@ -78,7 +91,16 @@ export default function EventsPage() {
 
   const clearFilters = () => setActiveFilters([])
 
-  const next7Days = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i))
+  const next7Days = Array.from(
+    new Set(
+      events
+        .filter(e => isAfter(e.date, new Date()) || isSameDay(e.date, new Date()))
+        .map(e => e.date.toDateString())
+    )
+  )
+    .map(dateStr => new Date(dateStr))
+    .sort((a, b) => a.getTime() - b.getTime())
+    .slice(0, 7)
 
   const getCategoryIcon = (category: string) => {
     const icons: Record<string, JSX.Element> = {
@@ -94,11 +116,9 @@ export default function EventsPage() {
     return icons[category.toLowerCase()] || <Calendar className="h-4 w-4" />
   }
 
-  const { user } = useAuth()
-
   const handleCreateEvent = async () => {
     if (!user?.id) {
-      alert("You must be logged in to create an event.")
+      toast.error("You must be logged in to create an event.")
       return
     }
   
@@ -106,7 +126,6 @@ export default function EventsPage() {
       const datetime = new Date(`${date}T${time}`)
   
       const formData = new FormData()
-  
       formData.append("CreatorId", user.id)
       formData.append("Title", title)
       formData.append("Date", datetime.toISOString())
@@ -115,25 +134,48 @@ export default function EventsPage() {
       formData.append("MaxAttendees", String(Number(capacity)))
       formData.append("Category", category)
       formData.append("Description", description)
-  
-      if (imageFile) {
-        formData.append("ImageFile", imageFile)
-      }
-  
-      // 👉 FIX para Tags
+      if (imageFile) formData.append("ImageFile", imageFile)
       tags.forEach((tag, index) => {
         formData.append(`Tags[${index}]`, tag)
       })
   
       const response = await axios.post(API_CREATE_EVENT, formData, {
         headers: {
-          "Content-Type": "multipart/form-data"
-        }
+          "Content-Type": "multipart/form-data",
+        },
       })
   
-      console.log("✅ Event created:", response.data)
-    } catch (error) {
+      const newEvent = {
+        ...response.data,
+        date: new Date(response.data.date),
+        joined: true,
+      }
+  
+      // 1. Añadir el nuevo evento al principio
+      setEvents((prev) => [newEvent, ...prev])
+  
+      // 2. Resetear el formulario
+      setTitle("")
+      setDescription("")
+      setDate("")
+      setTime("")
+      setLocation("")
+      setAddress("")
+      setCategory("")
+      setCapacity("")
+      setImageFile(null)
+      setImagePreview(null)
+      setTags([])
+      setTagInput("")
+  
+      // 3. Cerrar el desplegable
+      setShowCreateEvent(false)
+  
+      // 4. Toast de éxito
+      toast.success("Event created successfully!")
+    } catch (error: any) {
       console.error("Error creating event:", error)
+      toast.error("Failed to create event.")
     }
   }
   
@@ -155,12 +197,17 @@ export default function EventsPage() {
                 </p>
               </div>
               <Button
-                className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold"
-                onClick={() => setShowCreateEvent(true)}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Create Event
-              </Button>
+  className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold"
+  onClick={() => setShowCreateEvent(prev => !prev)}
+>
+  {showCreateEvent ? (
+    <X className="mr-2 h-4 w-4" />
+  ) : (
+    <Plus className="mr-2 h-4 w-4" />
+  )}
+  {showCreateEvent ? "Close Form" : "Create Event"}
+</Button>
+
             </div>
 
             {/* Filters & Tabs */}
@@ -219,11 +266,11 @@ export default function EventsPage() {
         >
           <div className="flex items-center gap-2">
             {showCreateEvent ? (
-              <ChevronUp className="h-4 w-4 text-[#0E1E40]" />
+              <ChevronUp className="h-4 w-4 text-text" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-[#0E1E40]" />
+              <ChevronDown className="h-4 w-4 text-text" />
             )}
-            <span className="text-sm font-medium text-[#0E1E40]">
+            <span className="text-sm font-medium text-text">
               {showCreateEvent ? "Hide Event Form" : "Create New Event"}
             </span>
           </div>
@@ -231,138 +278,179 @@ export default function EventsPage() {
 
         {/* Formulario con animación */}
         <AnimatePresence>
-          {showCreateEvent && (
-            <motion.div
-              key="eventForm"
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
-            >
-              <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-foreground text-text">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold text-text-secondary">Create a New Event</h2>
-                </div>
+  {showCreateEvent && (
+    <motion.div
+      key="eventForm"
+      initial={{ height: 0, opacity: 0 }}
+      animate={{ height: "auto", opacity: 1 }}
+      exit={{ height: 0, opacity: 0 }}
+      transition={{ duration: 0.3, ease: "easeInOut" }}
+      className="overflow-hidden"
+    >
+      <div className="border border-primary rounded-xl shadow p-6 mb-8 bg-foreground text-text">
+        <h2 className="text-xl font-bold text-text mb-4">Create a New Event</h2>
 
-                <Input placeholder="Event Title" value={title} onChange={(e) => setTitle(e.target.value)} className="mb-4" />
-                <div className="mb-4">
-                  <label className="text-sm font-medium text-text-secondary mb-2 block">Event Image</label>
-                  <div
-                    className="border-2 border-dashed rounded-md border-gray-300 dark:border-gray-700 p-6 flex flex-col items-center justify-center bg-background hover:bg-muted/30 cursor-pointer transition"
-                    onClick={() => document.getElementById("event-image-input")?.click()}
-                  >
-                    <Upload className="h-8 w-8 text-gray-400 mb-2" />
-                    <p className="text-sm text-gray-500 mb-1 text-center">
-                      Drag and drop an image here, or click to browse
-                    </p>
-                    <p className="text-xs text-gray-400 text-center">Recommended size: 1200 x 600 pixels</p>
-                    {imagePreview && (
-                      <img
-                        src={imagePreview}
-                        alt="Preview"
-                        className="mt-4 rounded-md max-h-40 object-contain border"
-                      />
-                    )}
-                    <input
-                      type="file"
-                      id="event-image-input"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          setImageFile(file)
-                          setImagePreview(URL.createObjectURL(file))
-                        }
-                      }}
-                      hidden
-                    />
-                  </div>
-                </div>
-                <Textarea
-                  placeholder="Describe your event..."
-                  rows={4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full mb-4 rounded-md border border-border text-sm p-3 resize-none"
-                />
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Title</label>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Erasmus Welcome Party"
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Max Capacity</label>
+            <Input
+              type="number"
+              min={1}
+              value={capacity}
+              onChange={(e) => setCapacity(e.target.value)}
+              placeholder="e.g. 100"
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-                  <Input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-                </div>
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Date</label>
+            <Input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Time</label>
+            <Input
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+        </div>
 
-                <Input placeholder="Location" value={location} onChange={(e) => setLocation(e.target.value)} className="mb-4" />
-                <Input placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} className="mb-4" />
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Location</label>
+            <Input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="e.g. Sala Apolo"
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Address</label>
+            <Input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="e.g. Carrer Nou de la Rambla 113"
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+        </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <Select value={category} onValueChange={(value) => setCategory(value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["Social", "Trip", "Cultural", "Academic", "Sports", "Workshop", "Party", "Food"].map(cat => (
-                        <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Input
-                    type="number"
-                    min={1}
-                    placeholder="Max Capacity"
-                    value={capacity}
-                    onChange={(e) => setCapacity(e.target.value)}
-                  />
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-text-secondary mb-1">Category</label>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="border border-primary dark:border-text-secondary">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent className="text-text border border-primary dark:border-text-secondary">
+              {["Social", "Trip", "Cultural", "Academic", "Sports", "Workshop", "Party", "Food"].map(cat => (
+                <SelectItem key={cat} value={cat.toLowerCase()}>{cat}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-                </div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-text-secondary mb-1">Description</label>
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            placeholder="Describe your event..."
+            className="w-full rounded-md border border-primary dark:border-text-secondary text-primary-dark text-sm p-3 focus:ring-2 focus:ring-primary focus:outline-none resize-none"
+          />
+        </div>
 
-                <div className="mb-4">
-  <label className="text-sm font-medium text-text-secondary block mb-1">Tags (max 3)</label>
-  <div className="flex gap-2">
-    <Input
-      placeholder="Add a tag and press Enter"
-      value={tagInput}
-      onChange={(e) => setTagInput(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") {
-          e.preventDefault()
-          const trimmed = tagInput.trim()
-          if (trimmed && !tags.includes(trimmed) && tags.length < 3) {
-            setTags([...tags, trimmed])
-            setTagInput("")
-          }
-        }
-      }}
-    />
-  </div>
-  <div className="flex flex-wrap gap-2 mt-2">
-    {tags.map((tag) => (
-      <Badge
-        key={tag}
-        variant="outline"
-        className="text-xs py-1 px-2 flex items-center gap-1 bg-muted text-muted-foreground"
-      >
-        {tag}
-        <X className="h-3 w-3 cursor-pointer" onClick={() => setTags(tags.filter((t) => t !== tag))} />
-      </Badge>
-    ))}
-  </div>
-</div>
-
-
-                <div className="flex justify-end gap-3 pt-2">
-                  <Button variant="outline" onClick={() => setShowCreateEvent(false)}>Cancel</Button>
-                  <Button
-                    className="bg-primary text-white hover:bg-primary/80"
-                    onClick={handleCreateEvent}
-                  >
-                    Create Event
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-text-secondary mb-1">Upload Banner</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0]
+              if (file) {
+                setImageFile(file)
+                setImagePreview(URL.createObjectURL(file))
+              }
+            }}
+            className="w-full rounded-md border border-primary dark:border-text-secondary text-primary-dark text-sm p-2 bg-foreground file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-[#3b5ccd]"
+          />
+          {imagePreview && (
+            <img
+              src={imagePreview}
+              alt="Preview"
+              className="mt-4 rounded-md max-h-40 object-contain border"
+            />
           )}
-        </AnimatePresence>
+        </div>
+
+        <div className="mb-4">
+          <label className="text-sm font-medium text-text-secondary block mb-1">Tags (max 3)</label>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Add a tag and press Enter"
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault()
+                  const trimmed = tagInput.trim()
+                  if (trimmed && !tags.includes(trimmed) && tags.length < 3) {
+                    setTags([...tags, trimmed])
+                    setTagInput("")
+                  }
+                }
+              }}
+              className="text-primary-dark text-sm border border-primary dark:border-text-secondary focus:ring-2 focus:ring-primary focus:outline-none"
+            />
+          </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {tags.map((tag) => (
+              <Badge
+                key={tag}
+                variant="outline"
+                className="text-xs py-1 px-2 flex items-center gap-1 bg-muted text-muted-foreground"
+              >
+                {tag}
+                <X className="h-3 w-3 cursor-pointer" onClick={() => setTags(tags.filter((t) => t !== tag))} />
+              </Badge>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-2">
+          <Button variant="outline" className="hover:bg-red-600" onClick={() => setShowCreateEvent(false)}>Cancel</Button>
+          <Button
+            className="bg-[#4C69DD] hover:bg-[#3b5ccd] text-white"
+            onClick={handleCreateEvent}
+          >
+            Create Event
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
 
         {/* Selector de fecha */}
         <div className="flex overflow-x-auto gap-2 pb-4 mb-6 scrollbar-hide">
@@ -378,7 +466,7 @@ export default function EventsPage() {
               onClick={() => setSelectedDate(date)}
             >
               <div className="flex flex-col items-center">
-                <span>{i === 0 ? "Today" : format(date, "EEE")}</span>
+                <span>{isSameDay(date, new Date()) ? "Today" : format(date, "EEE")}</span>
                 <span className="text-lg font-bold">{format(date, "d")}</span>
                 <span>{format(date, "MMM")}</span>
               </div>
@@ -406,7 +494,10 @@ export default function EventsPage() {
           <EventCalendarView
             events={events}
             selectedDate={selectedDate}
-            setSelectedDate={setSelectedDate}
+            setSelectedDate={(date) => {
+              setSelectedDate(date)
+              setViewMode("list")
+            }}
             activeFilters={activeFilters}
           />
         )}

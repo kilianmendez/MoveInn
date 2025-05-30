@@ -1,17 +1,71 @@
 import { CalendarIcon, MapPinIcon, Users2Icon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useState, useEffect } from "react"
+import axios from "axios"
+import { useAuth } from "@/context/authcontext"
+import { API_JOIN_EVENT, API_LEAVE_EVENT, API_GET_USER_EVENTS } from "@/utils/endpoints/config"
+import { format, parseISO } from "date-fns"
 
 interface EventCardProps {
+  eventId: string
   title: string
   date: string
   location: string
-  attendees: number
+  attendeesCount: number
   category: string
   joined: boolean
+  onStatusChange?: (joined: boolean) => void
 }
 
-export function EventCard({ title, date, location, attendees, category, joined }: EventCardProps) {
+
+export function EventCard({ eventId, title, date, location, attendeesCount, category, joined, onStatusChange }: EventCardProps) {
+  
+  const { user } = useAuth()
+  const [isJoining, setIsJoining] = useState(false)
+  const [isJoined, setIsJoined] = useState(false)
+  const [currentAttendees, setCurrentAttendees] = useState(attendeesCount)
+
+  const handleJoinLeave = async () => {
+    if (!user?.id) return
+    setIsJoining(true)
+
+    try {
+      if (isJoined) {
+        await axios.post(API_LEAVE_EVENT(eventId, user.id))
+        setIsJoined(false)
+        setCurrentAttendees(prev => Math.max(prev - 1, 0))
+        onStatusChange?.(false)
+      } else {
+        await axios.post(API_JOIN_EVENT(eventId, user.id))
+        setIsJoined(true)
+        setCurrentAttendees(prev => prev + 1)
+        onStatusChange?.(true)
+      }
+    } catch (error) {
+      console.error("Error joining/leaving event:", error)
+    } finally {
+      setIsJoining(false)
+    }
+  }
+
+  useEffect(() => {
+    const checkIfUserJoined = async () => {
+      if (!user?.id) return
+      try {
+        const { data } = await axios.get(API_GET_USER_EVENTS(user.id))
+        const joinedEventIds = data.map((event: { id: string }) => event.id)
+        setIsJoined(joinedEventIds.includes(eventId))
+      } catch (error) {
+        console.error("Failed to fetch user's joined events:", error)
+      }
+    }
+  
+    checkIfUserJoined()
+  }, [eventId, user])
+  
+
+  
   const getCategoryColor = () => {
     switch (category.toLowerCase()) {
       case "social":
@@ -81,7 +135,7 @@ export function EventCard({ title, date, location, attendees, category, joined }
         <div className="flex flex-wrap sm:flex-nowrap text-sm text-gray-800 dark:text-text-secondary gap-y-1 gap-x-4">
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
             <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="truncate">{date}</span>
+            <span className="truncate">{format(parseISO(date), "EEEE, MMMM d, h:mm a")}</span>
           </div>
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
             <MapPinIcon className="h-3.5 w-3.5 flex-shrink-0" />
@@ -89,22 +143,25 @@ export function EventCard({ title, date, location, attendees, category, joined }
           </div>
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
             <Users2Icon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span>{attendees}</span>
+            <span>{currentAttendees}</span>
           </div>
         </div>
       </div>
 
       <Button
-        variant={joined ? "ghost" : "default"}
+        onClick={handleJoinLeave}
+        disabled={isJoining}
+        variant={isJoined ? "ghost" : "default"}
         size="sm"
         className={
-          joined
+          isJoined
             ? "border-[#4C69DD] text-[#4C69DD] dark:text-text-secondary hover:bg-primary/10"
             : "bg-[#4C69DD] hover:bg-[#4C69DD]/90 text-white"
         }
       >
-        {joined ? "View Details" : "Join Event"}
+        {isJoining ? "Loading..." : isJoined ? "Leave Event" : "Join Event"}
       </Button>
+
     </div>
   )
 }

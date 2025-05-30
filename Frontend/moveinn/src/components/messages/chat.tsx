@@ -57,7 +57,7 @@ export default function MessagesPage() {
   )
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className="flex flex-col h-screen overflow-hidden">
       {/* HEADER */}
       <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl mx-4 mt-4 mb-2 px-6 py-4 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
@@ -83,11 +83,12 @@ export default function MessagesPage() {
           </button>
         </div>
       </div>
-
-      {/* CONTENT */}
-      <div className="flex flex-1 mx-4 mb-4 overflow-hidden rounded-xl shadow-sm bg-foreground relative">
+  
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex mx-4 mb-4 overflow-hidden rounded-xl shadow-sm bg-foreground relative">
         {/* CONTACT LIST - DESKTOP */}
-        <div className="hidden md:flex w-1/3 p-4 border-r border-border dark:border-gray-700 flex-col">
+        <div className="hidden md:flex w-1/3 flex-col p-4 border-r border-border dark:border-gray-700 overflow-y-auto">
+          {/* Search bar */}
           <div className="mb-4">
             <div className="bg-background border border-primary rounded-full px-4 py-2 flex items-center gap-2">
               <Search className="h-4 w-4 text-text" />
@@ -100,7 +101,7 @@ export default function MessagesPage() {
               />
             </div>
           </div>
-
+          {/* Contact list */}
           {filteredContacts.length > 0 ? (
             <ContactsList
               contacts={filteredContacts}
@@ -108,60 +109,15 @@ export default function MessagesPage() {
               onSelect={(c) => setSelected(c)}
             />
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-sm text-gray-500 text-center px-4">
+            <div className="flex-1 flex flex-col items-center justify-center text-sm text-text text-center px-4">
               <p className="mb-2">You don’t have any contacts yet.</p>
-              <p className="text-primary font-medium">Follow someone to start chatting!</p>
+              <p className="text-primary dark:text-text-secondary font-medium">Follow someone to start chatting!</p>
             </div>
           )}
         </div>
-
-        {/* CONTACT LIST - MOBILE SLIDEOVER */}
-        {showMobileContacts && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex md:hidden">
-            <div className="w-3/4 bg-background h-full flex flex-col p-4">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-primary dark:text-text-secondary">Chats</h2>
-                <button
-                  onClick={() => setShowMobileContacts(false)}
-                  className="p-2 rounded-full hover:bg-red-400"
-                >
-                  <X className="h-5 w-5 text-text" />
-                </button>
-              </div>
-              <div className="mb-4">
-                <div className="bg-background border border-primary rounded-full px-4 py-2 flex items-center gap-2">
-                  <Search className="h-4 w-4 text-text" />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="flex-1 bg-transparent outline-none text-sm text-text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-              {filteredContacts.length > 0 ? (
-                <ContactsList
-                  contacts={filteredContacts}
-                  selectedContactId={selected?.otherUserId || null}
-                  onSelect={(c) => {
-                    setSelected(c)
-                    setShowMobileContacts(false)
-                  }}
-                />
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-sm text-gray-500 text-center px-4">
-                  <p className="mb-2">You don’t have any contacts yet.</p>
-                  <p className="text-primary font-medium">Follow someone to start chatting!</p>
-                </div>
-              )}
-            </div>
-            <div className="flex-1" onClick={() => setShowMobileContacts(false)} />
-          </div>
-        )}
-
+  
         {/* CHAT */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {selected ? (
             <ChatWindow
               contact={selected}

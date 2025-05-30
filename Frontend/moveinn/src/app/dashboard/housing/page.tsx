@@ -235,11 +235,11 @@ const filteredCountries = availableCountries
         >
           <div className="flex items-center gap-2">
             {showCreateForm ? (
-              <ChevronUp className="h-4 w-4 text-[#0E1E40]" />
+              <ChevronUp className="h-4 w-4 text-text" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-[#0E1E40]" />
+              <ChevronDown className="h-4 w-4 text-text" />
             )}
-            <span className="text-sm font-medium text-[#0E1E40]">
+            <span className="text-sm font-medium text-text">
               {showCreateForm ? "Hide Accommodation Form" : "Create New Accommodation"}
             </span>
           </div>

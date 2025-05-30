@@ -29,8 +29,10 @@ export const API_RECOMMENDATION_CITIES = (country) => `${API_RECOMMENDATION}/cit
 export const API_EVENTS = `${API_BASE_URL}/Event`;
 export const API_CREATE_EVENT = `${API_BASE_URL}/Event`;
 export const API_DELETE_EVENT = (id) => `${API_EVENTS}/${id}`;
-export const API_JOIN_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/join?userId=${userId}`;  
+export const API_JOIN_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/join?userId=${userId}`
 export const API_LEAVE_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/leave?userId=${userId}`;
+export const API_GET_USER_EVENTS = (userId) => `${API_EVENTS}/user/${userId}`;
+export const API_SEARCH_EVENTS = `${API_EVENTS}/SearchEvents`;
 
 const API_RESERVATION = `${API_BASE_URL}/Reservation`;
 export const API_GET_RESERVATION = (id) => `${API_RESERVATION}/${id}`;

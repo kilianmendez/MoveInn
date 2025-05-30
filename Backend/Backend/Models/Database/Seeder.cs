@@ -981,18 +981,127 @@ namespace Backend.Models.Database
                     Address = "Plaza Nueva, 1, 41001 Sevilla",
                     AttendeesCount = 0,
                     MaxAttendees = 50,
-                    Category = "Quedada",
+                    Category = "social",
                     Description = "Encuentro para estudiantes Erasmus. Habrá música, comida y visitas guiadas.",
                     ImageUrl = "events/erasmus-sevilla.jpg",
                     Tags = new List<string> { "erasmus", "intercambio", "sevilla" },
-                    CreatorId = users[0].Id,  // Yasir es el creador
-                    Participants = new List<User>
-                    {
-                        users[1], // Christian
-                        users[2]  // Kilian
-                    }
+                    CreatorId = users[0].Id,
+                    Participants = new List<User> { users[1], users[2] }
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Excursión a Montserrat",
+                    Date = new DateTime(2025, 06, 22, 09, 00, 0),
+                    Location = "Montserrat, Barcelona",
+                    Address = "Estación Montserrat-Aeri",
+                    AttendeesCount = 0,
+                    MaxAttendees = 30,
+                    Category = "trip",
+                    Description = "Excursión de día completo para explorar la montaña de Montserrat y su monasterio.",
+                    ImageUrl = "events/trip-montserrat.jpg",
+                    Tags = new List<string> { "aventura", "senderismo", "barcelona" },
+                    CreatorId = users[0].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Visita al Museo Picasso",
+                    Date = new DateTime(2025, 06, 25, 15, 00, 0),
+                    Location = "Museu Picasso, Barcelona",
+                    Address = "Carrer Montcada, 15-23, 08003 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 40,
+                    Category = "cultural",
+                    Description = "Tour guiado por el Museo Picasso para conocer la historia y obras del artista.",
+                    ImageUrl = "events/museo-picasso.jpg",
+                    Tags = new List<string> { "arte", "historia", "barcelona" },
+                    CreatorId = users[1].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Charla sobre oportunidades académicas en Europa",
+                    Date = new DateTime(2025, 06, 27, 17, 00, 0),
+                    Location = "Universitat de Barcelona",
+                    Address = "Gran Via de les Corts Catalanes, 585, 08007 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 100,
+                    Category = "academic",
+                    Description = "Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.Sesión informativa sobre becas y másters en universidades europeas.",
+                    ImageUrl = "events/academic-session.jpg",
+                    Tags = new List<string> { "becas", "educación", "europeo" },
+                    CreatorId = users[2].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Torneo de fútbol Erasmus",
+                    Date = new DateTime(2025, 07, 01, 10, 00, 0),
+                    Location = "Complejo Deportivo Mar Bella",
+                    Address = "Av. del Litoral, 86-96, 08005 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 60,
+                    Category = "sports",
+                    Description = "Participa o anima en nuestro torneo de fútbol entre estudiantes Erasmus.",
+                    ImageUrl = "events/football-tournament.jpg",
+                    Tags = new List<string> { "deporte", "fútbol", "amistad" },
+                    CreatorId = users[0].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Taller de cocina española",
+                    Date = new DateTime(2025, 07, 03, 18, 00, 0),
+                    Location = "Kitchen Lab BCN",
+                    Address = "Carrer de París, 143, 08036 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 20,
+                    Category = "workshop",
+                    Description = "Aprende a cocinar tapas y paella como un verdadero chef español.",
+                    ImageUrl = "events/cooking-workshop.jpg",
+                    Tags = new List<string> { "paella", "gastronomía", "taller" },
+                    CreatorId = users[1].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Fiesta en la playa Barceloneta",
+                    Date = new DateTime(2025, 07, 05, 21, 00, 0),
+                    Location = "Playa de la Barceloneta",
+                    Address = "Passeig Marítim de la Barceloneta, 08003 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 150,
+                    Category = "party",
+                    Description = "Música, bebidas y diversión bajo las estrellas en la playa.",
+                    ImageUrl = "events/beach-party.jpg",
+                    Tags = new List<string> { "playa", "música", "noche" },
+                    CreatorId = users[2].Id,
+                    Participants = new List<User>()
+                },
+                new Event
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Ruta gastronómica por el Born",
+                    Date = new DateTime(2025, 07, 08, 13, 00, 0),
+                    Location = "Barrio del Born, Barcelona",
+                    Address = "Passeig del Born, 08003 Barcelona",
+                    AttendeesCount = 0,
+                    MaxAttendees = 25,
+                    Category = "food",
+                    Description = "Descubre los mejores sabores locales en una ruta por restaurantes auténticos.",
+                    ImageUrl = "events/food-tour-born.jpg",
+                    Tags = new List<string> { "tapas", "comida", "born" },
+                    CreatorId = users[0].Id,
+                    Participants = new List<User>()
                 }
             };
+
             _dataContext.Events.AddRange(events);
             _dataContext.Hosts.AddRange(hosts);
             await _dataContext.SaveChangesAsync();

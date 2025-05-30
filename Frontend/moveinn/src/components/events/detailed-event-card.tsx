@@ -13,6 +13,8 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { API_BASE_IMAGE_URL, API_JOIN_EVENT, API_LEAVE_EVENT } from "@/utils/endpoints/config"
 import { useAuth } from "@/context/authcontext"
+import { ChevronDown, ChevronUp } from "lucide-react"
+
 
 interface Event {
   id: string
@@ -41,6 +43,27 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
   const [isJoining, setIsJoining] = useState(false)
   const [joined, setJoined] = useState(event.joined)
   const [attendeesCount, setAttendeesCount] = useState(event.attendeesCount)
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
+  const [showFullDescription, setShowFullDescription] = useState(false)
+
+
+  const confirmLeaveEvent = async () => {
+    if (!user?.id) return
+  
+    setIsJoining(true)
+  
+    try {
+      await axios.post(API_LEAVE_EVENT(event.id, user.id))
+      setJoined(false)
+      setAttendeesCount(prev => prev - 1)
+    } catch (error) {
+      console.error("Error leaving event:", error)
+    } finally {
+      setIsJoining(false)
+      setShowLeaveModal(false)
+    }
+  }
+
 
   const handleJoinLeave = async () => {
     if (!user?.id) return
@@ -53,6 +76,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
         setJoined(false)
         setAttendeesCount(prev => prev - 1)
       } else {
+        console.log("sending", API_JOIN_EVENT(event.id, user.id))
         await axios.post(API_JOIN_EVENT(event.id, user.id))
         setJoined(true)
         setAttendeesCount(prev => prev + 1)
@@ -97,7 +121,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
   const isToday = new Date().toDateString() === event.date.toDateString()
 
   return (
-    <Card className="overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground py-0">
+    <Card className={`overflow-hidden border-none shadow-md hover:shadow-lg transition-all duration-300 bg-foreground py-0 ${showFullDescription ? "min-h-[auto]" : "min-h-[370px]"}`}>
       <div className="flex flex-col md:flex-row h-full">
         <div className="relative h-48 md:h-auto md:w-1/3">
           <Image
@@ -174,7 +198,32 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
                   </div>
                 </div>
 
-                <p className="text-sm text-text mb-3 line-clamp-3">{event.description}</p>
+                <div className="relative mb-3">
+                  <div
+                    className={`text-sm text-text overflow-hidden transition-all duration-300 ${
+                      showFullDescription ? "max-h-64 overflow-y-auto pr-2" : "line-clamp-3"
+                    }`}
+                  >
+                    {event.description}
+                  </div>
+                  {event.description.length > 160 && (
+                    <button
+                      onClick={() => setShowFullDescription(!showFullDescription)}
+                      className="mt-1 text-sm text-primary flex items-center hover:underline focus:outline-none"
+                    >
+                      {showFullDescription ? (
+                        <>
+                          Show less <ChevronUp className="ml-1 h-4 w-4" />
+                        </>
+                      ) : (
+                        <>
+                          Show more <ChevronDown className="ml-1 h-4 w-4" />
+                        </>
+                      )}
+                    </button>
+                  )}
+                </div>
+
 
                 <div className="flex flex-wrap gap-1 mb-2">
                   {event.tags.map((tag) => (
@@ -195,23 +244,24 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
               </div>
 
               <div className="flex flex gap-2 md:w-32">
+              {joined ? (
+                <Button
+                  variant="default"
+                  className="bg-secondary text-green-900 px-3 h-8 hover:bg-secondary/80"
+                  onClick={() => setShowLeaveModal(true)}
+                >
+                  Attending
+                </Button>
+              ) : (
                 <Button
                   onClick={handleJoinLeave}
                   disabled={isJoining}
-                  className={
-                    joined
-                      ? "bg-secondary text-[#0E1E40] hover:bg-[#B7F8C8]/90 px-3 h-8"
-                      : "bg-[#4C69DD] text-white hover:bg-[#4C69DD]/90 px-3 h-8"
-                  }
+                  className="bg-[#4C69DD] text-white hover:bg-[#4C69DD]/90 px-3 h-8"
                 >
-                  {isJoining
-                    ? joined
-                      ? "Leaving..."
-                      : "Joining..."
-                    : joined
-                    ? "Attending"
-                    : "Join Event"}
+                  {isJoining ? "Joining..." : "Join Event"}
                 </Button>
+              )}
+
               </div>
             </div>
           </CardContent>
@@ -224,6 +274,30 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
           </CardFooter>
         </div>
       </div>
+      {showLeaveModal && (
+  <div className="fixed inset-0 bg-background/50 flex items-center justify-center z-50">
+    <div className="bg-white dark:bg-background p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <h3 className="text-lg font-semibold text-center mb-4 text-primary dark:text-text-secondary">Leave Event?</h3>
+      <p className="text-sm text-text text-center mb-6">
+        Are you sure you want to withdraw your participation from <strong>{event.title}</strong>?
+      </p>
+      <div className="flex justify-end gap-3">
+        <Button className="text-text" variant="outline" onClick={() => setShowLeaveModal(false)}>
+          Cancel
+        </Button>
+        <Button
+          onClick={confirmLeaveEvent}
+          className="bg-red-600 text-white hover:bg-red-700"
+          disabled={isJoining}
+        >
+          {isJoining ? "Leaving..." : "Yes, Leave"}
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
     </Card>
+    
   )
 }
