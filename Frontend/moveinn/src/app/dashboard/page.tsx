@@ -327,65 +327,6 @@ export default function DashboardPage() {
             </div>
             </section>
 
-            {/* Quick Stats */}
-            {/* <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#B7F8C8]/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-sm text-text-secondary">Upcoming Events</p>
-                    <p className="text-2xl font-bold text-text">5</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-[#B7F8C8]/50 flex items-center justify-center">
-                    <CalendarIcon className="h-5 w-5 text-[#0E1E40]" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#4C69DD]/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-sm text-text-secondary">New Messages</p>
-                    <p className="text-2xl font-bold text-text">12</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-[#4C69DD]/30 flex items-center justify-center">
-                    <MessageCircleIcon className="h-5 w-5 text-white" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#62C3BA]/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-sm text-text-secondary">Group Invites</p>
-                    <p className="text-2xl font-bold text-text">3</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-[#62C3BA]/40 flex items-center justify-center">
-                    <Users2Icon className="h-5 w-5 text-[#0E1E40]" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-
-            <Card className="border-none shadow-sm bg-gradient-to-br from-foreground to-[#0E1E40]/10">
-                <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                    <div>
-                    <p className="text-sm text-text-secondary">New Recommendations</p>
-                    <p className="text-2xl font-bold text-text">8</p>
-                    </div>
-                    <div className="w-10 h-10 rounded-full bg-[#0E1E40]/70 flex items-center justify-center">
-                    <MapPinIcon className="h-5 w-5 text-white" />
-                    </div>
-                </div>
-                </CardContent>
-            </Card>
-            </section> */}
-
             {/* Main Content */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left Column */}
@@ -450,20 +391,20 @@ export default function DashboardPage() {
                     </Link>
                 </CardHeader>
                 <CardContent>
-  {acommodations.length > 0 ? (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {acommodations.map((acommodation) => (
-        <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
-      ))}
-    </div>
-  ) : (
-    <div className="text-center text-md text-text py-4">
-      <SearchX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
-      No housing options available in{" "}
-      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> at the moment.
-    </div>
-  )}
-</CardContent>
+                  {acommodations.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {acommodations.map((acommodation) => (
+                        <DashboardAcommodationCard key={acommodation.id} acommodation={acommodation} />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center text-md text-text py-4">
+                      <SearchX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+                      No housing options available in{" "}
+                      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> at the moment.
+                    </div>
+                  )}
+                </CardContent>
 
                 </Card>
 
@@ -481,26 +422,26 @@ export default function DashboardPage() {
                     </Link>
                 </CardHeader>
                 <CardContent>
-  {recommendations.length > 0 ? (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {recommendations.map((recommendation) => (
-        <RecommendationCard
-          key={recommendation.id}
-          name={recommendation.title}
-          category={getCategoryName(recommendation.category)}
-          rating={recommendation.rating}
-          description={recommendation.description}
-          recommendedBy={recommendation.userId}
-        />
-      ))}
-    </div>
-  ) : (
-    <div className="text-center text-md text-text py-4">
-      <CalendarX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
-      No recommendations found in <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> yet. Be the first to recommend something!
-    </div>
-  )}
-</CardContent>
+                  {recommendations.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {recommendations.map((recommendation) => (
+                        <RecommendationCard
+                          key={recommendation.id}
+                          name={recommendation.title}
+                          category={getCategoryName(recommendation.category)}
+                          rating={recommendation.rating}
+                          description={recommendation.description}
+                          recommendedBy={recommendation.userId}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center text-md text-text py-4">
+                      <CalendarX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+                      No recommendations found in <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span> yet. Be the first to recommend something!
+                    </div>
+                  )}
+                </CardContent>
 
                 </Card>
             </div>

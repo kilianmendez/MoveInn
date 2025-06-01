@@ -21,6 +21,8 @@ import { API_GET_ALL_USERS, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { useWebsocket } from "@/context/WebSocketContext"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
+import { OtherUserContentOverview } from "@/components/findpeople/other-user-content"
+
 
 export default function UserDetailPage() {
   const { id } = useParams()
@@ -311,6 +313,7 @@ export default function UserDetailPage() {
           </div>
         </div>
       )}
+      <OtherUserContentOverview userId={user.id} />
     </div>
   )
 }

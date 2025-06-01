@@ -10,6 +10,7 @@ import { Facebook, Instagram, Twitter, FileEdit, User, Linkedin, Github, X, Twit
 import { SOCIAL_MEDIA_TYPES } from "@/types/user"
 import { useAuth } from "@/context/authcontext"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
+import { UserContentOverview } from "./user-content"
 
 export function UserProfile() {
   const { user } = useAuth()
@@ -149,6 +150,20 @@ export function UserProfile() {
               <FileEdit className="h-4 w-4" />
               <span>Edit Profile</span>
             </TabsTrigger>
+            <TabsTrigger
+              value="content"
+              className={`
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
+        ${
+          activeTab === "content"
+            ? "bg-white text-primary shadow-sm border border-gray-200"
+            : "text-primary hover:text-primary hover:bg-white/50"
+        }
+      `}
+            >
+              <FileEdit className="h-4 w-4" />
+              <span>Content</span>
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -174,6 +189,9 @@ export function UserProfile() {
               <ProfileEdit onSuccess={() => setActiveTab("info")} />
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="content" className="mt-6">
+          <UserContentOverview />
         </TabsContent>
       </Tabs>
     </div>

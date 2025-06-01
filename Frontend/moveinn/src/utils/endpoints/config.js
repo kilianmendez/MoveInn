@@ -56,6 +56,7 @@ export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
 export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
 
 const API_REVIEWS = `${API_BASE_URL}/Reviews`;
+export const API_GET_ALL_REVIEWS = `${API_REVIEWS}`;
 export const API_GET_REVIEWS = (id) => `${API_REVIEWS}/accommodation/${id}`;
 export const API_CREATE_REVIEW = `${API_REVIEWS}`;
 
@@ -85,3 +86,23 @@ export const API_HOST_POST_REQUEST = `${API_HOSTS}`;
 export const API_HOST_GET_REQUESTS = `${API_HOSTS}/requests`;
 export const API_HOST_REQUEST_ACCEPT = (id) => `${API_HOSTS}/${id}/approve`;
 export const API_HOST_REQUEST_REJECT = (id) => `${API_HOSTS}/${id}/reject`;
+
+const API_ADMIN = `${API_BASE_URL}/Admin`;
+export const API_ADMIN_MODIFY_ROLE_USER = (id, role) => `${API_ADMIN}/user/${id}?newRole=${role}`;
+export const API_ADMIN_DELETE_REVIEW = (id) => `${API_ADMIN}/review/${id}`;
+export const API_ADMIN_DELETE_RESERVATION = (id) => `${API_ADMIN}/reservation/${id}`;
+export const API_ADMIN_DELETE_ACCOMMODATION = (id) => `${API_ADMIN}/accommodation/${id}`;
+export const API_ADMIN_DELETE_RECOMMENDATION = (id) => `${API_ADMIN}/recommendation/${id}`;
+export const API_ADMIN_DELETE_EVENT = (id) => `${API_ADMIN}/event/${id}`;
+export const API_ADMIN_DELETE_FORUM = (id) => `${API_ADMIN}/forum/${id}`;
+
+//User endpoints
+export const API_REVIEWS_USER = (id) => `${API_REVIEWS}/user/${id}`;
+export const API_RESERVATIONS_USER = (id) => `${API_RESERVATION}/user/${id}`;
+export const API_RECOMMENDATIONS_USER = (id) => `${API_RECOMMENDATION}/user/${id}`; 
+export const API_ACCOMMODATIONS_USER = (id) => `${API_ACCOMMODATION}/user/${id}`;
+export const API_EVENTS_USER = (id) => `${API_EVENTS}/user/${id}`;
+export const API_FORUMS_USER = (id) => `${API_FORUMS}/user/${id}`;
+
+export const API_USER_FOLLOWERS = (id) => `${API_USER}/${id}/followers`;
+export const API_USER_FOLLOWING = (id) => `${API_USER}/${id}/following`;

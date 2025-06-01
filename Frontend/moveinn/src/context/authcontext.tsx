@@ -197,11 +197,13 @@ export const AuthProvider = ({
           headers: { "Content-Type": "application/json" },
         },
       )
+
       const { accessToken } = response.data
+      console.log("accessToken", accessToken)
       if (!accessToken) throw new Error("No se recibió accessToken en la respuesta")
 
       setCookie("token", accessToken, {
-        maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 2, // 7 días o 2 horas
+        maxAge: rememberMe ? 60 * 60 * 24 * 7 : 60 * 60 * 2,
         path: "/",
       });
 

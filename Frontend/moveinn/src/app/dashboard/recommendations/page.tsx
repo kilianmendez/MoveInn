@@ -45,7 +45,7 @@ const categoryByNumber: Record<CategoryId, CategoryName> = Object.entries(catego
   {} as Record<CategoryId, CategoryName>
 )
 
-const getCategoryIcon = (categoryId: number) => {
+export const getCategoryIcon = (categoryId: number) => {
   const category = categoryByNumber[categoryId as CategoryId]?.toLowerCase() || ""
   switch (category) {
     case "restaurant":
