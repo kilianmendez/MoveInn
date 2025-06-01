@@ -17,11 +17,14 @@ import {
   Globe,
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import { API_GET_ALL_USERS, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
+import { API_GET_USER, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { useWebsocket } from "@/context/WebSocketContext"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { OtherUserContentOverview } from "@/components/findpeople/other-user-content"
+import { useAuth } from "@/context/authcontext";
+import { API_USER_FOLLOWING, API_USER_FOLLOWERS } from "@/utils/endpoints/config";
+import { getCookie } from "cookies-next";
 
 
 export default function UserDetailPage() {
@@ -31,7 +34,16 @@ export default function UserDetailPage() {
   const [showFollowers, setShowFollowers] = useState(false)
   const [showFollowing, setShowFollowing] = useState(false)
 
-  const { followUser, lastMessage } = useWebsocket()
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followerCount, setFollowerCount] = useState<number>(0);
+  const [followingCount, setFollowingCount] = useState<number>(0);
+
+  const [fetchedFollowers, setFetchedFollowers] = useState<any[]>([]);
+
+  const [showUnfollowModal, setShowUnfollowModal] = useState(false);
+
+  const { user: authUser } = useAuth()
+  const { socket, followUser, lastMessage } = useWebsocket()
 
   const handleFollow = () => {
     if (user?.id) {
@@ -41,31 +53,97 @@ export default function UserDetailPage() {
   }
 
   useEffect(() => {
-    if (
-      lastMessage?.action === "notification" &&
-      typeof lastMessage.message === "string"
-    ) {
-      console.log("✅ Toast fired:", lastMessage.message)
-      toast.success(lastMessage.message)
+    const fetchFollowers = async () => {
+      try {
+        if (!showFollowers || !user?.id) return;
+  
+        const token = getCookie("token");
+        const res = await axios.get(API_USER_FOLLOWERS(user.id), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        setFetchedFollowers(res.data || []);
+        console.log("✅ Fetched followers:", res.data);
+      } catch (err) {
+        console.error("❌ Error fetching followers:", err);
+      }
+    };
+  
+    fetchFollowers();
+  }, [showFollowers, user?.id]);
+  
+
+  useEffect(() => {
+    if (!user?.id || !socket) return;
+  
+    const payload = {
+      action: "subscribe_counts",
+      targetUserId: user.id
+    };
+  
+    socket.send(JSON.stringify(payload));
+    console.log("📤 Sent subscribe_counts:", payload);
+  }, [user?.id, socket]);
+  
+
+  useEffect(() => {
+    if (!lastMessage) return;
+  
+    // Notificaciones normales
+    if (lastMessage?.action === "notification" && typeof lastMessage.message === "string") {
+      toast.success(lastMessage.message);
     }
-  }, [lastMessage])
+  
+    // Conteo de followers en tiempo real
+    if (lastMessage.action === "receive_counts" && lastMessage.targetId === user?.id) {
+      setFollowerCount(lastMessage.followers);
+      setFollowingCount(lastMessage.followings);
+      console.log("📬 Live counts received:", lastMessage.followers, lastMessage.followings);
+    }
+  }, [lastMessage, user?.id]);
+  
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const token = localStorage.getItem("accessToken")
-        const res = await axios.get(API_GET_ALL_USERS, {
+        const token = getCookie("token");
+        const res = await axios.get(API_GET_USER(id), {
           headers: { Authorization: `Bearer ${token}` },
-        })
-        const found = res.data.find((u: any) => u.id === id)
-        setUser(found)
+        });
+        const found = res.data;
+        setUser(found);
       } catch (err) {
-        console.error("Error loading user:", err)
+        console.error("❌ Error loading user:", err);
       }
-    }
+    };
+  
+    if (id) fetchUser();
+  }, [id]);
 
-    if (id) fetchUser()
-  }, [id])
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      try {
+        const token = getCookie("token");
+        if (!authUser?.id || !user?.id) {
+          console.log("❌ IDs not ready yet → authUser:", authUser?.id, "| user:", user?.id);
+          return;
+        }
+  
+        const followingRes = await axios.get(API_USER_FOLLOWING(authUser.id), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        const isUserFollowed = followingRes.data.some((u: any) => u.id === user.id);
+        setIsFollowing(isUserFollowed);
+      } catch (err) {
+        console.error("❌ Error fetching following list:", err);
+      }
+    };
+  
+    fetchFollowing();
+  }, [authUser, user]);
+  
+  
 
   if (!user) {
     return (
@@ -118,9 +196,9 @@ export default function UserDetailPage() {
       ) : (
         <ul className="space-y-2">
           {list.map((u: any, i: number) => (
-            <li key={i} className="flex items-center gap-3">
+            <li key={u.id || `${u.name}-${i}`} className="flex items-center gap-3">
               <Image
-                src={u.avatarUrl || "/default-avatar.svg"}
+                src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
                 alt={u.name}
                 width={36}
                 height={36}
@@ -188,19 +266,31 @@ export default function UserDetailPage() {
 
   {/* RIGHT: Follow button + Followers/Following */}
   <div className="flex flex-col items-center gap-4">
-    <Button
-      className="bg-accent-light text-accent-dark hover:bg-accent w-full"
-      onClick={handleFollow}
-    >
-      Follow
-    </Button>
+  {isFollowing ? (
+  <Button
+    variant="outline"
+    className="text-primary border-primary hover:bg-primary/10 dark:hover:bg-primary/10 w-full"
+    onClick={() => setShowUnfollowModal(true)}
+  >
+    Following
+  </Button>
+) : (
+  <Button
+    className="bg-accent-light text-accent-dark hover:bg-accent dark:hover:bg-accent-dark w-full"
+    onClick={handleFollow}
+  >
+    Follow
+  </Button>
+)}
+
+
     <div className="flex gap-6">
       <div className="text-center cursor-pointer" onClick={() => setShowFollowers(true)}>
-        <p className="text-lg font-bold text-text">{followers.length}</p>
+        <p className="text-lg font-bold text-text">{followerCount}</p>
         <p className="text-sm text-gray-500">Followers</p>
       </div>
       <div className="text-center cursor-pointer" onClick={() => setShowFollowing(true)}>
-        <p className="text-lg font-bold text-text">{following.length}</p>
+        <p className="text-lg font-bold text-text">{followingCount}</p>
         <p className="text-sm text-gray-500">Following</p>
       </div>
     </div>
@@ -308,12 +398,40 @@ export default function UserDetailPage() {
               ✕
             </button>
 
-            {showFollowers && renderUserList(followers, "Followers")}
+            {showFollowers && renderUserList(fetchedFollowers, "Followers")}
             {showFollowing && renderUserList(following, "Following")}
           </div>
         </div>
       )}
       <OtherUserContentOverview userId={user.id} />
+      {showUnfollowModal && (
+  <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+    <div className="bg-white dark:bg-foreground rounded-lg shadow-lg p-6 max-w-sm w-full text-center space-y-4">
+      <h2 className="text-lg font-semibold text-text">Unfollow {user.name}?</h2>
+      <p className="text-sm text-text-secondary">
+        Are you sure you want to unfollow this user?
+      </p>
+      <div className="flex justify-center gap-4 mt-4">
+        <Button variant="ghost" className="dark:text-text-secondary" onClick={() => setShowUnfollowModal(false)}>
+          Cancel
+        </Button>
+        <Button
+          variant="destructive"
+          className="bg-red-500 hover:bg-red-600 text-white"
+          onClick={() => {
+            // En el futuro: llamada al endpoint de unfollow
+            console.log("Unfollow not implemented yet");
+            setShowUnfollowModal(false);
+          }}
+        >
+          Unfollow
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     </div>
   )
 }

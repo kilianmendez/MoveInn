@@ -105,4 +105,4 @@ export const API_EVENTS_USER = (id) => `${API_EVENTS}/user/${id}`;
 export const API_FORUMS_USER = (id) => `${API_FORUMS}/user/${id}`;
 
 export const API_USER_FOLLOWERS = (id) => `${API_USER}/${id}/followers`;
-export const API_USER_FOLLOWING = (id) => `${API_USER}/${id}/following`;
+export const API_USER_FOLLOWING = (id) => `${API_USER}/${id}/followings`;
