@@ -1,6 +1,7 @@
 ﻿using Backend.Models.Database.Entities;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection.Emit;
@@ -26,10 +27,11 @@ public class DataContext : DbContext
     public DbSet<Forum> Forum { get; set; }
     public DbSet<ForumThread> ForumsThread { get; set; }
     public DbSet<ForumMessages> ForumsMessages { get; set; }
-    public DbSet<Review> Reviews { get; set; }
-    public DbSet<Event> Events { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public DbSet<Messages> Messages { get; set; }
+    public DbSet<Hosts> Hosts { get; set; }
+    public DbSet<Speciality> Speciality { get; set; }
+    public DbSet<UserLanguage> UserLanguages { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnModelCreating(modelBuilder);
 

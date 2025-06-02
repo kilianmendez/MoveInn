@@ -1,7 +1,9 @@
-﻿using Backend.Models.Database.Entities;
+﻿using Backend.Models.Database;
+using Backend.Models.Database.Entities;
 using Backend.Models.Dtos;
 using Backend.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 
 namespace Backend.Services;
 
@@ -44,9 +46,7 @@ public class AccommodationService : IAccommodationService
     {
         var userExists = await _context.Users.AnyAsync(u => u.Id == accommodationDto.OwnerId);
         if (!userExists)
-        {
             throw new Exception("El usuario especificado (OwnerId) no existe en la base de datos.");
-        }
 
         var accommodation = AccommodationMapper.ToEntity(accommodationDto);
         accommodation.Id = Guid.NewGuid();
@@ -57,9 +57,7 @@ public class AccommodationService : IAccommodationService
         if (accommodationDto.AccomodationImages != null && accommodationDto.AccomodationImages.Any())
         {
             if (accommodationDto.AccomodationImages.Count > 5)
-            {
                 throw new Exception("Solo se permiten hasta 5 imágenes por alojamiento.");
-            }
 
             foreach (var file in accommodationDto.AccomodationImages)
             {
@@ -68,15 +66,17 @@ public class AccommodationService : IAccommodationService
                 {
                     Id = Guid.NewGuid(),
                     Url = imageUrl,
+                    AccommodationId = accommodation.Id
                 };
                 _context.Set<ImageAccommodation>().Add(image);
             }
 
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
         }
 
         return AccommodationMapper.ToDto(accommodation);
     }
+
 
     public async Task<bool> UpdateAccommodationAsync(Guid accommodationId, AccommodationUpdateDTO updateDto, Guid currentUserId)
     {
@@ -163,5 +163,26 @@ public class AccommodationService : IAccommodationService
     public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
     {
         return await _repository.GetCitiesByCountryAsync(country);
+    }
+
+    public async Task<bool> DeleteAccommodationAsync(Guid forumId, Guid userId)
+    {
+        try
+        {
+            return await _repository.DeleteAccommodation(forumId, userId);
+        }
+        catch (KeyNotFoundException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("There was a problem until the accomodation was being deleted", ex);
+        }
+    }
+
+    public async Task<IEnumerable<Accommodation>> GetAccommodationsByUser(Guid userId)
+    {
+        return await _repository.GetAccommodationsByUser(userId);
     }
 }
