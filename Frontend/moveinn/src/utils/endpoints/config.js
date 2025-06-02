@@ -1,8 +1,7 @@
-export const API_BASE = "localhost:7023"; 
-
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "localhost:7023";
+export const API_BASE_SOCKET_URL = process.env.NEXT_PUBLIC_WS_BASE_URL || `wss://${API_BASE}`;
 
 export const API_BASE_URL = `https://${API_BASE}/api`;
-export const API_BASE_SOCKET_URL = `wss://${API_BASE}`;
 export const API_BASE_IMAGE_URL = `https://${API_BASE}/`;
 
 
@@ -17,6 +16,7 @@ export const API_GET_USER = (id) => `${API_USER}/${id}`;
 export const API_UPDATE_USER = (id) => `${API_USER}/Update/${id}`;
 export const API_DELETE_USER = (id) => `${API_USER}/Delete/${id}`;
 export const API_UPDATE_SOCIALMEDIA = (id) => `${API_USER}/${id}/SocialMedias`;
+export const API_UPDATE_LANGUAGES = (id) => `${API_USER}/${id}/Languages`;
 
 const API_RECOMMENDATION = `${API_BASE_URL}/Recommendation`;
 export const API_ALL_RECOMMENDATION = `${API_RECOMMENDATION}/AllRecommendations`;

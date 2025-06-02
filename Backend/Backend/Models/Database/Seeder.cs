@@ -308,9 +308,15 @@ namespace Backend.Models.Database
         SocialMedias = new List<SocialMediaLink>
         {
             new SocialMediaLink { SocialMedia = SocialMedia.Instagram, Url = "https://instagram.com/yukiart" }
+        },
+        Languages = new List<UserLanguage>
+        {
+            new UserLanguage { Id = Guid.NewGuid(), Language = "Japanese", Level = LanguageLevel.Native },
+            new UserLanguage { Id = Guid.NewGuid(), Language = "French", Level = LanguageLevel.C1 }
         }
     }
 };
+
 
             var recommendation1 = new Recommendation
             {
@@ -986,7 +992,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/erasmus-sevilla.jpg",
                     Tags = new List<string> { "erasmus", "intercambio", "sevilla" },
                     CreatorId = users[0].Id,
-                    Participants = new List<User> { users[1], users[2] }
+                    
                 },
                 new Event
                 {
@@ -1002,7 +1008,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/trip-montserrat.jpg",
                     Tags = new List<string> { "aventura", "senderismo", "barcelona" },
                     CreatorId = users[0].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1018,7 +1024,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/museo-picasso.jpg",
                     Tags = new List<string> { "arte", "historia", "barcelona" },
                     CreatorId = users[1].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1034,7 +1040,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/academic-session.jpg",
                     Tags = new List<string> { "becas", "educación", "europeo" },
                     CreatorId = users[2].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1050,7 +1056,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/football-tournament.jpg",
                     Tags = new List<string> { "deporte", "fútbol", "amistad" },
                     CreatorId = users[0].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1066,7 +1072,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/cooking-workshop.jpg",
                     Tags = new List<string> { "paella", "gastronomía", "taller" },
                     CreatorId = users[1].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1082,7 +1088,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/beach-party.jpg",
                     Tags = new List<string> { "playa", "música", "noche" },
                     CreatorId = users[2].Id,
-                    Participants = new List<User>()
+                    
                 },
                 new Event
                 {
@@ -1098,7 +1104,7 @@ namespace Backend.Models.Database
                     ImageUrl = "events/food-tour-born.jpg",
                     Tags = new List<string> { "tapas", "comida", "born" },
                     CreatorId = users[0].Id,
-                    Participants = new List<User>()
+                    
                 }
             };
 

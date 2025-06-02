@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -38,6 +38,10 @@ import Image from "next/image";
 import { useAuth } from "@/context/authcontext";
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config";
 import { CountrySearch, CitySearch } from "@/components/ui/country-city-search";
+import { toast } from "sonner"
+import { API_UPDATE_LANGUAGES } from "@/utils/endpoints/config";
+import axios from "axios";
+
 
 interface ProfileEditProps {
   onSuccess: () => void;
@@ -66,10 +70,16 @@ const formSchema = z.object({
   ),
   countryFlag: z.string().optional(),
   erasmusCountryFlag: z.string().optional(),
+  languages: z.array(
+    z.object({
+      language: z.string().min(1, "Language is required"),
+      level: z.number().min(0).max(6, "Level must be between 0 and 6"),
+    })
+  ),
 });
 
 export function ProfileEdit({ onSuccess }: ProfileEditProps) {
-  const { user, updateUserProfile, updateSocialMedia } = useAuth();
+  const { user, updateUserProfile, updateSocialMedia, setUser } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -97,15 +107,53 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         : user.erasmusDate
       : "",
     phone: user?.phone || "",
-    socialMedias: user?.socialMedias || [],
+    socialMedias: Array.isArray(user?.socialMedias) ? user.socialMedias : [],
     countryFlag: user?.countryFlag || "",
     erasmusCountryFlag: user?.erasmusCountryFlag || "",
+    languages: Array.isArray(user?.languages) ? user.languages : [],
   };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: defaultValues,
   });
+
+useEffect(() => {
+  if (user) {
+    const newValues = {
+      name: user.name || "",
+      lastName: user.lastName || "",
+      email: user.mail || "",
+      biography: user.biography || "",
+      school: user.school || "",
+      city: user.city || "",
+      degree: user.degree || "",
+      nationality: user.nationality || "",
+      erasmusCountry: user.erasmusCountry || "",
+      erasmusDate: user.erasmusDate
+        ? typeof user.erasmusDate === "number"
+          ? new Date(user.erasmusDate).toISOString().split("T")[0]
+          : user.erasmusDate
+        : "",
+      phone: user.phone || "",
+      socialMedias: Array.isArray(user.socialMedias) ? user.socialMedias : [],
+      countryFlag: user.countryFlag || "",
+      erasmusCountryFlag: user.erasmusCountryFlag || "",
+      languages: Array.isArray(user.languages) ? user.languages : [],
+    };
+
+    form.reset(newValues);
+  }
+}, [user]);
+
+const updateLanguages = async (languages: { language: string; level: number }[]) => {
+  if (!user?.id) return;
+  await axios.put(API_UPDATE_LANGUAGES(user.id), {
+    userLanguages: languages,
+  });
+};
+
+
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -141,6 +189,20 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
       currentSocialMedias.filter((s) => s.id !== id)
     );
   };
+
+  const watchedLanguages = form.watch("languages") || [];
+
+const addLanguage = () => {
+  const current = form.getValues("languages") || [];
+  form.setValue("languages", [...current, { language: "", level: 0 }]);
+};
+
+const removeLanguage = (index: number) => {
+  const updated = [...form.getValues("languages")];
+  updated.splice(index, 1);
+  form.setValue("languages", updated);
+};
+
 
   const handleCountryFlagChange = (flagUrl: string) => {
     setSelectedCountryFlag(flagUrl);
@@ -180,39 +242,62 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
         countryFlag: data.countryFlag,
         erasmusCountryFlag: data.erasmusCountryFlag,
         socialMedias: [], 
+        languages: data.languages || [],
       };
 
       // First update the user profile
       await updateUserProfile(formData);
+      setUser((prev) => prev ? { ...prev, languages: data.languages } : prev);
 
       // Then update social media separately using the new endpoint
       if (data.socialMedias && data.socialMedias.length > 0) {
         await updateSocialMedia(data.socialMedias);
-      } else {
+      }else {
         await updateSocialMedia([]);
       }
 
-      setSuccess("Profile updated successfully");
-
-      // Notify success
-      setTimeout(() => {
-        onSuccess();
-      }, 1500);
+      toast.success("Profile updated successfully", {
+        description: "Your profile has been updated.",
+      });
+      onSuccess();
+      
     } catch (err) {
       console.error("Error updating profile:", err);
-      setError("Could not update profile. Please try again.");
+      toast.error("Error updating profile", {
+        description: "Could not update profile. Please try again.",
+      });      
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const onInvalid = (errors: typeof form.formState.errors) => {
+    console.warn("❌ Form validation errors:", errors);
+  
+    const firstError = Object.values(errors)[0];
+  
+    let message = "Please fill in all required fields correctly.";
+  
+    if (firstError && typeof firstError === "object" && "message" in firstError && typeof firstError.message === "string") {
+      message = firstError.message;
+    }
+  
+    toast.error("Validation error", {
+      description: message,
+    });
+  };
+  
+  
+
   const userAvatar = user?.avatarUrl
     ? API_BASE_IMAGE_URL + user.avatarUrl
     : "/placeholder.svg?height=128&width=128";
 
+  const watchedSocialMedias = form.watch("socialMedias") || [];
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="space-y-6">
         {/* Error/success messages */}
         {error && (
           <Alert variant="destructive">
@@ -272,7 +357,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <Input
                     placeholder="Your name"
                     {...field}
-                    className="text-text"
+                    className="text-text border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -290,7 +375,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <Input
                     placeholder="Your last name"
                     {...field}
-                    className="text-text"
+                    className="text-text border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -309,7 +394,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                 <Input
                   placeholder="your@email.com"
                   {...field}
-                  className="text-text"
+                  className="text-text border-primary dark:border-text-secondary"
                 />
               </FormControl>
               <FormMessage />
@@ -326,7 +411,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
               <FormControl>
                 <Textarea
                   placeholder="Tell us about yourself..."
-                  className="resize-none min-h-[100px] text-text"
+                  className="resize-none min-h-[100px] text-text border-primary dark:border-text-secondary"
                   {...field}
                 />
               </FormControl>
@@ -347,7 +432,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <Input
                     placeholder="Your university"
                     {...field}
-                    className="text-text"
+                    className="text-text border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -365,7 +450,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <Input
                     placeholder="Your degree or specialty"
                     {...field}
-                    className="text-text"
+                    className="text-text border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -388,7 +473,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                     onChange={field.onChange}
                     onFlagChange={handleCountryFlagChange}
                     placeholder="Search for your nationality..."
-                    className="text-text placeholder:text-text-secondary"
+                    className="text-text placeholder:text-text-secondary border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -406,7 +491,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                   <Input
                     placeholder="Your phone number"
                     {...field}
-                    className="text-text"
+                    className="text-text border-primary dark:border-text-secondary"
                   />
                 </FormControl>
                 <FormMessage />
@@ -433,7 +518,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       type="date"
                       {...field}
                       value={field.value || ""}
-                      className="text-text"
+                      className="text-text border-primary dark:border-text-secondary"
                     />
                   </FormControl>
                   <FormMessage />
@@ -457,7 +542,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       onChange={field.onChange}
                       onFlagChange={handleErasmusCountryFlagChange}
                       placeholder="Search for erasmus country..."
-                      className="text-text"
+                      className="text-text border-primary dark:border-text-secondary"
                     />
                   </FormControl>
                   <FormMessage />
@@ -478,7 +563,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       country={form.watch("erasmusCountry") || ""}
                       disabled={!form.watch("erasmusCountry")}
                       placeholder="Search for erasmus city..."
-                      className="text-text"
+                      className="text-text border-primary dark:border-text-secondary"
                     />
                   </FormControl>
                   <FormMessage />
@@ -506,12 +591,13 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
             </Button>
           </div>
 
-          {form.watch("socialMedias").map((social, index) => (
-            <div
-              key={`social-form-${social.id}-${index}`}
-              className="flex items-start gap-3 text-primary-dark"
-            >
-              <FormField
+          {Array.isArray(watchedSocialMedias) &&
+            watchedSocialMedias.map((social, index) => (
+              <div
+                key={`social-form-${social.id}-${index}`}
+                className="flex items-start gap-3 text-primary-dark"
+              >
+                <FormField
                 control={form.control}
                 name={`socialMedias.${index}.socialMedia`}
                 render={({ field }) => (
@@ -526,7 +612,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       }
                     >
                       <FormControl>
-                        <SelectTrigger className="text-primary-dark">
+                        <SelectTrigger className="text-primary-dark border-primary dark:border-text-secondary">
                           <SelectValue placeholder="Select a social media" className="text-primary-dark" />
                         </SelectTrigger>
                       </FormControl>
@@ -555,7 +641,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
                       <Input
                         placeholder="https://..."
                         {...field}
-                        className="text-text"
+                        className="text-text border-primary dark:border-text-secondary"
                       />
                     </FormControl>
                     <FormMessage />
@@ -576,6 +662,82 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
           ))}
         </div>
 
+        {/* Languages */}
+<div className="space-y-4 pt-4 border-t">
+  <div className="flex justify-between items-center">
+    <h3 className="text-lg font-semibold text-text-secondary">Languages</h3>
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      onClick={addLanguage}
+      className="flex items-center gap-1 bg-secondary/50 text-primary-dark hover:bg-secondary"
+    >
+      <Plus className="h-4 w-4" />
+      <span>Add</span>
+    </Button>
+  </div>
+
+  {watchedLanguages.map((lang, index) => (
+    <div key={`lang-${index}`} className="flex gap-3 items-start">
+      <FormField
+        control={form.control}
+        name={`languages.${index}.language`}
+        render={({ field }) => (
+          <FormItem className="flex-1">
+            <FormLabel className="text-gray-500">Language</FormLabel>
+            <FormControl>
+              <Input placeholder="e.g. English" {...field} className="text-text border-primary dark:border-text-secondary" />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={form.control}
+        name={`languages.${index}.level`}
+        render={({ field }) => (
+          <FormItem className="w-32">
+            <FormLabel className="text-gray-500">Level</FormLabel>
+            <Select
+              value={field.value.toString()}
+              onValueChange={(value) => field.onChange(Number(value))}
+            >
+              <FormControl>
+                <SelectTrigger className="text-text border-primary dark:border-text-secondary">
+                  <SelectValue />
+                </SelectTrigger>
+              </FormControl>
+              <SelectContent>
+                <SelectItem value="0">A1</SelectItem>
+                <SelectItem value="1">A2</SelectItem>
+                <SelectItem value="2">B1</SelectItem>
+                <SelectItem value="3">B2</SelectItem>
+                <SelectItem value="4">C1</SelectItem>
+                <SelectItem value="5">C2</SelectItem>
+                <SelectItem value="6">Native</SelectItem>
+              </SelectContent>
+            </Select>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <Button
+        type="button"
+        variant="ghost"
+        size="icon"
+        className="mt-8"
+        onClick={() => removeLanguage(index)}
+      >
+        <Trash2 className="h-4 w-4 text-red-500" />
+      </Button>
+    </div>
+  ))}
+</div>
+
+
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4 pt-4">
           <Button
@@ -583,7 +745,7 @@ export function ProfileEdit({ onSuccess }: ProfileEditProps) {
             variant="outline"
             onClick={onSuccess}
             disabled={isSubmitting}
-            className="text-gray-800 bg-red-400 hover:bg-red-500"
+            className="text-gray-800 bg-red-400 hover:bg-red-500 border-primary dark:border-text-secondary"
           >
             Cancel
           </Button>

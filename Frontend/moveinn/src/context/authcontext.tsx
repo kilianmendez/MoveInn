@@ -26,6 +26,7 @@ interface AuthContextType {
   isLoading: boolean
   updateUserProfile: (userData: UserUpdateFormData) => Promise<User>
   updateSocialMedia: (socialMedias: Array<{ id: number; socialMedia: number; url: string }>) => Promise<void>
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -106,7 +107,10 @@ export const AuthProvider = ({
     if (userData.countryFlag) formData.append("countryFlag", userData.countryFlag);
     if (userData.erasmusCountryFlag) formData.append("erasmusCountryFlag", userData.erasmusCountryFlag);
     if (userData.avatarFile) formData.append("file", userData.avatarFile);
-  
+    if (userData.languages && Array.isArray(userData.languages)) {
+      formData.append("languages", JSON.stringify({ userLanguages: userData.languages }));
+    }    
+    
     try {
       const response = await axios.put(API_UPDATE_USER(user.id), formData, {
         headers: {
@@ -114,8 +118,14 @@ export const AuthProvider = ({
           "Content-Type": "multipart/form-data",
         },
       });
-  
+
+      console.log("FormData enviado:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+
       if (response.status === 200 && response.data) {
+        console.log("✅ Usuario actualizado, datos recibidos:", response.data); //
         setUser(response.data);
       }
   
@@ -283,6 +293,7 @@ export const AuthProvider = ({
         isLoading,
         updateUserProfile,
         updateSocialMedia,
+        setUser,
       }}
     >
       {children}

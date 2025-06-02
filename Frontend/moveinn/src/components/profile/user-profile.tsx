@@ -22,6 +22,8 @@ export function UserProfile() {
   const { socket, lastMessage } = useWebsocket()
   const [activeTab, setActiveTab] = useState("info")
 
+  console.log(user)
+
   const [followerCount, setFollowerCount] = useState(0)
   const [followingCount, setFollowingCount] = useState(0)
 
@@ -55,9 +57,23 @@ export function UserProfile() {
       targetUserId: user.id,
     };
   
-    socket.send(JSON.stringify(payload));
-    console.log("📡 [WS] Subscrito a updates de followers:", payload);
+    const sendWhenReady = () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(payload));
+        console.log("📡 [WS] Subscribed to follower updates:", payload);
+      } else if (socket.readyState === WebSocket.CONNECTING) {
+        socket.addEventListener("open", () => {
+          socket.send(JSON.stringify(payload));
+          console.log("📡 [WS] Subscribed after connect:", payload);
+        }, { once: true });
+      } else {
+        console.warn("❌ [WS] Cannot subscribe, state:", socket.readyState);
+      }
+    };
+  
+    sendWhenReady();
   }, [user?.id, socket]);
+  
   
 
   useEffect(() => {
@@ -125,7 +141,9 @@ export function UserProfile() {
     }
   }
 
-  const userAvatar = user.avatarUrl ? API_BASE_IMAGE_URL + user.avatarUrl : "/placeholder.svg?height=160&width=160"
+  const userAvatar = user.avatarUrl
+  ? `${API_BASE_IMAGE_URL + user.avatarUrl}?v=${user.updatedAt || Date.now()}`
+  : "/placeholder.svg?height=160&width=160";
 
   const getRoleBadge = (role: number) => {
     switch (role) {
@@ -223,6 +241,39 @@ export function UserProfile() {
           )}
         </div>
       </div>
+
+      {Array.isArray(user.languages) && user.languages.length > 0 && (
+  <div className="mt-6">
+    <h3 className="text-sm font-semibold text-text mb-1 text-center md:text-left">Languages</h3>
+    <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-sm mt-2">
+      {user.languages.map((lang: any, i: number) => {
+        const levels = ["A1", "A2", "B1", "B2", "C1", "C2", "Native"];
+        const levelColors = [
+          "bg-red-100 text-red-800 dark:bg-red-100/90",
+          "bg-orange-100 text-orange-800 dark:bg-orange-100/90",
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-100/90",
+          "bg-green-100 text-green-800 dark:bg-green-100/90",
+          "bg-blue-100 text-blue-800 dark:bg-blue-100/90",
+          "bg-indigo-100 text-indigo-800 dark:bg-indigo-100/90",
+          "bg-purple-100 text-purple-800 dark:bg-purple-100/90",
+        ];
+        const levelText = levels[lang.level] || "Unknown";
+        const colorClass = levelColors[lang.level] || "bg-gray-100 text-gray-800";
+
+        return (
+          <li
+            key={`${lang.language}-${i}`}
+            className={`px-3 py-1 rounded-full shadow-sm text-center ${colorClass}`}
+          >
+            {lang.language} <span className="text-xs">— {levelText}</span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)}
+
+
 
       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-2">

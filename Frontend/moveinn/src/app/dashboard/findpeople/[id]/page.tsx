@@ -111,12 +111,30 @@ export default function UserDetailPage() {
   
     const payload = {
       action: "subscribe_counts",
-      targetUserId: user.id
+      targetUserId: user.id,
     };
   
-    socket.send(JSON.stringify(payload));
-    console.log("📤 Sent subscribe_counts:", payload);
+    const sendWhenReady = () => {
+      if (socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify(payload));
+        console.log("📡 [WS] Subscribed to follower updates:", payload);
+      } else if (socket.readyState === WebSocket.CONNECTING) {
+        socket.addEventListener(
+          "open",
+          () => {
+            socket.send(JSON.stringify(payload));
+            console.log("📡 [WS] Subscribed after connect:", payload);
+          },
+          { once: true }
+        );
+      } else {
+        console.warn("❌ [WS] Cannot subscribe, state:", socket.readyState);
+      }
+    };
+  
+    sendWhenReady();
   }, [user?.id, socket]);
+  
   
 
   useEffect(() => {
@@ -144,6 +162,7 @@ export default function UserDetailPage() {
           headers: { Authorization: `Bearer ${token}` },
         });
         const found = res.data;
+        console.log("✅ User found:", found);
         setUser(found);
       } catch (err) {
         console.error("❌ Error loading user:", err);
@@ -249,7 +268,7 @@ export default function UserDetailPage() {
   return (
     <div className="min-h-screen container mx-auto px-4 py-10 space-y-10">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-center md:items-start text-center md:text-left gap-6">
   {/* LEFT: Avatar + Name + Bio */}
   <div className="flex flex-col md:flex-row items-center gap-6 flex-1">
     <div
@@ -279,7 +298,6 @@ export default function UserDetailPage() {
       </h1>
       {getRoleBadge(user.role)}
       {user.biography && <p className="mt-4 text-text-secondary max-w-xl">{user.biography}</p>}
-
       {Array.isArray(user.socialMedias) && user.socialMedias.length > 0 && (
         <div className="flex flex-wrap gap-2 mt-4 justify-center md:justify-start">
           {user.socialMedias.map((social: any) => (
@@ -330,6 +348,40 @@ export default function UserDetailPage() {
     </div>
   </div>
 </div>
+
+{/* Idiomas del usuario */}
+{Array.isArray(user.languages) && user.languages.length > 0 && (
+  <div className="mt-4">
+    <h3 className="text-sm font-semibold text-text mb-1">Languages</h3>
+    <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 text-sm">
+
+      {user.languages.map((lang: any, i: number) => {
+        const levels = ["A1", "A2", "B1", "B2", "C1", "C2", "Native"];
+        const levelColors = [
+          "bg-red-100 text-red-800 dark:bg-red-100/90",
+          "bg-orange-100 text-orange-800 dark:bg-orange-100/90",
+          "bg-yellow-100 text-yellow-800 dark:bg-yellow-100/90",
+          "bg-green-100 text-green-800 dark:bg-green-100/90",
+          "bg-blue-100 text-blue-800 dark:bg-blue-100/90",
+          "bg-indigo-100 text-indigo-800 dark:bg-indigo-100/90",
+          "bg-purple-100 text-purple-800 dark:bg-purple-100/90",
+        ];
+        const levelText = levels[lang.level] || "Unknown";
+        const colorClass = levelColors[lang.level] || "bg-gray-100 text-gray-800";
+
+        return (
+          <li
+            key={`${lang.language}-${i}`}
+            className={`px-3 py-1 rounded-full shadow-sm text-center ${colorClass}`}
+          >
+            {lang.language} <span className="text-xs">{levelText}</span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+)}
+
 
 
       {/* Info Cards */}

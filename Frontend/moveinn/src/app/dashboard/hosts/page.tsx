@@ -240,30 +240,6 @@ useEffect(() => {
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
           <div className="space-y-6 order-2 xl:order-1 xl:col-span-1">
-            {/* Quick Stats */}
-            <Card className="border-none shadow-md bg-foreground py-0">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Host Community</h2>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center w-full">
-                    <div className="text-xl font-bold text-text">1,240</div>
-                    <div className="text-xs text-secondary">Active Hosts</div>
-                  </div>
-                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center w-full">
-                    <div className="text-xl font-bold text-text">42</div>
-                    <div className="text-xs text-secondary">Countries</div>
-                  </div>
-                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center">
-                    <div className="text-xl font-bold text-text">156</div>
-                    <div className="text-xs text-secondary">Universities</div>
-                  </div>
-                  <div className="bg-[#E7ECF0]/30 dark:bg-background/50 p-3 rounded-lg text-center">
-                    <div className="text-xl font-bold text-text">28</div>
-                    <div className="text-xs text-secondary">Languages</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
 
             {/* Cities Filter */}
             <Card className="border-none shadow-md bg-foreground py-0">
