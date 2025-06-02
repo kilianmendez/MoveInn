@@ -106,7 +106,7 @@ export default function RecommendationsPage() {
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
   const [countrySearch, setCountrySearch] = useState("")
   const [availableCities, setAvailableCities] = useState<string[]>([])
-
+  const [isLoadingRecommendations, setIsLoadingRecommendations] = useState(false)
 
   const { user } = useAuth()
 
@@ -228,6 +228,7 @@ export default function RecommendationsPage() {
   
   
   const fetchRecommendations = async () => {
+    setIsLoadingRecommendations(true)
     try {
       const token = localStorage.getItem("token")
       const response = await axios.post(API_SEARCH_RECOMMENDATION, {
@@ -252,6 +253,8 @@ export default function RecommendationsPage() {
     } catch (error) {
       console.error("Error fetching recommendations:", error)
       setRecommendations([])
+    } finally {
+      setIsLoadingRecommendations(false)
     }
   }
 
@@ -549,13 +552,20 @@ export default function RecommendationsPage() {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-  {recommendations.map((rec) => (
+      {isLoadingRecommendations ? (
+  <div className="flex justify-center items-center min-h-[200px] col-span-full">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+  </div>
+) : (
+  recommendations.map((rec) => (
     <DetailedRecommendationCard
       key={rec.id}
       recommendation={rec}
       categoryIcon={getCategoryIcon(rec.category)}
     />
-  ))}
+  ))
+)}
+
 </section>
 
 {recommendations.length === 0 && (

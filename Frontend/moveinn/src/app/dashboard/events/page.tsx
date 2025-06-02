@@ -47,6 +47,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<any[]>([])
   const [tagInput, setTagInput] = useState("")
   const [tags, setTags] = useState<string[]>([])
+  const [isLoadingEvents, setIsLoadingEvents] = useState(false)
 
   const { user } = useAuth()
 
@@ -54,6 +55,7 @@ export default function EventsPage() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
+        setIsLoadingEvents(true)
         const [allEventsRes, userEventsRes] = await Promise.all([
           axios.get(API_EVENTS),
           axios.get(API_GET_USER_EVENTS(user?.id))
@@ -70,6 +72,9 @@ export default function EventsPage() {
         setEvents(data)
       } catch (error) {
         console.error("Failed to fetch events:", error)
+      }
+      finally {
+        setIsLoadingEvents(false)
       }
     }
   
@@ -476,21 +481,25 @@ export default function EventsPage() {
 
         {/* Lista o calendario */}
         {viewMode === "list" ? (
-          <div className="space-y-6">
-            {filteredEvents.length > 0 ? (
-              filteredEvents.map(event => (
-                <DetailedEventCard key={event.id} event={event} categoryIcon={getCategoryIcon(event.category)} />
-              ))
-            ) : (
-              <div className="text-center py-12 bg-foreground rounded-lg">
-                <CalendarOff className="h-12 w-12 mx-auto mb-4 text-text-secondary" />
-                <h3 className="text-xl font-medium text-text-secondary mb-2">No events found</h3>
-                <p className="text-text max-w-md mx-auto mb-6">Try changing your filters or date.</p>
-                <Button onClick={clearFilters} className="text-white">Clear filters</Button>
-              </div>
-            )}
-          </div>
-        ) : (
+  <div className="space-y-6">
+    {isLoadingEvents ? (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+      </div>
+    ) : filteredEvents.length > 0 ? (
+      filteredEvents.map(event => (
+        <DetailedEventCard key={event.id} event={event} categoryIcon={getCategoryIcon(event.category)} />
+      ))
+    ) : (
+      <div className="text-center py-12 bg-foreground rounded-lg">
+        <CalendarOff className="h-12 w-12 mx-auto mb-4 text-text-secondary" />
+        <h3 className="text-xl font-medium text-text-secondary mb-2">No events found</h3>
+        <p className="text-text max-w-md mx-auto mb-6">Try changing your filters or date.</p>
+        <Button onClick={clearFilters} className="text-white">Clear filters</Button>
+      </div>
+    )}
+  </div>
+) : (
           <EventCalendarView
             events={events}
             selectedDate={selectedDate}

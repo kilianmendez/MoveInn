@@ -24,6 +24,8 @@ import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
 countries.registerLocale(enLocale)
 import { toast } from "sonner"
+import { ForumCard } from "@/components/forums/detailed-forum-card"
+
 
 const categoryLabels: Record<number, string> = {
   0: "Procedures & Docs",
@@ -104,6 +106,7 @@ export default function ForumsPage() {
   const limit = 5
   const [forumCountries, setForumCountries] = useState<string[]>([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [isLoadingForums, setIsLoadingForums] = useState(false)
 
 
 
@@ -111,6 +114,7 @@ export default function ForumsPage() {
 
   const getForums = async () => {
     try {
+      setIsLoadingForums(true)
       const token = localStorage.getItem("token")
       const response = await axios.post(API_FORUM_SEARCH_FORUMS, {
         page: page + 1,
@@ -131,6 +135,9 @@ export default function ForumsPage() {
     } catch (error) {
       console.error("Error fetching forums", error)
       setForums([])
+    }
+    finally {
+      setIsLoadingForums(false)
     }
   }
 
@@ -419,41 +426,24 @@ export default function ForumsPage() {
             </AnimatePresence>
 
             <div className="flex flex-col gap-4 w-full">
-              {forums.map((forum) => (
-                <Link href={`/dashboard/forums/${forum.id}`} key={forum.id}>
-                  <Card className="flex py-0 flex-col justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
-                    <CardContent className="p-0 flex flex-col flex-grow bg-foreground rounded-md">
-                      <div className={`rounded-t-md px-6 pt-6 pb-4 border-b-3 ${forumCategoryBorderColors[forum.category]} bg-gradient-to-br ${forumCategoryColors[forum.category] || 'from-gray-100 to-white'}`}>
-                        <Badge className={`mb-2 w-fit text-xs font-medium px-2 py-1 rounded-md ${forumCategoryBadgeColors[forum.category]}`}>
-                          {categoryLabels[forum.category]}
-                        </Badge>
-                        <h3 className="font-bold text-text text-lg mb-2">{forum.title}</h3>
-                        <div className="flex items-center text-xs text-gray-600 bg-gray-200 dark:text-gray-300 dark:bg-foreground rounded-md px-2 py-1 justify-between mb-1">
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3 text-[#4C69DD]" />
-                            {forum.country}
-                          </span>
-                          <span>{new Date(forum.createdAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
+  {isLoadingForums ? (
+    <div className="flex justify-center items-center min-h-[200px]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+    </div>
+  ) : (
+    forums.map((forum) => (
+      <ForumCard
+        key={forum.id}
+        forum={forum}
+        categoryLabels={categoryLabels}
+        categoryBadgeColors={forumCategoryBadgeColors}
+        categoryBorderColors={forumCategoryBorderColors}
+        categoryBgColors={forumCategoryColors}
+      />
+    ))
+  )}
+</div>
 
-                      <div className="p-6 pt-4 flex-grow flex flex-col bg-foreground rounded-b-md border-t border-gray-200 dark:border-gray-800">
-                        <p className="text-sm text-text line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
-                        <div className="mt-auto">
-                          <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-3 py-2 w-fit">
-                            <Avatar className="h-8 w-8 text-text">
-                              <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
-                              <AvatarFallback>{forum.creatorName.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm font-medium text-text">{forum.creatorName}</span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
-            </div>
 
             {totalForums > limit && (
   <div className="mt-6 flex justify-center gap-2 flex-wrap">

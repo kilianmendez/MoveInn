@@ -196,14 +196,14 @@ export default function UserDetailPage() {
   }, [authUser, user]);
   
   
-
   if (!user) {
     return (
-      <div className="container mx-auto px-4 py-10 text-center text-gray-500">
-        Loading user details...
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
       </div>
     )
   }
+
 
   const userAvatar = user.avatarUrl
     ? API_BASE_IMAGE_URL + user.avatarUrl

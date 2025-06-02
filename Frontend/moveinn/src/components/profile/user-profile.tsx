@@ -277,7 +277,8 @@ export function UserProfile() {
 
       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-2">
-          <TabsList className="grid sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-1 gap-2 w-full max-w-xl bg-background h-fit p-1 rounded-xl shadow-inner">
+        <TabsList className="flex flex-wrap justify-center gap-2 w-fit max-w-full mx-auto bg-background h-fit p-1 rounded-xl shadow-inner">
+
             <TabsTrigger
               value="info"
               className={`

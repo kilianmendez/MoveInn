@@ -65,6 +65,8 @@ export default function AcommodationsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [limit] = useState(6)
+  const [isLoadingAcommodations, setIsLoadingAcommodations] = useState(false)
+
 
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
 
@@ -99,6 +101,7 @@ const filteredCountries = availableCountries
   
   const fetchAcommodations = async () => {
     try {
+      setIsLoadingAcommodations(true)
       const token = localStorage.getItem("token")
   
       const payload: any = {
@@ -123,6 +126,9 @@ const filteredCountries = availableCountries
     } catch (err) {
       console.error("Error fetching accommodations:", err)
       toast.error("Failed to load accommodations")
+    }
+    finally {
+      setIsLoadingAcommodations(false)
     }
   }
   
@@ -447,13 +453,20 @@ const filteredCountries = availableCountries
 
         </section>
 
-        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {acommodations.map((acommodation) => (
-            <Link href={`/dashboard/housing/${acommodation.id}`} key={acommodation.id}>
-              <AcommodationCard acommodation={acommodation} />
-            </Link>
-          ))}
-        </section>
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[200px]">
+  {isLoadingAcommodations ? (
+    <div className="col-span-full flex justify-center items-center min-h-[200px]">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+    </div>
+  ) : (
+    acommodations.map((acommodation) => (
+      <Link href={`/dashboard/housing/${acommodation.id}`} key={acommodation.id}>
+        <AcommodationCard acommodation={acommodation} />
+      </Link>
+    ))
+  )}
+</section>
+
 
         {/* Paginación */}
         {totalPages > 1 && (

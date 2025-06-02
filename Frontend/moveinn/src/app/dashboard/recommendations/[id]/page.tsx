@@ -113,6 +113,31 @@ const getCategoryBadgeColor = (category: string) => {
   }
 }
 
+const getCategoryColorBorder = (category: string) => {
+  switch (category.toLowerCase()) {
+    case "restaurant":
+      return "border-secondary"
+    case "cafeteria":
+      return "border-pink-200"
+    case "museum":
+      return "border-primary"
+    case "leisurezone":
+      return "border-amber-400"
+    case "park":
+      return "border-secondary-greenblue"
+    case "historicalsite":
+      return "border-yellow-200"
+    case "shopping":
+      return "border-purple-200"
+    case "bar":
+      return "border-[#0E1E40]"
+    case "other":
+      return "border-gray-200"
+    default:
+      return "border-gray-200"
+  }
+}
+
 
 export default function RecommendationDetailPage() {
   const { id } = useParams()
@@ -140,8 +165,16 @@ export default function RecommendationDetailPage() {
     fetchRecommendation()
   }, [id])
 
-  if (loading) return <div className="p-8 text-center">Loading...</div>
-  if (!recommendation) return <div className="p-8 text-center">Recommendation not found</div>
+  if (loading) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+    </div>
+  )
+  if (!recommendation) return (
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-gray-500">Recommendation not found</p>
+    </div>
+  )
 
   const categoryName = categoryByNumber[recommendation.category]
   const categoryIcon = getCategoryIcon(recommendation.category)
@@ -187,7 +220,7 @@ export default function RecommendationDetailPage() {
             </div>
           </div>
 
-          <div className={`flex justify-between items-center p-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-br ${getCategoryGradient(categoryName)}`}>
+          <div className={`flex justify-between items-center p-4 border-b-3 ${getCategoryColorBorder(categoryName)} bg-gradient-to-br ${getCategoryGradient(categoryName)}`}>
 
             <div className="flex items-center">
               <div className="flex items-center bg-amber-100 px-3 py-1 rounded-full">
