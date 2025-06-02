@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20250430104703_InitialMySql")]
-    partial class InitialMySql
+    [Migration("20250602114102_MoveInnMigration")]
+    partial class MoveInnMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,6 +29,9 @@ namespace Backend.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
+
+                    b.Property<int>("AcommodationType")
+                        .HasColumnType("int");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -79,6 +82,59 @@ namespace Backend.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Accommodations");
+                });
+
+            modelBuilder.Entity("Backend.Models.Database.Entities.Event", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("AttendeesCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<Guid>("CreatorId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("MaxAttendees")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatorId");
+
+                    b.ToTable("Events");
                 });
 
             modelBuilder.Entity("Backend.Models.Database.Entities.Follow", b =>
@@ -196,6 +252,39 @@ namespace Backend.Migrations
                     b.HasIndex("ForumId");
 
                     b.ToTable("ForumsThread");
+                });
+
+            modelBuilder.Entity("Backend.Models.Database.Entities.Hosts", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("HostSince")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Hosts");
                 });
 
             modelBuilder.Entity("Backend.Models.Database.Entities.Image", b =>
@@ -426,6 +515,21 @@ namespace Backend.Migrations
                     b.ToTable("SocialMediaLinks");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.Speciality", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Speciality");
+                });
+
             modelBuilder.Entity("Backend.Models.Database.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -483,6 +587,59 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.UserLanguage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLanguages");
+                });
+
+            modelBuilder.Entity("EventUser", b =>
+                {
+                    b.Property<Guid>("ParticipantsId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("ParticipatingEventsId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("ParticipantsId", "ParticipatingEventsId");
+
+                    b.HasIndex("ParticipatingEventsId");
+
+                    b.ToTable("EventUser");
+                });
+
+            modelBuilder.Entity("HostsSpeciality", b =>
+                {
+                    b.Property<Guid>("HostsId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("SpecialtiesId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("HostsId", "SpecialtiesId");
+
+                    b.HasIndex("SpecialtiesId");
+
+                    b.ToTable("HostsSpeciality");
+                });
+
             modelBuilder.Entity("Accommodation", b =>
                 {
                     b.HasOne("Backend.Models.Database.Entities.User", "Owner")
@@ -494,16 +651,27 @@ namespace Backend.Migrations
                     b.Navigation("Owner");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.Event", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", "Creator")
+                        .WithMany("CreatedEvents")
+                        .HasForeignKey("CreatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Creator");
+                });
+
             modelBuilder.Entity("Backend.Models.Database.Entities.Follow", b =>
                 {
                     b.HasOne("Backend.Models.Database.Entities.User", "Follower")
-                        .WithMany()
+                        .WithMany("Followings")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Database.Entities.User", "Following")
-                        .WithMany()
+                        .WithMany("Followers")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -539,6 +707,17 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Forum");
+                });
+
+            modelBuilder.Entity("Backend.Models.Database.Entities.Hosts", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", "User")
+                        .WithOne("Host")
+                        .HasForeignKey("Backend.Models.Database.Entities.Hosts", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Database.Entities.Image", b =>
@@ -642,6 +821,47 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.UserLanguage", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", "User")
+                        .WithMany("Languages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EventUser", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipantsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Database.Entities.Event", null)
+                        .WithMany()
+                        .HasForeignKey("ParticipatingEventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HostsSpeciality", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.Hosts", null)
+                        .WithMany()
+                        .HasForeignKey("HostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Database.Entities.Speciality", null)
+                        .WithMany()
+                        .HasForeignKey("SpecialtiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Accommodation", b =>
                 {
                     b.Navigation("AccomodationImages");
@@ -670,6 +890,16 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Database.Entities.User", b =>
                 {
                     b.Navigation("Accommodations");
+
+                    b.Navigation("CreatedEvents");
+
+                    b.Navigation("Followers");
+
+                    b.Navigation("Followings");
+
+                    b.Navigation("Host");
+
+                    b.Navigation("Languages");
 
                     b.Navigation("Recommendations");
 

@@ -94,8 +94,9 @@ namespace Backend.Migrations
                     b.Property<int>("AttendeesCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<Guid>("CreatorId")
                         .HasColumnType("char(36)");
@@ -250,6 +251,39 @@ namespace Backend.Migrations
                     b.ToTable("ForumsThread");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.Hosts", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("HostSince")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Hosts");
+                });
+
             modelBuilder.Entity("Backend.Models.Database.Entities.Image", b =>
                 {
                     b.Property<Guid>("Id")
@@ -284,7 +318,7 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid?>("AccommodationId")
+                    b.Property<Guid>("AccommodationId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -478,6 +512,21 @@ namespace Backend.Migrations
                     b.ToTable("SocialMediaLinks");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.Speciality", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Speciality");
+                });
+
             modelBuilder.Entity("Backend.Models.Database.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -535,6 +584,29 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.UserLanguage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLanguages");
+                });
+
             modelBuilder.Entity("EventUser", b =>
                 {
                     b.Property<Guid>("ParticipantsId")
@@ -548,6 +620,21 @@ namespace Backend.Migrations
                     b.HasIndex("ParticipatingEventsId");
 
                     b.ToTable("EventUser");
+                });
+
+            modelBuilder.Entity("HostsSpeciality", b =>
+                {
+                    b.Property<Guid>("HostsId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<Guid>("SpecialtiesId")
+                        .HasColumnType("char(36)");
+
+                    b.HasKey("HostsId", "SpecialtiesId");
+
+                    b.HasIndex("SpecialtiesId");
+
+                    b.ToTable("HostsSpeciality");
                 });
 
             modelBuilder.Entity("Accommodation", b =>
@@ -575,13 +662,13 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Models.Database.Entities.Follow", b =>
                 {
                     b.HasOne("Backend.Models.Database.Entities.User", "Follower")
-                        .WithMany()
+                        .WithMany("Followings")
                         .HasForeignKey("FollowerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Backend.Models.Database.Entities.User", "Following")
-                        .WithMany()
+                        .WithMany("Followers")
                         .HasForeignKey("FollowingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -619,6 +706,17 @@ namespace Backend.Migrations
                     b.Navigation("Forum");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.Hosts", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", "User")
+                        .WithOne("Host")
+                        .HasForeignKey("Backend.Models.Database.Entities.Hosts", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Backend.Models.Database.Entities.Image", b =>
                 {
                     b.HasOne("Backend.Models.Database.Entities.Recommendation", "Recommendation")
@@ -636,9 +734,13 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Database.Entities.ImageAccommodation", b =>
                 {
-                    b.HasOne("Accommodation", null)
+                    b.HasOne("Accommodation", "Accommodation")
                         .WithMany("AccomodationImages")
-                        .HasForeignKey("AccommodationId");
+                        .HasForeignKey("AccommodationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Accommodation");
                 });
 
             modelBuilder.Entity("Backend.Models.Database.Entities.Messages", b =>
@@ -716,6 +818,17 @@ namespace Backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Backend.Models.Database.Entities.UserLanguage", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.User", "User")
+                        .WithMany("Languages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("EventUser", b =>
                 {
                     b.HasOne("Backend.Models.Database.Entities.User", null)
@@ -727,6 +840,21 @@ namespace Backend.Migrations
                     b.HasOne("Backend.Models.Database.Entities.Event", null)
                         .WithMany()
                         .HasForeignKey("ParticipatingEventsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HostsSpeciality", b =>
+                {
+                    b.HasOne("Backend.Models.Database.Entities.Hosts", null)
+                        .WithMany()
+                        .HasForeignKey("HostsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Database.Entities.Speciality", null)
+                        .WithMany()
+                        .HasForeignKey("SpecialtiesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -761,6 +889,14 @@ namespace Backend.Migrations
                     b.Navigation("Accommodations");
 
                     b.Navigation("CreatedEvents");
+
+                    b.Navigation("Followers");
+
+                    b.Navigation("Followings");
+
+                    b.Navigation("Host");
+
+                    b.Navigation("Languages");
 
                     b.Navigation("Recommendations");
 

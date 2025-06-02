@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using Stripe;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection.Emit;
@@ -16,14 +17,14 @@ public class DataContext : DbContext
     }
     public DbSet<User> Users { get; set; }
     public DbSet<Accommodation> Accommodations { get; set; }
-
     public DbSet<Recommendation> Recommendations { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<ImageAccommodation> ImageAccommodations { get; set; }
     public DbSet<SocialMediaLink> SocialMediaLinks { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
+    public DbSet<Backend.Models.Database.Entities.Event> Events { get; set; }
+    public DbSet<Backend.Models.Database.Entities.Review> Reviews { get; set; }
     public DbSet<Follow> Follows { get; set; }
-    public DbSet<Messages> Messages { get; set; }
     public DbSet<Forum> Forum { get; set; }
     public DbSet<ForumThread> ForumsThread { get; set; }
     public DbSet<ForumMessages> ForumsMessages { get; set; }
@@ -31,7 +32,8 @@ public class DataContext : DbContext
     public DbSet<Hosts> Hosts { get; set; }
     public DbSet<Speciality> Speciality { get; set; }
     public DbSet<UserLanguage> UserLanguages { get; set; }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 

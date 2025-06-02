@@ -19,7 +19,7 @@ namespace Backend.Models.Database.Entities
         public int AttendeesCount { get; set; } = 0;
         public int? MaxAttendees { get; set; }
 
-        public EventCategory Category { get; set; }
+        public string Category { get; set; }
         public string Description { get; set; }
 
         public string ImageUrl { get; set; }

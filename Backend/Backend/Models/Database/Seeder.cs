@@ -653,7 +653,6 @@ namespace Backend.Models.Database
                     Address = "Plaza Nueva, 1, 41001 Sevilla",
                     AttendeesCount = 0,
                     MaxAttendees = 50,
-                    Category = "Quedada",
                     Description = "Encuentro para estudiantes Erasmus. Habrá música, comida y visitas guiadas.",
                     ImageUrl = "events/erasmus-sevilla.jpg",
                     Tags = new List<string> { "erasmus", "intercambio", "sevilla" },

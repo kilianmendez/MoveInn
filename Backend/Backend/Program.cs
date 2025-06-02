@@ -158,14 +158,16 @@ public class Program
 
         app.Run();
     }
-    //Force Commit
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
 
-        await dbContext.Database.MigrateAsync();
-
+        var pending = await dbContext.Database.GetPendingMigrationsAsync();
+        if (pending.Any())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
         if (!await dbContext.Users.AnyAsync())
         {
             var seeder = new Seeder(dbContext);

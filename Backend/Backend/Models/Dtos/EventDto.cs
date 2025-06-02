@@ -12,7 +12,7 @@ namespace Backend.Models.Dtos
         public string Address { get; set; }
         public int AttendeesCount { get; set; }
         public int? MaxAttendees { get; set; }
-        public EventCategory Category { get; set; }
+        public string Category { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public List<string> Tags { get; set; }
