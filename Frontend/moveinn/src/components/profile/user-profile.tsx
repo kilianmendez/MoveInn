@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -11,14 +11,107 @@ import { SOCIAL_MEDIA_TYPES } from "@/types/user"
 import { useAuth } from "@/context/authcontext"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { UserContentOverview } from "./user-content"
+import axios from "axios"
+import { getCookie } from "cookies-next"
+import { API_USER_FOLLOWERS, API_USER_FOLLOWING } from "@/utils/endpoints/config"
+import { useWebsocket } from "@/context/WebSocketContext"
+
 
 export function UserProfile() {
   const { user } = useAuth()
+  const { socket, lastMessage } = useWebsocket()
   const [activeTab, setActiveTab] = useState("info")
+
+  const [followerCount, setFollowerCount] = useState(0)
+  const [followingCount, setFollowingCount] = useState(0)
+
+  const [showFollowersModal, setShowFollowersModal] = useState(false)
+  const [showFollowingModal, setShowFollowingModal] = useState(false)
+  const [fetchedFollowers, setFetchedFollowers] = useState<any[]>([])
+  const [fetchedFollowing, setFetchedFollowing] = useState<any[]>([])
 
   if (!user) {
     return <div className="text-gray-800">No user information available</div>
   }
+
+  useEffect(() => {
+    if (!lastMessage) return;
+  
+    if (
+      lastMessage.action === "receive_counts" &&
+      lastMessage.targetId === user?.id
+    ) {
+      setFollowerCount(lastMessage.followers);
+      setFollowingCount(lastMessage.followings);
+      console.log("🔄 [WS] Contadores actualizados:", lastMessage.followers, lastMessage.followings);
+    }
+  }, [lastMessage, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id || !socket) return;
+  
+    const payload = {
+      action: "subscribe_counts",
+      targetUserId: user.id,
+    };
+  
+    socket.send(JSON.stringify(payload));
+    console.log("📡 [WS] Subscrito a updates de followers:", payload);
+  }, [user?.id, socket]);
+  
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const token = getCookie("token")
+        const headers = { Authorization: `Bearer ${token}` }
+  
+        const [followersRes, followingRes] = await Promise.all([
+          axios.get(API_USER_FOLLOWERS(user.id), { headers }),
+          axios.get(API_USER_FOLLOWING(user.id), { headers }),
+        ])
+  
+        setFollowerCount(followersRes.data?.length || 0)
+        setFollowingCount(followingRes.data?.length || 0)
+      } catch (err) {
+        console.error("❌ Error fetching follower/following counts:", err)
+      }
+    }
+  
+    if (user?.id) fetchCounts()
+  }, [user?.id])
+
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      try {
+        if (!showFollowersModal || !user?.id) return
+        const token = getCookie("token")
+        const res = await axios.get(API_USER_FOLLOWERS(user.id), {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setFetchedFollowers(res.data || [])
+      } catch (err) {
+        console.error("❌ Error fetching followers list:", err)
+      }
+    }
+    fetchFollowers()
+  }, [showFollowersModal, user?.id])
+  
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      try {
+        if (!showFollowingModal || !user?.id) return
+        const token = getCookie("token")
+        const res = await axios.get(API_USER_FOLLOWING(user.id), {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setFetchedFollowing(res.data || [])
+      } catch (err) {
+        console.error("❌ Error fetching following list:", err)
+      }
+    }
+    fetchFollowing()
+  }, [showFollowingModal, user?.id])  
 
   const getSocialIcon = (type: number) => {
     switch (type) {
@@ -97,6 +190,18 @@ export function UserProfile() {
             {user.name} {user.lastName || ""}
           </h1>
           {getRoleBadge(user.role)}
+
+          <div className="flex gap-6 mt-4 justify-center md:justify-start">
+            <div className="text-center cursor-pointer" onClick={() => setShowFollowersModal(true)}>
+              <p className="text-lg font-bold text-text">{followerCount}</p>
+              <p className="text-sm text-gray-500">Followers</p>
+            </div>
+            <div className="text-center cursor-pointer" onClick={() => setShowFollowingModal(true)}>
+              <p className="text-lg font-bold text-text">{followingCount}</p>
+              <p className="text-sm text-gray-500">Following</p>
+            </div>
+          </div>
+
 
           {user.biography && <p className="px-1 mt-6 text-text-secondary max-w-2xl">{user.biography}</p>}
 
@@ -194,6 +299,72 @@ export function UserProfile() {
           <UserContentOverview />
         </TabsContent>
       </Tabs>
+
+      {(showFollowersModal || showFollowingModal) && (
+  <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+    <div className="bg-white dark:bg-foreground rounded-lg shadow-lg max-w-md w-full p-6 relative">
+      <button
+        onClick={() => {
+          setShowFollowersModal(false)
+          setShowFollowingModal(false)
+        }}
+        className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+      >
+        ✕
+      </button>
+
+      {showFollowersModal && (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Followers</h2>
+          {fetchedFollowers.length === 0 ? (
+            <p className="text-gray-500">No followers yet.</p>
+          ) : (
+            <ul className="space-y-3">
+              {fetchedFollowers.map((u: any) => (
+                <li key={u.id} className="flex items-center gap-3">
+                  <Image
+                    src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
+                    alt={u.name}
+                    width={36}
+                    height={36}
+                    className="rounded-full"
+                    unoptimized
+                  />
+                  <span className="text-text">{u.name} {u.lastName}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      {showFollowingModal && (
+        <div>
+          <h2 className="text-xl font-semibold mb-4">Following</h2>
+          {fetchedFollowing.length === 0 ? (
+            <p className="text-gray-500">You're not following anyone.</p>
+          ) : (
+            <ul className="space-y-3">
+              {fetchedFollowing.map((u: any) => (
+                <li key={u.id} className="flex items-center gap-3">
+                  <Image
+                    src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
+                    alt={u.name}
+                    width={36}
+                    height={36}
+                    className="rounded-full"
+                    unoptimized
+                  />
+                  <span className="text-text">{u.name} {u.lastName}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
+  </div>
+)}
+    </div>  
   )
 }

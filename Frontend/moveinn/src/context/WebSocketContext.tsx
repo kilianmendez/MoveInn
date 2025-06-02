@@ -5,6 +5,7 @@ export interface IWebsocketContext {
   socket: WebSocket | null;
   sendMessage: (receiverId: string, content: string) => void;
   followUser: (targetUserId: string) => void;
+  unfollowUser: (targetUserId: string) => void;
   markAsRead: (contactId: string) => void;
   lastMessage: any;
 }
@@ -86,6 +87,23 @@ export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
     socketRef.current.send(JSON.stringify(payload))
   }
 
+  const unfollowUser = (targetUserId: string) => {
+    if (!socketRef.current) {
+      console.warn("❌ No WebSocket instance.")
+      return
+    }
+  
+    if (socketRef.current.readyState !== WebSocket.OPEN) {
+      console.warn("❌ WebSocket not open. Current state:", socketRef.current.readyState)
+      return
+    }
+  
+    const payload = { action: "unfollow", targetUserId }
+    console.log("📤 Sending unfollow message:", payload)
+    socketRef.current.send(JSON.stringify(payload))
+  }
+  
+
   const markAsRead = (contactId: string) => {
     if (socketRef.current?.readyState === WebSocket.OPEN) {
       socketRef.current.send(JSON.stringify({ action: 'mark_as_read', contactId }));
@@ -93,7 +111,7 @@ export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <WebsocketContext.Provider value={{ socket, sendMessage, followUser, markAsRead, lastMessage }}>
+    <WebsocketContext.Provider value={{ socket, sendMessage, followUser, unfollowUser, markAsRead, lastMessage }}>
       {children}
     </WebsocketContext.Provider>
   );

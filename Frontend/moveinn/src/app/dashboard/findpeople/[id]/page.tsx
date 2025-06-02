@@ -39,18 +39,51 @@ export default function UserDetailPage() {
   const [followingCount, setFollowingCount] = useState<number>(0);
 
   const [fetchedFollowers, setFetchedFollowers] = useState<any[]>([]);
+  const [fetchedFollowing, setFetchedFollowing] = useState<any[]>([]);
 
   const [showUnfollowModal, setShowUnfollowModal] = useState(false);
 
   const { user: authUser } = useAuth()
-  const { socket, followUser, lastMessage } = useWebsocket()
+  const { socket, followUser, unfollowUser, lastMessage } = useWebsocket()
 
   const handleFollow = () => {
     if (user?.id) {
       followUser(user.id)
       console.log("🔄 Follow request sent to:", user.id)
+      setIsFollowing(true);
     }
   }
+
+  const handleUnfollow = () => {
+    if (user?.id) {
+      unfollowUser(user.id);
+      console.log("🚫 Unfollow request sent to:", user.id);
+      // toast.success(`Has dejado de seguir a ${user.name}`);
+      setIsFollowing(false);
+      setShowUnfollowModal(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      try {
+        if (!showFollowing || !user?.id) return;
+  
+        const token = getCookie("token");
+        const res = await axios.get(API_USER_FOLLOWING(user.id), {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+  
+        setFetchedFollowing(res.data || []);
+        console.log("✅ Fetched following:", res.data);
+      } catch (err) {
+        console.error("❌ Error fetching following list:", err);
+      }
+    };
+  
+    fetchFollowing();
+  }, [showFollowing, user?.id]);  
+  
 
   useEffect(() => {
     const fetchFollowers = async () => {
@@ -203,6 +236,7 @@ export default function UserDetailPage() {
                 width={36}
                 height={36}
                 className="rounded-full"
+                unoptimized
               />
               <span className="text-text">{u.name} {u.lastName}</span>
             </li>
@@ -276,7 +310,7 @@ export default function UserDetailPage() {
   </Button>
 ) : (
   <Button
-    className="bg-accent-light text-accent-dark hover:bg-accent dark:hover:bg-accent-dark w-full"
+    className="bg-accent-light text-accent-dark hover:bg-accent hover:text-accent-dark dark:hover:bg-accent-dark w-full"
     onClick={handleFollow}
   >
     Follow
@@ -399,7 +433,8 @@ export default function UserDetailPage() {
             </button>
 
             {showFollowers && renderUserList(fetchedFollowers, "Followers")}
-            {showFollowing && renderUserList(following, "Following")}
+            {showFollowing && renderUserList(fetchedFollowing, "Following")}
+
           </div>
         </div>
       )}
@@ -418,11 +453,7 @@ export default function UserDetailPage() {
         <Button
           variant="destructive"
           className="bg-red-500 hover:bg-red-600 text-white"
-          onClick={() => {
-            // En el futuro: llamada al endpoint de unfollow
-            console.log("Unfollow not implemented yet");
-            setShowUnfollowModal(false);
-          }}
+          onClick={handleUnfollow}
         >
           Unfollow
         </Button>
