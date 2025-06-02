@@ -125,7 +125,7 @@ export const AuthProvider = ({
       }
 
       if (response.status === 200 && response.data) {
-        console.log("✅ Usuario actualizado, datos recibidos:", response.data); //
+        console.log("✅ Usuario actualizado, datos recibidos despues del update:", response.data); //
         setUser(response.data);
       }
   

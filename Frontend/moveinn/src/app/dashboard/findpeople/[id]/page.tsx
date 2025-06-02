@@ -328,7 +328,7 @@ export default function UserDetailPage() {
   </Button>
 ) : (
   <Button
-    className="bg-accent-light text-accent-dark hover:bg-accent hover:text-accent-dark dark:hover:bg-accent-dark w-full"
+    className="bg-accent-light text-accent-dark hover:bg-accent hover:text-accent-dark dark:hover:bg-accent-dark dark:hover:text-accent-light w-full"
     onClick={handleFollow}
   >
     Follow

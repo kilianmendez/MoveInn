@@ -61,6 +61,21 @@ export function DetailedRecommendationCard({
     }
   }
 
+  const getCategoryColorBorder = () => {
+    switch (categorySlug) {
+      case "restaurant": return "border-secondary"
+      case "cafeteria": return "border-pink-200"
+      case "museum": return "border-primary"
+      case "leisurezone": return "border-amber-400"
+      case "park": return "border-secondary-greenblue"
+      case "historicalsite": return "border-yellow-200"
+      case "shopping": return "border-purple-200"
+      case "bar": return "border-[#0E1E40]"
+      case "other": return "border-gray-200"
+      default: return "border-gray-200"
+    }
+  }
+
   return (
     <Card className="flex flex-col py-0 justify-between h-full min-h-[480px] overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-foreground border-none">
       {/* Imagen + info superior + fondo de color */}
@@ -88,7 +103,7 @@ export function DetailedRecommendationCard({
           </div>
         </div>
 
-        <div className={`w-full bg-gradient-to-br ${getCategoryColor()}`}>
+        <div className={`w-full border-b-3 ${getCategoryColorBorder()} bg-gradient-to-br ${getCategoryColor()}`}>
           <div className="px-4 pt-2 pb-3 flex flex-col justify-center">
             <h3 className="font-semibold text-lg text-text mb-1 line-clamp-1">{recommendation.title}</h3>
             <div className="flex items-center bg-foreground/10 w-fit px-2 py-1 rounded-full text-xs text-gray-700 dark:text-gray-200">

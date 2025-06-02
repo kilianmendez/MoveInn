@@ -14,6 +14,7 @@ import { Progress } from "@/components/ui/progress"
 import { API_BASE_IMAGE_URL, API_JOIN_EVENT, API_LEAVE_EVENT } from "@/utils/endpoints/config"
 import { useAuth } from "@/context/authcontext"
 import { ChevronDown, ChevronUp } from "lucide-react"
+import { toast } from "sonner"
 
 
 interface Event {
@@ -55,6 +56,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
     try {
       await axios.post(API_LEAVE_EVENT(event.id, user.id))
       setJoined(false)
+      toast.error(`You left "${event.title}".`, { duration: 3000 })
       setAttendeesCount(prev => prev - 1)
     } catch (error) {
       console.error("Error leaving event:", error)
@@ -75,11 +77,12 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
         await axios.post(API_LEAVE_EVENT(event.id, user.id))
         setJoined(false)
         setAttendeesCount(prev => prev - 1)
+        toast.error(`You left "${event.title}".`, { duration: 3000 })
       } else {
-        console.log("sending", API_JOIN_EVENT(event.id, user.id))
         await axios.post(API_JOIN_EVENT(event.id, user.id))
         setJoined(true)
         setAttendeesCount(prev => prev + 1)
+        toast.success(`You joined "${event.title}"!`, { duration: 3000 })
       }
     } catch (error) {
       console.error("Error joining/leaving event:", error)
@@ -116,6 +119,20 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
     }
   }
 
+  const getCategoryColorBorder = () => {
+    switch (event.category.toLowerCase()) {
+      case "social": return "border-pink-500"
+      case "trip": return "border-primary"
+      case "cultural": return "border-secondary-greenblue"
+      case "academic": return "border-amber-400"
+      case "sports": return "border-purple-500"
+      case "workshop": return "border-yellow-500"
+      case "party": return "border-[#0E1E40]"
+      case "other": return "border-gray-500"
+      default: return "border-gray-500"
+    }
+  }
+
   const attendancePercentage = (attendeesCount / event.maxAttendees) * 100
   const isAlmostFull = attendancePercentage >= 80
   const isToday = new Date().toDateString() === event.date.toDateString()
@@ -143,7 +160,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
           </div>
         </div>
 
-        <div className={`flex-1 bg-gradient-to-br ${getCategoryColor()}`}>
+        <div className={`flex-1 bg-gradient-to-br ${getCategoryColor()} border-l-3 ${getCategoryColorBorder()}`}>
           <CardContent className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">
@@ -266,7 +283,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
             </div>
           </CardContent>
 
-          <CardFooter className="p-3 bg-foreground flex items-center justify-end">
+          <CardFooter className="p-3 bg-foreground border-l-3 border-foreground flex items-center justify-end">
             <Button variant="ghost" size="sm" className="text-text-secondary hover:bg-[#4C69DD]/10">
               <Share2 className="h-3.5 w-3.5 mr-1" />
               Share

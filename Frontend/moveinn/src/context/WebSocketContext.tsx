@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useRef, useState, ReactNode } from 'react'
 import { useAuth } from '@/context/authcontext'
+import { toast } from 'sonner'
 
 export interface IWebsocketContext {
   socket: WebSocket | null
@@ -67,10 +68,24 @@ export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
         const parsed = JSON.parse(event.data)
         setLastMessage(parsed)
         console.log("📩 WS received:", parsed)
+    
+        // Mostrar toast si es una notificación
+        if (parsed.action === 'notification' && parsed.message) {
+          const msg = parsed.message.toLowerCase()
+        
+          if (msg.includes('ha dejado de seguirte')) {
+            toast.error(parsed.message, { duration: 4000 })
+          } else {
+            toast.success(parsed.message, { duration: 4000 })
+          }
+        }
+        
+    
       } catch (e) {
         console.error("⚠ Invalid WS JSON:", e)
       }
     }
+    
     ws.onerror = (err) => console.error('❌ [WS] error', err)
     ws.onclose = () => console.log('🔴 [WS] disconnected')
 

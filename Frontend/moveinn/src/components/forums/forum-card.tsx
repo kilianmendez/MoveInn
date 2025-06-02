@@ -46,6 +46,19 @@ const forumCategoryBadgeColors: Record<number, string> = {
   9: "bg-gray-200 text-gray-700",
 }
 
+const forumCategoryBorderColors: Record<number, string> = {
+  0: "border-secondary",
+  1: "border-yellow-200",
+  2: "border-pink-200",
+  3: "border-purple-200",
+  4: "border-secondary-greenblue",
+  5: "border-amber-400",
+  6: "border-[#0E1E40]",
+  7: "border-primary",
+  8: "border-gray-300",
+  9: "border-gray-200",
+}
+
 export interface Forum {
     id: string
     title: string
@@ -64,7 +77,7 @@ export default function ForumCard({ forum }: { forum: Forum }) {
     <Link href={`/dashboard/forums/${forum.id}`}>
       <Card className="flex flex-col bg-none py-0 px-0 justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
         <CardContent className="p-0 flex flex-col flex-grow bg-foreground rounded-md">
-          <div className={`rounded-t-md px-6 pt-6 pb-4 bg-gradient-to-br ${forumCategoryColors[forum.category] || 'from-gray-100 to-white'}`}>
+          <div className={`rounded-t-md px-6 pt-6 pb-4 border-b-3 ${forumCategoryBorderColors[forum.category]} bg-gradient-to-br ${forumCategoryColors[forum.category] || 'from-gray-100 to-white'}`}>
             <Badge className={`mb-2 w-fit text-xs font-medium px-2 py-1 rounded-md ${forumCategoryBadgeColors[forum.category]}`}>
               {categoryLabels[forum.category]}
             </Badge>
