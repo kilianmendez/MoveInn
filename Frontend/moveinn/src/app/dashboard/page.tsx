@@ -135,6 +135,7 @@ export default function DashboardPage() {
     const [recommendations, setRecommendations] = useState<Recommendation[]>([])
     // const [acomodations, setAcomodations] = useState<Acommodation[]>([])
     const [acommodations, setAcommodations] = useState<Acommodation[]>([])
+    const [isLoadingDashboard, setIsLoadingDashboard] = useState(true)
 
     interface Event {
       id: string
@@ -149,6 +150,19 @@ export default function DashboardPage() {
     }
     
     const [events, setEvents] = useState<Event[]>([])
+
+    useEffect(() => {
+      const loadDashboardData = async () => {
+        setIsLoadingDashboard(true)
+        await Promise.all([getRecommendations(), fetchEvents(), searchAcommodations()])
+        setIsLoadingDashboard(false)
+      }
+    
+      if (user?.city && user?.erasmusCountry) {
+        loadDashboardData()
+      }
+    }, [user])
+    
     
     const fetchEvents = async () => {
       try {

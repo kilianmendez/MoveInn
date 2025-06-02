@@ -11,6 +11,7 @@ export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [passwordMatch, setPasswordMatch] = useState(true)
+  const [isNavigatingToLogin, setIsNavigatingToLogin] = useState(false)
   const router = useRouter()
   const { register, isLoading, error } = useAuth()
 
@@ -35,7 +36,7 @@ export default function RegisterForm() {
 
     try {
       await register(name, mail, password, phone)
-      router.push("/dashboard")
+        router.push("/dashboard")
     } catch (err) {
       console.error("Error en registro:", err)
     }
@@ -195,19 +196,79 @@ export default function RegisterForm() {
             disabled={isLoading}
             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:text-gray-900 bg-primary hover:bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200"
           >
-            {isLoading ? "Creating Account..." : "Create Account"}
+            {isLoading ? (
+  <>
+    <svg
+      className="animate-spin h-5 w-5 text-white mr-2"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      />
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
+      />
+    </svg>
+    Creating Account...
+  </>
+) : (
+  "Create Account"
+)}
+
           </button>
         </form>
 
         {/* Link to login */}
         <div className="mt-4 text-center text-sm text-text-secondary">
           Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-primary hover:text-primary-dark dark:text-gray-400 dark:hover:text-gray-200 font-medium inline-flex items-center transition-colors"
-          >
-            Login
-          </Link>
+          <button
+  onClick={() => {
+    setIsNavigatingToLogin(true)
+    router.push("/login")
+  }}
+  disabled={isNavigatingToLogin}
+  className="text-primary hover:text-primary-dark dark:text-gray-400 dark:hover:text-gray-200 font-medium inline-flex items-center transition-colors"
+>
+  {isNavigatingToLogin ? (
+    <>
+      <svg
+        className="animate-spin h-4 w-4 mr-2"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+      >
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16 8 8 0 01-8-8z"
+        />
+      </svg>
+      Loading...
+    </>
+  ) : (
+    <>
+      Login
+    </>
+  )}
+</button>
+
         </div>
       </div>
     </div>

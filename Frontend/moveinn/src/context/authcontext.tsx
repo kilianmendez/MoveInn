@@ -237,31 +237,24 @@ export const AuthProvider = ({
   const register = async (name: string, mail: string, password: string, phone: string) => {
     setIsLoading(true)
     setError(null)
-
+  
     try {
-      const payload = {
-        mail,
-        password,
-        name,
-        phone: phone,
-      }
-
+      const payload = { mail, password, name, phone }
+  
       const response = await axios.post(API_AUTH_REGISTER, payload, {
         headers: { "Content-Type": "application/json" },
       })
-
+  
       const { accessToken } = response.data
+      if (!accessToken) throw new Error("No se recibió accessToken")
+  
       localStorage.setItem("accessToken", accessToken)
       setToken(accessToken)
-
-      const decoded: DecodedToken = jwtDecode(accessToken)
-      setUser({
-        id: decoded.id,
-        mail: decoded.email,
-        name: decoded.name,
-        phone: phone.toString(),
-      })
-
+  
+      // Importante: actualiza usuario completo
+      await updateUserFromToken(accessToken)
+  
+      // Redirige después de que esté todo cargado
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.response?.data || "Error en el registro")
@@ -270,6 +263,7 @@ export const AuthProvider = ({
       setIsLoading(false)
     }
   }
+  
 
   const logout = () => {
     deleteCookie("token")
