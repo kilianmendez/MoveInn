@@ -158,7 +158,6 @@ public class Program
 
         app.Run();
     }
-    //Force
     static async Task SeedDatabase(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
