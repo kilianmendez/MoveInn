@@ -154,7 +154,7 @@ public class Program
             FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot"))
         });
         app.MapControllers();
-        await SeedDatabase(app.Services);
+        //await SeedDatabase(app.Services);
 
         app.Run();
     }
