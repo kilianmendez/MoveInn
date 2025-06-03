@@ -103,6 +103,16 @@ public class AccommodationsController : ControllerBase
                     .ToList();
             }
 
+            if (!string.IsNullOrWhiteSpace(request.City))
+            {
+                accommodations = accommodations
+                    .Where(a =>
+                        a.City != null &&
+                        a.City.Equals(request.City, StringComparison.OrdinalIgnoreCase)
+                    )
+                    .ToList();
+            }
+
             if (request.AccommodationType.HasValue)
             {
                 accommodations = accommodations

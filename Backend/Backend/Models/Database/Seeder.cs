@@ -651,6 +651,8 @@ namespace Backend.Models.Database
                     Date = new DateTime(2025, 06, 20, 18, 30, 0),
                     Location = "Centro Cultural de Sevilla",
                     Address = "Plaza Nueva, 1, 41001 Sevilla",
+                    City ="Malaga",
+                    Country ="Spain",
                     AttendeesCount = 0,
                     MaxAttendees = 50,
                     Category = "Quedada",
