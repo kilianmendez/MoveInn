@@ -36,7 +36,7 @@ namespace Backend.Services
             
             
         };
-//
+
         public static void UpdateEntity(Event e, EventUpdateDto dto)
         {
             e.Title = dto.Title;
