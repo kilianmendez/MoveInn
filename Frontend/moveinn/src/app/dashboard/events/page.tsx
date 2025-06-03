@@ -21,7 +21,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from "axios"
-import { API_EVENTS, API_CREATE_EVENT, API_GET_USER_EVENTS } from "@/utils/endpoints/config"
+import { API_EVENTS, API_CREATE_EVENT, API_GET_USER_EVENTS, API_SEARCH_EVENTS } from "@/utils/endpoints/config"
 import { v4 as uuidv4 } from "uuid"
 import { useAuth } from "@/context/authcontext"
 import { toast } from "sonner"
@@ -49,39 +49,69 @@ export default function EventsPage() {
   const [tags, setTags] = useState<string[]>([])
   const [isLoadingEvents, setIsLoadingEvents] = useState(false)
 
+  const [query, setQuery] = useState("")
+  const [locationFilter, setLocationFilter] = useState("")
+  const [categoryFilter, setCategoryFilter] = useState("")
+  const [tagFilter, setTagFilter] = useState<string[]>([])
+  const [sortField, setSortField] = useState("")
+  const [sortOrder, setSortOrder] = useState("")
+  const [page, setPage] = useState(1)
+  const [limit] = useState(6)
+  const [totalPages, setTotalPages] = useState(1)
+
+
+
   const { user } = useAuth()
 
-
   useEffect(() => {
-    const fetchEvents = async () => {
+    const fetchFilteredEvents = async () => {
       try {
         setIsLoadingEvents(true)
-        const [allEventsRes, userEventsRes] = await Promise.all([
-          axios.get(API_EVENTS),
-          axios.get(API_GET_USER_EVENTS(user?.id))
-        ])
+        const token = localStorage.getItem("token")
   
-        const joinedIds = new Set(userEventsRes.data.map((e: any) => e.id))
+        const payload = {
+          page,
+          limit,
+          query,
+          location: locationFilter,
+          category: categoryFilter,
+          tags: tagFilter,
+          sortField,
+          sortOrder
+        }
   
-        const data = allEventsRes.data.map((event: any) => ({
+        console.log("payload events", payload)
+        const res = await axios.post(API_SEARCH_EVENTS, payload, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+
+        console.log("res events", res.data)
+  
+        const joinedRes = await axios.get(API_GET_USER_EVENTS(user?.id))
+        const joinedIds = new Set(joinedRes.data.map((e: any) => e.id))
+  
+        const formattedEvents = res.data.items.map((event: any) => ({
           ...event,
           date: new Date(event.date),
           joined: joinedIds.has(event.id)
         }))
   
-        setEvents(data)
+        setEvents(formattedEvents)
+        setTotalPages(res.data.totalPages)
       } catch (error) {
-        console.error("Failed to fetch events:", error)
-      }
-      finally {
+        console.error("Error loading events:", error)
+      } finally {
         setIsLoadingEvents(false)
       }
     }
   
     if (user?.id) {
-      fetchEvents()
+      fetchFilteredEvents()
     }
-  }, [user?.id])
+  }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, user?.id])
+  
   
 
   const filteredEvents = events.filter(event =>
@@ -225,23 +255,6 @@ export default function EventsPage() {
                 />
               </div>
               <div className="flex flex-wrap gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="text-white bg-white/10 border-white/20 hover:bg-white/10">
-                      <Filter className="mr-2 h-4 w-4" />
-                      Filter <ChevronDown className="ml-2 h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56 bg-foreground border-white/20 text-primary-dark">
-                    <DropdownMenuLabel>Category</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    {["Social", "Trip", "Cultural", "Academic", "Sports", "Workshop"].map(cat => (
-                      <DropdownMenuItem key={cat} onClick={() => toggleFilter(cat)}>
-                        {getCategoryIcon(cat)} <span className="ml-2">{cat}</span>
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
                 <Tabs defaultValue="list">
                   <TabsList className="bg-white/10 border border-white/20">
                     <TabsTrigger
@@ -456,6 +469,44 @@ export default function EventsPage() {
   )}
 </AnimatePresence>
 
+<section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div>
+    <label className="block text-sm font-medium text-text mb-1">Category</label>
+    <select
+      value={categoryFilter}
+      onChange={(e) => {
+        setCategoryFilter(e.target.value)
+        setPage(1)
+      }}
+      className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
+    >
+      <option value="">All Categories</option>
+      <option value="social">Social</option>
+      <option value="trip">Trip</option>
+      <option value="cultural">Cultural</option>
+      <option value="academic">Academic</option>
+      <option value="sports">Sports</option>
+      <option value="workshop">Workshop</option>
+      <option value="party">Party</option>
+      <option value="food">Food</option>
+    </select>
+  </div>
+
+  <div>
+    <label className="block text-sm font-medium text-text mb-1">Location</label>
+    <Input
+      placeholder="e.g. Barcelona"
+      value={locationFilter}
+      onChange={(e) => {
+        setLocationFilter(e.target.value)
+        setPage(1)
+      }}
+      className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
+    />
+  </div>
+</section>
+
+
 
         {/* Selector de fecha */}
         <div className="flex overflow-x-auto gap-2 pb-4 mb-6 scrollbar-hide">
@@ -511,6 +562,21 @@ export default function EventsPage() {
           />
         )}
       </main>
+      {totalPages > 1 && (
+  <div className="mt-6 flex justify-center gap-2 flex-wrap">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <Button
+        key={i}
+        onClick={() => setPage(i + 1)}
+        variant={i + 1 === page ? "default" : "outline"}
+        className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === page ? "bg-primary text-white" : ""}`}
+      >
+        {i + 1}
+      </Button>
+    ))}
+  </div>
+)}
+
     </div>
   )
 }

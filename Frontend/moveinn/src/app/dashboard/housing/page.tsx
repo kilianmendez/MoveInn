@@ -3,12 +3,12 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Search, ChevronUp, ChevronDown } from "lucide-react"
+import { Search, ChevronUp, ChevronDown, MapPinOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AcommodationCard } from "@/components/housing/acommodation-card"
 import axios from "axios"
-import { API_ACCOMMODATION_COUNTRIES, API_CREATE_ACCOMMODATION, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
+import { API_ACCOMMODATION_CITIES, API_ACCOMMODATION_COUNTRIES, API_CREATE_ACCOMMODATION, API_SEARCH_ACOMMODATION } from "@/utils/endpoints/config"
 import { motion, AnimatePresence } from "framer-motion"
 import { toast } from "sonner"
 import { useAuth } from "@/context/authcontext"
@@ -69,6 +69,8 @@ export default function AcommodationsPage() {
 
 
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
+  const [availableCities, setAvailableCities] = useState<string[]>([])
+
 
   const [countrySearch, setCountrySearch] = useState("")
 const filteredCountries = availableCountries
@@ -98,6 +100,30 @@ const filteredCountries = availableCountries
   })
   const [isPosting, setIsPosting] = useState(false)
   const [imageFiles, setImageFiles] = useState<File[]>([])
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedCountry) {
+        setAvailableCities([])
+        setSelectedCity("")
+        return
+      }
+  
+      try {
+        const token = localStorage.getItem("token")
+        const res = await axios.get(API_ACCOMMODATION_CITIES(selectedCountry), {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setAvailableCities(res.data)
+      } catch (err) {
+        console.error("Error fetching cities:", err)
+        setAvailableCities([])
+      }
+    }
+  
+    fetchCities()
+  }, [selectedCountry])
+  
   
   const fetchAcommodations = async () => {
     try {
@@ -111,6 +137,7 @@ const filteredCountries = availableCountries
         availableFrom: availableFrom ? new Date(availableFrom).toISOString() : null,
         availableTo: availableTo ? new Date(availableTo).toISOString() : null,
         country: selectedCountry,
+        city: selectedCity,
         page: currentPage,
         limit: limit,
       }
@@ -134,7 +161,7 @@ const filteredCountries = availableCountries
   
   useEffect(() => {
     fetchAcommodations()
-  }, [searchQuery, selectedCountry, selectedType, availableFrom, availableTo, currentPage, limit])
+  }, [searchQuery, selectedCountry, selectedType, availableFrom, availableTo, currentPage, limit, selectedCity])
   
 
   useEffect(() => {
@@ -289,6 +316,7 @@ const filteredCountries = availableCountries
                   </div>
                 ))}
 
+
                 <div>
                   <label className="block text-sm font-medium text-text-secondary mb-1">Accommodation Type</label>
                   <select
@@ -407,6 +435,26 @@ const filteredCountries = availableCountries
 
 
         <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+        <div>
+  <label className="block text-sm font-medium text-text mb-1">City</label>
+  <select
+    className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
+    value={selectedCity}
+    onChange={(e) => {
+      setSelectedCity(e.target.value)
+      setCurrentPage(1)
+    }}
+    disabled={availableCities.length === 0}
+  >
+    <option value="">All Cities</option>
+    {availableCities.map((city) => (
+      <option key={city} value={city}>
+        {city}
+      </option>
+    ))}
+  </select>
+</div>
+
           <div>
             <label className="block text-sm font-medium text-text mb-1">Accommodation Type</label>
             <select
@@ -425,6 +473,7 @@ const filteredCountries = availableCountries
               <option value="4">Others</option>
             </select>
           </div>
+          
           <div>
   <label className="block text-sm font-medium text-text mb-1">Available From</label>
   <input
@@ -454,17 +503,23 @@ const filteredCountries = availableCountries
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[200px]">
-  {isLoadingAcommodations ? (
-    <div className="col-span-full flex justify-center items-center min-h-[200px]">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
-    </div>
-  ) : (
-    acommodations.map((acommodation) => (
-      <Link href={`/dashboard/housing/${acommodation.id}`} key={acommodation.id}>
-        <AcommodationCard acommodation={acommodation} />
-      </Link>
-    ))
-  )}
+        {isLoadingAcommodations ? (
+          <div className="col-span-full flex justify-center items-center min-h-[200px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+          </div>
+        ) : acommodations.length === 0 ? (
+          <div className="col-span-full flex flex-col justify-center items-center min-h-[200px] text-center text-text-secondary">
+            <MapPinOff className="h-12 w-12 text-primary dark:text-text-secondary mb-4" />
+            <p className="text-text">No accommodations found for the selected filters.</p>
+          </div>
+        ) : (
+          acommodations.map((acommodation) => (
+            <Link href={`/dashboard/housing/${acommodation.id}`} key={acommodation.id}>
+              <AcommodationCard acommodation={acommodation} />
+            </Link>
+          ))
+        )}
+
 </section>
 
 

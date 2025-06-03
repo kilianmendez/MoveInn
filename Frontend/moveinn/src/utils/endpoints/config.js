@@ -12,6 +12,9 @@ export const API_AUTH_REGISTER = `${API_AUTH}/Register`;
 
 const API_USER = `${API_BASE_URL}/User`;
 export const API_GET_ALL_USERS = `${API_USER}/All`;
+export const API_SEARCH_USERS = `${API_USER}/SearchUsers`;
+export const API_USER_COUNTRIES = `${API_USER}/countries`;
+export const API_USER_CITIES = (country) => `${API_USER}/cities/${country}`;
 export const API_GET_USER = (id) => `${API_USER}/${id}`;
 export const API_UPDATE_USER = (id) => `${API_USER}/Update/${id}`;
 export const API_DELETE_USER = (id) => `${API_USER}/Delete/${id}`;
@@ -54,6 +57,7 @@ export const API_SEARCH_ACOMMODATION = `${API_ACOMMODATION}/SearchAccommodation`
 export const API_ACCOMMODATION_COUNTRIES = `${API_ACOMMODATION}/countries`;
 export const API_GET_ACOMMODATION = (id) => `${API_ACOMMODATION}/${id}`;
 export const API_ALL_ACOMMODATIONS = `${API_ACOMMODATION}/AllAccommodations`;
+export const API_ACCOMMODATION_CITIES = (country) => `${API_ACOMMODATION}/cities/${country}`;
 
 const API_REVIEWS = `${API_BASE_URL}/Reviews`;
 export const API_GET_ALL_REVIEWS = `${API_REVIEWS}`;
@@ -86,6 +90,7 @@ export const API_HOST_POST_REQUEST = `${API_HOSTS}`;
 export const API_HOST_GET_REQUESTS = `${API_HOSTS}/requests`;
 export const API_HOST_REQUEST_ACCEPT = (id) => `${API_HOSTS}/${id}/approve`;
 export const API_HOST_REQUEST_REJECT = (id) => `${API_HOSTS}/${id}/reject`;
+export const API_HOST_SEARCH_HOSTS = `${API_HOSTS}/SearchHosts`;
 
 const API_ADMIN = `${API_BASE_URL}/Admin`;
 export const API_ADMIN_MODIFY_ROLE_USER = (id, role) => `${API_ADMIN}/user/${id}?newRole=${role}`;
