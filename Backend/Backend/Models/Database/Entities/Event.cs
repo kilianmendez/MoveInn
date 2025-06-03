@@ -24,12 +24,12 @@ namespace Backend.Models.Database.Entities
 
         public string ImageUrl { get; set; }
 
-        public ICollection<string> Tags { get; set; } = new List<string>();
+        public IList<string> Tags { get; set; } = new List<string>();
 
         [ForeignKey(nameof(Creator))]
         public Guid CreatorId { get; set; }
         public User Creator { get; set; }
 
-        public ICollection<User> Participants { get; set; } = new List<User>();
+        public IList<User> Participants { get; set; } = new List<User>();
     }
 }
