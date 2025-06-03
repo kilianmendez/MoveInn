@@ -48,7 +48,7 @@ public class Program
         builder.Services.AddScoped<IHostRepository, HostRepository>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
-        // Servicios de aplicación
+        // Servicios de aplicaciÃ³n
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
@@ -92,7 +92,7 @@ public class Program
             options.OperationFilter<SecurityRequirementsOperationFilter>(true, JwtBearerDefaults.AuthenticationScheme);
         });
 
-        // Autenticación JWT
+        // AutenticaciÃ³n JWT
         builder.Services.AddAuthentication()
             .AddJwtBearer(options =>
             {

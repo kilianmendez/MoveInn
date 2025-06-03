@@ -124,5 +124,15 @@ namespace Backend.Services
         {
             return _unitOfWork.EventRepository.GetByUserAsync(userId);
         }
+
+        public async Task<IEnumerable<string>> GetAllCountriesAsync()
+        {
+            return await _unitOfWork.EventRepository.GetAllCountriesAsync();
+        }
+
+        public async Task<IEnumerable<string>> GetCitiesByCountryAsync(string country)
+        {
+            return await _unitOfWork.EventRepository.GetCitiesByCountryAsync(country);
+        }
     }
 }

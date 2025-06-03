@@ -11,6 +11,7 @@ public class SearchAccommodationDTO
     public DateTime? AvailableFrom { get; set; }
     public DateTime? AvailableTo { get; set; }
     public string Country { get; set; }
+    public string City { get; set; }
     public int Page { get; set; } = 1;
     public int Limit { get; set; } = 10;
 }

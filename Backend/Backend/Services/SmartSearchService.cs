@@ -197,6 +197,76 @@ public class SmartSearchService
         });
     }
 
+    public async Task<IEnumerable<UserSearchDto>> SearchUsersAsync(string query)
+    {
+        List<User> result;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            result = await _context.Users.ToListAsync();
+        }
+        else
+        {
+            var queryKeys = GetKeys(ClearText(query));
+            result = new List<User>();
+            var users = await _context.Users.ToListAsync();
+
+            foreach (var u in users)
+            {
+                var itemKeys = GetKeys(ClearText(u.Name + " " + u.School));
+                if (IsMatch(queryKeys, itemKeys))
+                    result.Add(u);
+            }
+        }
+
+        return result.Select(u => new UserSearchDto
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Biography = u.Biography,
+            AvatarUrl = u.AvatarUrl,
+            School = u.School,
+            City = u.City,
+            Nationality = u.Nationality,
+            ErasmusCountry = u.ErasmusCountry
+        });
+    }
+
+    public async Task<IEnumerable<UserSearchDto>> SearchHostsAsync(string query)
+    {
+        List<User> result;
+
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            result = await _context.Users.ToListAsync();
+        }
+        else
+        {
+            var queryKeys = GetKeys(ClearText(query));
+            result = new List<User>();
+            var users = await _context.Users.ToListAsync();
+
+            foreach (var u in users)
+            {
+                var itemKeys = GetKeys(ClearText(u.Name + " " + u.School));
+                if (IsMatch(queryKeys, itemKeys))
+                    result.Add(u);
+            }
+        }
+
+        return result.Select(u => new UserSearchDto
+        {
+            Id = u.Id,
+            Name = u.Name,
+            Biography = u.Biography,
+            AvatarUrl = u.AvatarUrl,
+            School = u.School,
+            City = u.City,
+            Nationality = u.Nationality,
+            ErasmusCountry = u.ErasmusCountry
+        });
+    }
+
 
     private bool IsMatch(string[] queryKeys, string[] itemKeys)
     {
