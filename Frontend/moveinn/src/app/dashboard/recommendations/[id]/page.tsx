@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useParams } from "next/navigation"
-import { API_GET_RECOMMENDATION } from "@/utils/endpoints/config"
+import { API_GET_RECOMMENDATION, API_GET_USER } from "@/utils/endpoints/config"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -28,6 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Recommendation, categories } from "@/types/recommendation"
+import { getCookie } from "cookies-next"
 
 type CategoryName = keyof typeof categories
 const categoryByNumber: Record<number, CategoryName> = Object.entries(categories).reduce(
@@ -144,6 +145,7 @@ export default function RecommendationDetailPage() {
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("overview")
+  const [recommenderName, setRecommenderName] = useState<string>("")
 
   useEffect(() => {
     const fetchRecommendation = async () => {
@@ -154,6 +156,7 @@ export default function RecommendationDetailPage() {
             Authorization: `Bearer ${token}`,
           },
         })
+        console.log(response.data)
         setRecommendation(response.data)
       } catch (error) {
         console.error("Error fetching recommendation:", error)
@@ -164,6 +167,30 @@ export default function RecommendationDetailPage() {
 
     fetchRecommendation()
   }, [id])
+
+  useEffect(() => {
+      const fetchUserName = async () => {
+        if (recommendation?.userId && recommendation.userId !== "00000000-0000-0000-0000-000000000000") {
+          try {
+            const token = getCookie("token")
+            const response = await axios.get(API_GET_USER(recommendation.userId), {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+            const userData = response.data
+            setRecommenderName(userData.name)
+          } catch (error) {
+            console.error("Error fetching user name:", error)
+            setRecommenderName("Unknown User")
+          }
+        } else {
+          setRecommenderName("System")
+        }
+      }
+  
+      fetchUserName()
+    }, [recommendation?.userId])
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-screen">
@@ -238,7 +265,7 @@ export default function RecommendationDetailPage() {
 
           <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
             <div className="px-4">
-              <TabsList className="grid grid-cols-2 w-full max-w-md bg-background h-fit rounded-[5px] m-4">
+              <TabsList className="grid grid-cols-2 w-full max-w-md bg-background h-fit rounded-lg m-4">
               <TabsTrigger value="overview" className="bg-background p-2 rounded-var(--radius-sm) text-text data-[state=active]:bg-foreground data-[state=active]:text-text">
                 Overview
               </TabsTrigger>
@@ -258,13 +285,13 @@ export default function RecommendationDetailPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 mb-2">Tags</h3>
+                  <h3 className="text-sm font-medium text-text-secondary mb-2">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {recommendation.tags.map((tag) => (
                       <Badge
                         key={tag}
                         variant="outline"
-                        className="bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        className="bg-secondary-greenblue border-none text-green-900 cursor-default"
                       >
                         {tag}
                       </Badge>
@@ -273,16 +300,16 @@ export default function RecommendationDetailPage() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-background py-1 px-3 rounded-lg w-fit">
+                  <div className="bg-background/50 py-1 px-3 rounded-lg w-fit">
                     
                     <div className="space-y-3">
                       <div className="flex items-start">
                         <MapPin className="h-4 w-4 text-[#4C69DD] mt-0.5 mr-2" />
                         <div>
-                        <p className="text-gray-500 dark:text-gray-400 mb-1 text-xs">
+                        <p className="text-gray-600 dark:text-gray-300 mb-1 text-xs">
                           Recomended by{" "}
                           <span className="font-semibold text-primary dark:text-text-secondary">
-                            {recommendation.userId === "00000000-0000-0000-0000-000000000000" ? "system" : recommendation.userId}
+                            {recommendation.userId === "00000000-0000-0000-0000-000000000000" ? "system" : recommenderName}
                           </span>
                         </p>
                         </div>

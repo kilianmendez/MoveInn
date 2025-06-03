@@ -1,12 +1,14 @@
-import type { ReactNode } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { MapPin, Star, ExternalLink, Share2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { API_BASE } from "@/utils/endpoints/config"
+import { API_BASE, API_GET_USER } from "@/utils/endpoints/config"
 import { DetailedRecommendationCardProps } from "@/types/recommendation"
+import axios from "axios"
+import { getCookie } from "cookies-next"
 
 const categoryByNumber: Record<number, string> = {
   0: "Restaurant",
@@ -26,6 +28,7 @@ export function DetailedRecommendationCard({
 }: DetailedRecommendationCardProps) {
   const categoryName = categoryByNumber[recommendation.category] || "Other"
   const categorySlug = categoryName.toLowerCase()
+  const [recommenderName, setRecommenderName] = useState<string>("")
 
   const mainImage = recommendation.recommendationImages?.[0]?.url
     ? `/uploads/${recommendation.recommendationImages[0].url}`
@@ -75,6 +78,32 @@ export function DetailedRecommendationCard({
       default: return "border-gray-200"
     }
   }
+
+  console.log(recommendation)
+
+  useEffect(() => {
+    const fetchUserName = async () => {
+      if (recommendation.userId && recommendation.userId !== "00000000-0000-0000-0000-000000000000") {
+        try {
+          const token = getCookie("token")
+          const response = await axios.get(API_GET_USER(recommendation.userId), {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          const userData = response.data
+          setRecommenderName(userData.name)
+        } catch (error) {
+          console.error("Error fetching user name:", error)
+          setRecommenderName("Unknown User")
+        }
+      } else {
+        setRecommenderName("System")
+      }
+    }
+
+    fetchUserName()
+  }, [recommendation.userId])
 
   return (
     <Card className="flex flex-col py-0 justify-between h-full min-h-[480px] overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-foreground border-none">
@@ -132,7 +161,7 @@ export function DetailedRecommendationCard({
         <p className="text-gray-500 dark:text-gray-400 text-xs truncate">
           Recommended by{" "}
           <span className="font-semibold text-primary dark:text-text-secondary">
-            {recommendation.userId === "00000000-0000-0000-0000-000000000000" ? "system" : recommendation.userId}
+            {recommendation.userId === "00000000-0000-0000-0000-000000000000" ? "system" : recommenderName}
           </span>
         </p>
       </CardContent>

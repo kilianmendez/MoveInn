@@ -112,13 +112,27 @@ export function EventCard({ eventId, title, date, location, attendeesCount, cate
     }
   }
 
+  const getCategoryColorBorder = () => {
+    switch (category.toLowerCase()) {
+      case "social": return "border-pink-500"
+      case "trip": return "border-primary"
+      case "cultural": return "border-secondary-greenblue"
+      case "academic": return "border-amber-400"
+      case "sports": return "border-purple-500"
+      case "workshop": return "border-yellow-500"
+      case "party": return "border-[#0E1E40]"
+      case "other": return "border-gray-500"
+      default: return "border-gray-500"
+    }
+  }
+
   const truncate = (text: string, maxLength = 28) => {
     return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text
   }
 
   return (
     <div
-      className={`flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-[var(--radius-lg)] bg-gradient-to-r ${getCategoryColor()} hover:shadow-md transition-all min-h-[110px]`}
+      className={`flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 rounded-[var(--radius-lg)] bg-gradient-to-r ${getCategoryColor()} hover:shadow-md transition-all min-h-[110px] border-l-3 ${getCategoryColorBorder()} hover:border-background/50`}
     >
       <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${getBadgeColor()}`}>
         <CalendarIcon className="h-6 w-6" />
@@ -134,16 +148,16 @@ export function EventCard({ eventId, title, date, location, attendeesCount, cate
 
         <div className="flex flex-wrap sm:flex-nowrap text-sm text-gray-800 dark:text-text-secondary gap-y-1 gap-x-4">
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
-            <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="truncate">{format(parseISO(date), "EEEE, MMMM d, h:mm a")}</span>
+            <CalendarIcon className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+            <span className="truncate text-gray-600 dark:text-gray-300">{format(parseISO(date), "EEEE, MMMM d, h:mm a")}</span>
           </div>
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
-            <MapPinIcon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span className="truncate">{truncate(location)}</span>
+            <MapPinIcon className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+            <span className="truncate text-gray-600 dark:text-gray-300">{truncate(location)}</span>
           </div>
           <div className="flex text-xs items-center bg-background/20 dark:bg-background/50 px-2 py-1 rounded-full w-fit">
-            <Users2Icon className="h-3.5 w-3.5 flex-shrink-0" />
-            <span>{currentAttendees}</span>
+            <Users2Icon className="h-3.5 w-3.5 flex-shrink-0 text-primary" />
+            <span className="text-gray-600 dark:text-gray-300">{currentAttendees}</span>
           </div>
         </div>
       </div>

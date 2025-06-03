@@ -208,11 +208,13 @@ export default function DashboardPage() {
             query: "",
             sortField: "",
             sortOrder: "",
-            country: user?.country,
+            country: user?.erasmusCountry,
             city: user?.city,
             page: 1,
             limit: 4,
           }
+
+          console.log("Body de la busqueda:", body)
   
           const response = await axios.post(API_SEARCH_RECOMMENDATION, body, {
             headers: {
@@ -446,6 +448,7 @@ export default function DashboardPage() {
                           rating={recommendation.rating}
                           description={recommendation.description}
                           recommendedBy={recommendation.userId}
+                          id={recommendation.id}
                         />
                       ))}
                     </div>

@@ -30,6 +30,7 @@ import { toast } from "sonner"
 import Flag from 'react-world-flags'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
+import Link from "next/link"
 
 countries.registerLocale(enLocale)
 
@@ -558,11 +559,13 @@ export default function RecommendationsPage() {
   </div>
 ) : (
   recommendations.map((rec) => (
+    <Link href={`/dashboard/recommendations/${rec.id}`} key={rec.id}>
     <DetailedRecommendationCard
       key={rec.id}
       recommendation={rec}
       categoryIcon={getCategoryIcon(rec.category)}
     />
+    </Link>
   ))
 )}
 

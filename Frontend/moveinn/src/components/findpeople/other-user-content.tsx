@@ -110,7 +110,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
     <section className="w-full px-4 md:px-0 max-w-6xl mx-auto mt-6 overflow-x-visible">
       <Tabs defaultValue="reviews" className="space-y-4">
         <div className="w-full flex justify-center">
-          <TabsList className="flex flex-wrap md:flex-nowrap md:justify-center overflow-x-auto gap-2 p-2 bg-foreground rounded-xl">
+          <TabsList className="flex flex-wrap md:flex-nowrap md:justify-center overflow-x-auto gap-2 p-1 bg-foreground rounded-lg">
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
             <TabsTrigger value="accommodations">Accommodations</TabsTrigger>
@@ -124,7 +124,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
             {data.reviews.length > 0 ? (
               data.reviews.map((rev: any) => <ReviewCard key={rev.id} review={rev} />)
             ) : (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                 <MessageCircleOff className="h-12 w-12 text-primary" />
                 <p className="text-md text-text">No reviews found.</p>
               </div>
@@ -143,7 +143,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
                 />
               ))
             ) : (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                 <MapPinOff className="h-12 w-12 text-primary" />
                 <p className="text-md text-text">No recommendations found.</p>
               </div>
@@ -156,7 +156,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
             {data.accommodations.length > 0 ? (
               data.accommodations.map((accom: any) => <AcommodationCard key={accom.id} acommodation={accom} />)
             ) : (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                 <Sofa className="h-12 w-12 text-primary" />
                 <p className="text-md text-text">No accommodations found.</p>
               </div>
@@ -169,7 +169,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
             {data.events.length > 0 ? (
               data.events.map((event: any) => <EventCardWrapper key={event.id} event={event} />)
             ) : (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                 <CalendarOff className="h-12 w-12 text-primary" />
                 <p className="text-md text-text">No events found.</p>
               </div>
@@ -182,7 +182,7 @@ export function OtherUserContentOverview({ userId }: { userId: string }) {
             {data.forums.length > 0 ? (
               data.forums.map((forum: any) => <ForumCard key={forum.id} forum={forum} />)
             ) : (
-              <div className="flex items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                 <Bookmark className="h-12 w-12 text-primary" />
                 <p className="text-md text-text">No forums found.</p>
               </div>

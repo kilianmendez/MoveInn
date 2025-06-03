@@ -192,14 +192,14 @@ export function UserContentOverview() {
 
       <Tabs defaultValue="reviews" className="space-y-4">
       <div className="w-full flex justify-center">
-      <TabsList className="flex flex-wrap md:flex-nowrap md:justify-center overflow-x-auto gap-2 p-2 bg-foreground rounded-xl">
+      <TabsList className="flex flex-wrap md:flex-nowrap md:justify-center overflow-x-auto gap-2 p-1 bg-foreground rounded-lg">
 
-          <TabsTrigger value="reviews" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Reviews</TabsTrigger>
-          <TabsTrigger value="reservations" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Reservations</TabsTrigger>
-          <TabsTrigger value="recommendations" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Recommendations</TabsTrigger>
-          <TabsTrigger value="accommodations" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Accommodations</TabsTrigger>
-          <TabsTrigger value="events" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Events</TabsTrigger>
-          <TabsTrigger value="forums" className="text-text min-w-[120px] text-sm text-text whitespace-nowrap">Forums</TabsTrigger>
+          <TabsTrigger value="reviews" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Reviews</TabsTrigger>
+          <TabsTrigger value="reservations" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Reservations</TabsTrigger>
+          <TabsTrigger value="recommendations" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Recommendations</TabsTrigger>
+          <TabsTrigger value="accommodations" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Accommodations</TabsTrigger>
+          <TabsTrigger value="events" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Events</TabsTrigger>
+          <TabsTrigger value="forums" className="text-text min-w-[130px] text-sm text-text whitespace-nowrap">Forums</TabsTrigger>
         </TabsList>
         </div>
 
@@ -210,7 +210,7 @@ export function UserContentOverview() {
                     <ReviewCard key={rev.id} review={rev} />
                 ))
                 ) : (
-                    <div className="flex items-center justify-center gap-2">
+                  <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                         <MessageCircleOff className="h-12 w-12 text-primary" />
                         <p className="text-md text-text">No reviews found.</p>
                     </div>
@@ -225,7 +225,7 @@ export function UserContentOverview() {
                     <ReservationCard key={res.id} reservation={res} />
                 ))
                 ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                         <NotebookPen className="h-12 w-12 text-primary" />
                         <p className="text-md text-text">No reservations found.</p>
                     </div>
@@ -244,7 +244,7 @@ export function UserContentOverview() {
                     />
                 ))
                 ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                         <MapPinOff className="h-12 w-12 text-primary" />
                         <p className="text-md text-text">No recommendations found.</p>
                     </div>
@@ -259,7 +259,7 @@ export function UserContentOverview() {
                     <AcommodationCard key={accom.id} acommodation={accom} />
                 ))
                 ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                         <Sofa className="h-12 w-12 text-primary" />
                         <p className="text-md text-text">No accommodations found.</p>
                     </div>
@@ -274,7 +274,7 @@ export function UserContentOverview() {
                     <EventCardWrapper key={event.id} event={event} />
                 ))
                 ) : (
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                         <CalendarOff className="h-12 w-12 text-primary" />
                         <p className="text-md text-text">No events found.</p>
                     </div>
@@ -287,7 +287,7 @@ export function UserContentOverview() {
             {data.forums.length > 0 ? (
               data.forums.map((forum: any) => <ForumCard key={forum.id} forum={forum} />)
             ) : (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex flex-col items-center justify-center w-full min-h-[300px] text-center gap-2 col-span-full">
                     <Bookmark className="h-12 w-12 text-primary" />
                     <p className="text-md text-text">No forums found.</p>
                 </div>

@@ -73,6 +73,8 @@ export interface Forum {
 
 
 export default function ForumCard({ forum }: { forum: Forum }) {
+  console.log("Forum creator info:", forum)
+
   return (
     <Link href={`/dashboard/forums/${forum.id}`}>
       <Card className="flex flex-col bg-none py-0 px-0 justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">
@@ -93,15 +95,6 @@ export default function ForumCard({ forum }: { forum: Forum }) {
 
           <div className="p-6 pt-4 flex-grow flex flex-col bg-foreground rounded-b-md border-t border-gray-200 dark:border-gray-800">
             <p className="text-sm text-text line-clamp-3 lg:line-clamp-5 mb-4">{forum.description}</p>
-            <div className="mt-auto">
-              <div className="flex items-center gap-2 bg-[#4C69DD]/10 rounded-full px-3 py-2 w-fit">
-                <Avatar className="h-8 w-8 text-text">
-                  <AvatarImage src={`${API_BASE_IMAGE_URL}${forum.creatorAvatar}`} />
-                  <AvatarFallback>{forum.creatorName?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <span className="text-sm font-medium text-text">{forum.creatorName}</span>
-              </div>
-            </div>
           </div>
         </CardContent>
       </Card>

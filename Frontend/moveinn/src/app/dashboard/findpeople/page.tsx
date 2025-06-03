@@ -10,6 +10,7 @@ import axios from "axios"
 import { useAuth } from "@/context/authcontext"
 import { API_GET_ALL_USERS } from "@/utils/endpoints/config"
 import Link from "next/link"
+import UserCard from "@/components/findpeople/user-card"
 
 export default function UsersExplorePage() {
   const { user } = useAuth()
@@ -17,10 +18,15 @@ export default function UsersExplorePage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCity, setSelectedCity] = useState("")
   const [selectedCountry, setSelectedCountry] = useState("")
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true)
+  const [navigating, setNavigating] = useState(false)
+
+
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setIsLoadingUsers(true)
         const token = localStorage.getItem("accessToken")
         const res = await axios.get(API_GET_ALL_USERS, {
           headers: { Authorization: `Bearer ${token}` },
@@ -29,6 +35,8 @@ export default function UsersExplorePage() {
         setUsers(filtered)
       } catch (err) {
         console.error("Error fetching users:", err)
+      } finally {
+        setIsLoadingUsers(false)
       }
     }
 
@@ -136,60 +144,14 @@ export default function UsersExplorePage() {
         {filteredUsers.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredUsers.map((u) => (
-              <Link href={`/dashboard/findpeople/${u.id}`} key={u.id}>
-              <Card key={u.id} className="border-none shadow-md hover:shadow-lg transition-all h-full w-full rounded-md py-0 bg-foreground flex flex-col justify-between">
-                <div className="relative">
-                  <div className="h-40 bg-gradient-to-br from-[#4C69DD]/20 to-[#62C3BA]/20 rounded-t-md flex items-center justify-center">
-                    <Avatar className="h-24 w-24 border-4 border-white shadow-md">
-                      <AvatarImage src={u.avatarUrl || "/default-avatar.svg"} alt={u.name} />
-                      <AvatarFallback className="bg-[#4C69DD] text-white text-2xl">
-                        {u.name?.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
-
-                  {u.erasmusCountry && (
-                    <div className="absolute top-3 right-3 bg-accent text-[#0E1E40] text-xs font-semibold px-3 py-1 rounded-full shadow ">
-                      Erasmus in <span className="font-bold">{u.erasmusCountry}</span>
-                    </div>
-                  )}
-                </div>
-
-                <CardContent className="px-4 py-2 pb-0 text-center flex-1 flex flex-col justify-between">
-                  <div>
-                    <h3 className="font-semibold text-lg text-text">{u.name} {u.lastName}</h3>
-                    {u.biography && (
-                      <p className="text-sm text-gray-500 line-clamp-2 mb-2 dark:text-text-secondary">{u.biography}</p>
-                    )}
-                    {u.city && (
-                      <div className="flex items-center justify-start text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        <MapPin className="h-4 w-4 mr-1 text-primary" />
-                        {u.city}
-                      </div>
-                    )}
-                    {u.school && (
-                      <div className="flex items-center justify-start text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        <GraduationCap className="h-4 w-4 mr-1 text-primary" />
-                        {u.school}
-                      </div>
-                    )}
-                    {u.nationality && (
-                      <div className="flex items-center justify-start text-sm text-gray-600 dark:text-gray-400 mb-2">
-                        <Globe className="h-4 w-4 mr-1 text-primary" />
-                        From {u.nationality}
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-
-                <CardFooter className="p-3 pt-0">
-                  <Button className="w-full bg-primary text-white hover:bg-primary/70">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Follow
-                  </Button>
-                </CardFooter>
-              </Card>
-              </Link>
+              <UserCard
+              key={u.id}
+              user={u}
+              onClick={() => {
+                setNavigating(true)
+                window.location.href = `/dashboard/findpeople/${u.id}`
+              }}
+            />
             ))}
           </div>
         ) : (
@@ -198,6 +160,11 @@ export default function UsersExplorePage() {
           </div>
         )}
       </main>
+      {(isLoadingUsers || navigating) && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+        </div>
+      )}
     </div>
   )
 }

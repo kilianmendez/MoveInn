@@ -21,6 +21,8 @@ export const ForumCard = ({
   categoryBorderColors,
   categoryBgColors
 }: ForumCardProps) => {
+  console.log("Forum creator info:", forum)
+
   return (
     <Link href={`/dashboard/forums/${forum.id}`} key={forum.id}>
       <Card className="flex py-0 flex-col justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">

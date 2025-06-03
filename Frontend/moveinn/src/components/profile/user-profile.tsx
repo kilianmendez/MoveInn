@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ProfileInfo } from "./profile-info"
 import { ProfileEdit } from "./profile-edit"
-import { Facebook, Instagram, Twitter, FileEdit, User, Linkedin, Github, X, TwitterIcon } from "lucide-react"
+import { Facebook, Instagram, Twitter, FileEdit, User, Linkedin, Github, X, TwitterIcon, TableOfContents } from "lucide-react"
 import { SOCIAL_MEDIA_TYPES } from "@/types/user"
 import { useAuth } from "@/context/authcontext"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
@@ -277,12 +277,12 @@ export function UserProfile() {
 
       <Tabs defaultValue="info" value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-2">
-        <TabsList className="flex flex-wrap justify-center gap-2 w-fit max-w-full mx-auto bg-background h-fit p-1 rounded-xl shadow-inner">
+        <TabsList className="flex flex-wrap justify-center gap-2 w-fit max-w-full mx-auto bg-background h-fit p-1 rounded-lg shadow-inner">
 
             <TabsTrigger
               value="info"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
         ${
           activeTab === "info"
             ? "bg-white text-primary shadow-sm border border-gray-200"
@@ -296,7 +296,7 @@ export function UserProfile() {
             <TabsTrigger
               value="edit"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
         ${
           activeTab === "edit"
             ? "bg-white text-primary shadow-sm border border-gray-200"
@@ -310,7 +310,7 @@ export function UserProfile() {
             <TabsTrigger
               value="content"
               className={`
-        flex items-center justify-center gap-2 px-6 py-2.5 rounded-md font-medium transition-all duration-200
+        flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200
         ${
           activeTab === "content"
             ? "bg-white text-primary shadow-sm border border-gray-200"
@@ -318,7 +318,7 @@ export function UserProfile() {
         }
       `}
             >
-              <FileEdit className="h-4 w-4" />
+              <TableOfContents className="h-4 w-4" />
               <span>Content</span>
             </TabsTrigger>
           </TabsList>

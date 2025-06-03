@@ -15,6 +15,7 @@ import {
   Calendar,
   MapPin,
   Globe,
+  User,
 } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { API_GET_USER, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
@@ -25,6 +26,9 @@ import { OtherUserContentOverview } from "@/components/findpeople/other-user-con
 import { useAuth } from "@/context/authcontext";
 import { API_USER_FOLLOWING, API_USER_FOLLOWERS } from "@/utils/endpoints/config";
 import { getCookie } from "cookies-next";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { TableOfContents } from "lucide-react"
+import { CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 
 
 export default function UserDetailPage() {
@@ -382,10 +386,61 @@ export default function UserDetailPage() {
   </div>
 )}
 
+      {/* Modal for followers/following */}
+      {(showFollowers || showFollowing) && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center">
 
+          <div className="bg-white dark:bg-foreground rounded-lg shadow-lg max-w-md w-full p-6 relative">
+            <button
+              onClick={() => {
+                setShowFollowers(false)
+                setShowFollowing(false)
+              }}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
 
-      {/* Info Cards */}
-      <Card className="bg-foreground dark:border-gray-800 shadow-md rounded-xl p-6 space-y-8">
+            {showFollowers && renderUserList(fetchedFollowers, "Followers")}
+            {showFollowing && renderUserList(fetchedFollowing, "Following")}
+
+          </div>
+        </div>
+      )}
+      <Tabs defaultValue="info" className="w-full mt-10">
+  <div className="flex justify-center mb-2">
+    <TabsList className="flex flex-wrap justify-center gap-2 w-fit max-w-full mx-auto bg-background h-fit p-1 rounded-lg shadow-inner">
+      <TabsTrigger
+        value="info"
+        className={`
+          flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200 hover:bg-gray-100/20 hover:text-primary
+          data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200
+        `}
+      >
+        <User className="h-4 w-4" />
+        <span>Information</span>
+      </TabsTrigger>
+      <TabsTrigger
+        value="content"
+        className={`
+          flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all duration-200 hover:bg-gray-100/20 hover:text-primary
+          data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-sm data-[state=active]:border data-[state=active]:border-gray-200
+        `}
+      >
+        <TableOfContents className="h-4 w-4" />
+        <span>Content</span>
+      </TabsTrigger>
+    </TabsList>
+  </div>
+
+  {/* Info Tab */}
+  <TabsContent value="info" className="mt-6">
+    <Card className="border-none shadow-sm bg-foreground">
+      <CardHeader className="border-b border-gray-200">
+        <CardTitle className="text-text">User Information</CardTitle>
+        <CardDescription className="text-gray-500">Details and profile data</CardDescription>
+      </CardHeader>
+      <CardContent className="pt-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Contact Info */}
           <div className="space-y-4">
@@ -467,30 +522,16 @@ export default function UserDetailPage() {
             </div>
           </div>
         </div>
-      </Card>
+      </CardContent>
+    </Card>
+  </TabsContent>
 
-      {/* Modal for followers/following */}
-      {(showFollowers || showFollowing) && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center">
+  {/* Content Tab */}
+  <TabsContent value="content" className="mt-6">
+    <OtherUserContentOverview userId={user.id} />
+  </TabsContent>
+</Tabs>
 
-          <div className="bg-white dark:bg-foreground rounded-lg shadow-lg max-w-md w-full p-6 relative">
-            <button
-              onClick={() => {
-                setShowFollowers(false)
-                setShowFollowing(false)
-              }}
-              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-            >
-              ✕
-            </button>
-
-            {showFollowers && renderUserList(fetchedFollowers, "Followers")}
-            {showFollowing && renderUserList(fetchedFollowing, "Following")}
-
-          </div>
-        </div>
-      )}
-      <OtherUserContentOverview userId={user.id} />
       {showUnfollowModal && (
   <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
     <div className="bg-white dark:bg-foreground rounded-lg shadow-lg p-6 max-w-sm w-full text-center space-y-4">
