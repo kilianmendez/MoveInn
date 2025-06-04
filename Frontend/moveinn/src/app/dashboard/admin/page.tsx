@@ -213,24 +213,29 @@ export default function AdminPage() {
         {/* Admin Tabs */}
         <section>
           <Tabs defaultValue="users" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-5 bg-foreground border-none rounded-lg p-1 text-text">
-              <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="users">
-                Users
-              </TabsTrigger>
-              <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="recommendations">
-                Recommendations
-              </TabsTrigger>
-              <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="events">
-                Events
-              </TabsTrigger>
-              <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="housing">
-                Housing
-              </TabsTrigger>
-              <TabsTrigger className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="reviews">
-                Reviews
-              </TabsTrigger>
-              <TabsTrigger value="hosts" className="text-text transition-colors duration-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg">Hosts</TabsTrigger> {/* ✅ nueva pestaña */}
-            </TabsList>
+          <div className="w-full flex justify-center">
+  <TabsList className="flex flex-wrap md:flex-nowrap md:justify-center overflow-x-auto gap-2 p-1 bg-foreground rounded-lg">
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="users">
+      Users
+    </TabsTrigger>
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="recommendations">
+      Recommendations
+    </TabsTrigger>
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="events">
+      Events
+    </TabsTrigger>
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="housing">
+      Housing
+    </TabsTrigger>
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="reviews">
+      Reviews
+    </TabsTrigger>
+    <TabsTrigger className="text-text min-w-[130px] text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:font-semibold data-[state=active]:rounded-lg" value="hosts">
+      Hosts
+    </TabsTrigger>
+  </TabsList>
+</div>
+
 
             <TabsContent value="users">
               <UsersTable renderRoleBadge={(role, userId) => <RoleBadge role={role} userId={userId} />} />

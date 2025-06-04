@@ -29,8 +29,9 @@ interface HostCardProps {
 }
 
 export default function HostCard({ host }: HostCardProps) {
+  // console.log("Host info:", host)
   return (
-    <Link href={`/dashboard/hosts/${host.id}`} className="cursor-pointer h-full block">
+    <Link href={`/dashboard/findpeople/${host.id}`} className="cursor-pointer h-full block">
       <Card className="border-none py-0 shadow-md hover:shadow-lg transition-all rounded-md bg-foreground flex flex-col justify-between min-h-[420px]">
         {/* Header */}
         <div className="relative">

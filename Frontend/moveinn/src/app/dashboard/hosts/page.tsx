@@ -45,7 +45,6 @@ countries.registerLocale(enLocale)
 
 export default function HostsPage() {
   const [activeFilter, setActiveFilter] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<"grid" | "map">("grid")
   const [showHostModal, setShowHostModal] = useState(false);
   const [reason, setReason] = useState("");
   const [specialties, setSpecialties] = useState<string[]>([]);
@@ -55,6 +54,7 @@ export default function HostsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [citiesFromApi, setCitiesFromApi] = useState<string[]>([])
   const [selectedCity, setSelectedCity] = useState<string | null>(null)
+  const [isLoadingHosts, setIsLoadingHosts] = useState(false);
 
   const { user } = useAuth()
   const [hosts, setHosts] = useState<any[]>([])
@@ -68,22 +68,17 @@ export default function HostsPage() {
     )
   ).filter(Boolean).sort();
   
-  
-
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [limit] = useState(6);
  
-
-
-
   const getCountryCode = (countryName: string) => {
     return countries.getAlpha2Code(countryName, 'en') || 'UN'
   }
 
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
-const [countrySearch, setCountrySearch] = useState("")
-const filteredCountries = availableCountries
+  const [countrySearch, setCountrySearch] = useState("")
+  const filteredCountries = availableCountries
   .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
   .map(name => ({
     name,
@@ -91,86 +86,77 @@ const filteredCountries = availableCountries
   }))
   .filter(c => c.code !== "UN")
 
-useEffect(() => {
-  const fetchHostCountries = async () => {
-    try {
-      const token = getCookie("token")
-      const res = await axios.get(API_HOST_COUNTRIES, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setAvailableCountries(res.data)
-    } catch (err) {
-      console.error("Error fetching host countries:", err)
-    }
-  }
-
-  fetchHostCountries()
-}, [])
-
-useEffect(() => {
-  const fetchCities = async () => {
-    if (!availableCountries.includes(activeFilter || "")) {
-      setCitiesFromApi([])
-      setSelectedCity(null)
-      return
-    }
-
-    try {
-      const token = getCookie("token")
-      const res = await axios.get(API_HOST_CITIES(activeFilter), {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      setCitiesFromApi(res.data)
-    } catch (err) {
-      console.error("Error fetching cities:", err)
-      setCitiesFromApi([])
-    }
-  }
-
-  fetchCities()
-}, [activeFilter, availableCountries])
-
-
-
-useEffect(() => {
-  const fetchHosts = async () => {
-    const token = getCookie("token");
-    try {
-      const res = await axios.post(
-        API_HOST_SEARCH_HOSTS,
-        {
-          query: searchQuery,
-          country: availableCountries.includes(activeFilter || "") ? activeFilter : "",
-          city: selectedCity || "",
-          page: currentPage,
-          limit: limit,
-        },
-        {
+  useEffect(() => {
+    const fetchHostCountries = async () => {
+      try {
+        const token = getCookie("token")
+        const res = await axios.get(API_HOST_COUNTRIES, {
           headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setHosts(res.data.items || []);
-      setTotalPages(res.data.totalPages || 1);
-    } catch (error) {
-      console.error("Error fetching hosts:", error);
+        })
+        setAvailableCountries(res.data)
+      } catch (err) {
+        console.error("Error fetching host countries:", err)
+      }
     }
-  };
 
-  fetchHosts();
-}, [activeFilter, selectedCity, currentPage, searchQuery]);
+    fetchHostCountries()
+  }, [])
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!availableCountries.includes(activeFilter || "")) {
+        setCitiesFromApi([])
+        setSelectedCity(null)
+        return
+      }
+
+      try {
+        const token = getCookie("token")
+        const res = await axios.get(API_HOST_CITIES(activeFilter), {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        setCitiesFromApi(res.data)
+      } catch (err) {
+        console.error("Error fetching cities:", err)
+        setCitiesFromApi([])
+      }
+    }
+
+    fetchCities()
+  }, [activeFilter, availableCountries])
 
 
-  // Sample languages
-  const languages = [
-    { name: "English", count: 156 },
-    { name: "Spanish", count: 87 },
-    { name: "French", count: 76 },
-    { name: "German", count: 68 },
-    { name: "Italian", count: 54 },
-    { name: "Portuguese", count: 42 },
-    { name: "Czech", count: 31 },
-    { name: "Dutch", count: 28 },
-  ]
+
+  useEffect(() => {
+    const fetchHosts = async () => {
+      setIsLoadingHosts(true);
+      const token = getCookie("token");
+      try {
+        const res = await axios.post(
+          API_HOST_SEARCH_HOSTS,
+          {
+            query: searchQuery,
+            country: availableCountries.includes(activeFilter || "") ? activeFilter : "",
+            city: selectedCity || "",
+            page: currentPage,
+            limit: limit,
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        console.log("Hosts response:", res.data)
+        setHosts(res.data.items || []);
+        setTotalPages(res.data.totalPages || 1);
+      } catch (error) {
+        console.error("Error fetching hosts:", error);
+      } finally {
+        setIsLoadingHosts(false);
+      }
+    };
+
+    fetchHosts();
+  }, [activeFilter, selectedCity, currentPage, searchQuery]);
 
   // Filter hosts by active filter
   const filteredHosts = hosts.filter((host) => {
@@ -201,9 +187,6 @@ useEffect(() => {
     return matchesBackendFilters && matchesSpecialties;
   });
   
-
-
-
     const handleHostRequestSubmit = async () => {
       try {
         const token = getCookie("token");
@@ -297,40 +280,40 @@ useEffect(() => {
         </section>
 
         <section className="mb-6">
-  <div className="bg-foreground p-4 rounded-lg shadow-sm">
-    <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
+          <div className="bg-foreground p-4 rounded-lg shadow-sm">
+            <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
 
-    <Input
-      placeholder="Search countries..."
-      value={countrySearch}
-      onChange={(e) => setCountrySearch(e.target.value)}
-      className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
-    />
+            <Input
+              placeholder="Search countries..."
+              value={countrySearch}
+              onChange={(e) => setCountrySearch(e.target.value)}
+              className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
+            />
 
-    <div className={`flex flex-wrap gap-2 ${filteredCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
-      {filteredCountries.map((country) => (
-        <Button
-          key={country.name}
-          variant="outline"
-          className={`
-            flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
-            ${activeFilter === country.name
-              ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
-              : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
-          `}
-          onClick={() => {
-            const newFilter = activeFilter === country.name ? "" : country.name
-            setActiveFilter(newFilter)
-            setCurrentPage(1)
-          }}
-        >
-          <Flag code={country.code} style={{ width: 20, height: 14 }} />
-          {country.name}
-        </Button>
-      ))}
-    </div>
-  </div>
-</section>
+            <div className={`flex flex-wrap gap-2 ${filteredCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
+              {filteredCountries.map((country) => (
+                <Button
+                  key={country.name}
+                  variant="outline"
+                  className={`
+                    flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
+                    ${activeFilter === country.name
+                      ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
+                      : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
+                  `}
+                  onClick={() => {
+                    const newFilter = activeFilter === country.name ? "" : country.name
+                    setActiveFilter(newFilter)
+                    setCurrentPage(1)
+                  }}
+                >
+                  <Flag code={country.code} style={{ width: 20, height: 14 }} />
+                  {country.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
 
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
@@ -343,24 +326,24 @@ useEffect(() => {
                 <h2 className="font-semibold text-text-secondary mb-3">Popular Cities</h2>
                 <div className="space-y-2">
                 {citiesFromApi.length === 0 && (
-  <p className="text-sm text-gray-400">Select a country to see cities</p>
-)}
+                  <p className="text-sm text-gray-400">Select a country to see cities</p>
+                )}
 
-{citiesFromApi.map((city) => (
-  <Button
-    key={city}
-    variant="outline"
-    className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
-      selectedCity === city ? "bg-[#4C69DD] text-white" : ""
-    }`}
-    onClick={() => {setSelectedCity(selectedCity === city ? null : city); setCurrentPage(1);}}
-  >
-    <div className="flex items-center">
-      <MapPin className="h-4 w-4 mr-2" />
-      <span>{city}</span>
-    </div>
-  </Button>
-))}
+                {citiesFromApi.map((city) => (
+                  <Button
+                    key={city}
+                    variant="outline"
+                    className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+                      selectedCity === city ? "bg-[#4C69DD] text-white" : ""
+                    }`}
+                    onClick={() => {setSelectedCity(selectedCity === city ? null : city); setCurrentPage(1);}}
+                  >
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      <span>{city}</span>
+                    </div>
+                  </Button>
+                ))}
 
                 </div>
                 <Button variant="ghost" className="w-full mt-2 text-primary dark:text-text-secondary">
@@ -371,37 +354,36 @@ useEffect(() => {
 
             {/* Expertise Filter */}
             <Card className="border-none shadow-md bg-foreground py-0">
-  <CardContent className="p-4">
-    <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
-    <div className="space-y-2">
-      {uniqueSpecialties.map((specialty) => (
-        <Button
-        key={specialty}
-        variant="outline"
-        className={`w-full justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
-          selectedSpecialties.includes(specialty)
-            ? "bg-[#4C69DD] text-white"
-            : "bg-background/50 hover:bg-[#4C69DD]/10"
-        }`}
-        onClick={() => {
-          const isSelected = selectedSpecialties.includes(specialty);
-          const updated = isSelected
-            ? selectedSpecialties.filter((s) => s !== specialty)
-            : [...selectedSpecialties, specialty];
-          setSelectedSpecialties(updated);
-          setCurrentPage(1);
-        }}
-      >
-        <div className="flex items-center">
-          <GraduationCap className="h-4 w-4 mr-2" />
-          <span>{specialty}</span>
-        </div>
-      </Button>
-      
-      ))}
-    </div>
-  </CardContent>
-</Card>
+              <CardContent className="p-4">
+                <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
+                <div className="space-y-2">
+                  {uniqueSpecialties.map((specialty) => (
+                    <Button
+                    key={specialty}
+                    variant="outline"
+                    className={`w-full justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+                      selectedSpecialties.includes(specialty)
+                        ? "bg-[#4C69DD] text-white"
+                        : "bg-background/50 hover:bg-[#4C69DD]/10"
+                    }`}
+                    onClick={() => {
+                      const isSelected = selectedSpecialties.includes(specialty);
+                      const updated = isSelected
+                        ? selectedSpecialties.filter((s) => s !== specialty)
+                        : [...selectedSpecialties, specialty];
+                      setSelectedSpecialties(updated);
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <GraduationCap className="h-4 w-4 mr-2" />
+                      <span>{specialty}</span>
+                    </div>
+                  </Button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
 
             {/* Become a Host */}
@@ -464,68 +446,30 @@ useEffect(() => {
 
 
             {/* View Mode: Grid or Map */}
-            {viewMode === "grid" ? (
+            {isLoadingHosts ? (
+              <div className="col-span-full flex justify-center items-center min-h-[300px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+              </div>
+            ) : filteredHosts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredHosts.map((host) => (
                   <HostCard key={host.id} host={host} />
                 ))}
               </div>
             ) : (
-              // Map View
-              <div className="relative rounded-xl overflow-hidden border border-gray-200 h-[600px]">
-                {/* This would be replaced with an actual map component */}
-                <div className="absolute inset-0 bg-[#E7ECF0]">
-                  <div className="absolute top-0 left-0 w-full h-full bg-[url('/placeholder.svg?height=600&width=1200')] opacity-20"></div>
-
-                  {/* Host markers on map */}
-                  {filteredHosts.map((host) => (
-                    <div
-                      key={host.id}
-                      className="absolute cursor-pointer transition-all duration-300 hover:z-20 hover:scale-110"
-                      style={{
-                        // Random positions for demonstration - would be actual coordinates in real implementation
-                        top: `${30 + Math.random() * 40}%`,
-                        left: `${20 + Math.random() * 60}%`,
-                      }}
-                    >
-                      <div className="relative">
-                        <Avatar className="h-12 w-12 border-2 border-white shadow-md">
-                          <AvatarImage src={host.avatar} alt={host.name} />
-                          <AvatarFallback className="bg-[#4C69DD] text-white">{host.name.charAt(0)}</AvatarFallback>
-                        </Avatar>
-                        {host.isOnline && (
-                          <div className="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-green-500 border-2 border-white"></div>
-                        )}
-                        {host.isSuperHost && (
-                          <div className="absolute top-0 right-0 h-4 w-4 rounded-full bg-[#FFBF00] border-2 border-white flex items-center justify-center">
-                            <Star className="h-2 w-2 text-[#0E1E40]" />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="absolute mt-2 left-1/2 -translate-x-1/2 bg-white rounded-lg shadow-lg p-2 w-48 opacity-0 hover:opacity-100 transition-opacity z-10">
-                        <div className="text-center mb-1">
-                          <div className="font-medium text-[#0E1E40]">{host.name}</div>
-                          <div className="text-xs text-gray-600">{host.university}</div>
-                        </div>
-                        <div className="flex items-center justify-center mb-1">
-                          <Star className="h-3 w-3 text-[#FFBF00] fill-[#FFBF00] mr-1" />
-                          <span className="text-sm">{host.rating}</span>
-                        </div>
-                        <Button size="sm" className="w-full h-7 text-xs bg-background">
-                          View Profile
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-
-                  {/* Map Attribution */}
-                  <div className="absolute bottom-1 right-1 text-xs text-gray-500 bg-white/80 px-1 rounded">
-                    Map data © MoveIn 2025
-                  </div>
+              <div className="text-center py-12 bg-white/50 rounded-lg border border-gray-100">
+                <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="h-8 w-8 text-gray-400" />
                 </div>
+                <h3 className="text-xl font-medium text-gray-700 mb-2">No hosts found</h3>
+                <p className="text-gray-500 max-w-md mx-auto mb-6">
+                  We couldn't find any hosts matching your filter criteria. Try adjusting your filters or search for a
+                  different location.
+                </p>
+                <Button onClick={() => setActiveFilter(null)}>Clear Filter</Button>
               </div>
             )}
+
 
             {filteredHosts.length === 0 && (
               <div className="text-center py-12 bg-white/50 rounded-lg border border-gray-100">
@@ -608,20 +552,19 @@ useEffect(() => {
         </div>
       )}
       {totalPages > 1 && (
-  <div className="mt-6 flex justify-center gap-2 flex-wrap">
-    {Array.from({ length: totalPages }, (_, i) => (
-      <Button
-        key={i}
-        onClick={() => setCurrentPage(i + 1)}
-        variant={i + 1 === currentPage ? "default" : "outline"}
-        className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === currentPage ? "bg-primary text-white" : ""}`}
-      >
-        {i + 1}
-      </Button>
-    ))}
-  </div>
-)}
-
+        <div className="mt-6 flex justify-center gap-2 flex-wrap">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              variant={i + 1 === currentPage ? "default" : "outline"}
+              className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === currentPage ? "bg-primary text-white" : ""}`}
+            >
+              {i + 1}
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
