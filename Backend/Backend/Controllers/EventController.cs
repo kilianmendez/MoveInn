@@ -143,6 +143,16 @@ public class EventController : ControllerBase
                 .Where(e => e.Location.Equals(request.Location, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
+        if (!string.IsNullOrWhiteSpace(request.City))
+            events = events
+                .Where(e => e.City.Equals(request.City, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        if (!string.IsNullOrWhiteSpace(request.Country))
+            events = events
+                .Where(e => e.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
         if (!string.IsNullOrWhiteSpace(request.Category))
             events = events
                 .Where(e => !string.IsNullOrWhiteSpace(e.Category)

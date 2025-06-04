@@ -187,6 +187,8 @@ public class SmartSearchService
             Date = e.Date,
             Location = e.Location,
             Address = e.Address,
+            City = e.City,
+            Country = e.Country,
             AttendeesCount = e.AttendeesCount,
             MaxAttendees = e.MaxAttendees,
             Category = e.Category,

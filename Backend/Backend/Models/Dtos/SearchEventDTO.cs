@@ -9,6 +9,8 @@ public class SearchEventDTO
     public int Limit { get; set; }
     public string? Query { get; set; }
     public string? Location { get; set; }
+    public string? City { get; set;}
+    public string? Country { get; set; }
     public string? Category { get; set; }
     public List<string>? Tags { get; set; }
     public string? SortField { get; set; }
