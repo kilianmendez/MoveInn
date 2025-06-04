@@ -33,9 +33,10 @@ import { DashboardAcommodationCard } from "@/components/dashboard/dashboard-acom
 import { HostCard } from "@/components/dashboard/host-card"
 import axios from "axios"
 import { useAuth } from "@/context/authcontext"
-import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION, API_ALL_ACOMMODATIONS, API_SEARCH_EVENTS } from "@/utils/endpoints/config"
+import { API_SEARCH_RECOMMENDATION, API_SEARCH_ACOMMODATION, API_SEARCH_EVENTS, API_HOST_SEARCH_HOSTS } from "@/utils/endpoints/config"
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { getCookie } from "cookies-next"
 
 interface Recommendation {
     id: string
@@ -136,6 +137,8 @@ export default function DashboardPage() {
     // const [acomodations, setAcomodations] = useState<Acommodation[]>([])
     const [acommodations, setAcommodations] = useState<Acommodation[]>([])
     const [isLoadingDashboard, setIsLoadingDashboard] = useState(true)
+    const [dashboardHosts, setDashboardHosts] = useState<any[]>([])
+
 
     interface Event {
       id: string
@@ -154,7 +157,7 @@ export default function DashboardPage() {
     useEffect(() => {
       const loadDashboardData = async () => {
         setIsLoadingDashboard(true)
-        await Promise.all([getRecommendations(), fetchEvents(), searchAcommodations()])
+        await Promise.all([getRecommendations(), fetchEvents(), searchAcommodations(), fetchDashboardHosts()])
         setIsLoadingDashboard(false)
       }
     
@@ -163,10 +166,37 @@ export default function DashboardPage() {
       }
     }, [user])
     
+    const fetchDashboardHosts = async () => {
+      try {
+        const token = getCookie("token")
+        const response = await axios.post(
+          API_HOST_SEARCH_HOSTS,
+          {
+            query: "",
+            country: user?.erasmusCountry || "",
+            city: user?.city || "",
+            page: 1,
+            limit: 4,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        const data = response.data.items
+        console.log("Hosts encontrados:", data)
+        setDashboardHosts(data || [])
+      } catch (error) {
+        console.error("Error fetching dashboard hosts:", error)
+        setDashboardHosts([])
+      }
+    }
     
+
     const fetchEvents = async () => {
       try {
-        const token = localStorage.getItem("token")
+        const token = getCookie("token")
         const response = await axios.post(
           API_SEARCH_EVENTS,
           {
@@ -196,13 +226,14 @@ export default function DashboardPage() {
     useEffect(() => {
       if (user?.city) {
         fetchEvents()
+        fetchDashboardHosts()
       }
     }, [user])
     
 
     const getRecommendations = async () => {
         try {
-          const token = localStorage.getItem("token")
+          const token = getCookie("token")
 
           const body = {
             query: "",
@@ -241,7 +272,7 @@ export default function DashboardPage() {
     const searchAcommodations = async () => {
       console.log("Buscando acomodaciones para:", user?.city, user?.erasmusCountry)
       try {
-        const token = localStorage.getItem("token")
+        const token = getCookie("token")
     
         const body = {
           query: "",
@@ -510,33 +541,29 @@ export default function DashboardPage() {
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
                     <div>
                     <CardTitle className="text-xl text-text">Your Hosts</CardTitle>
-                    <CardDescription className="text-text-secondary">Local students helping you navigate Barcelona</CardDescription>
+                    <CardDescription className="text-text-secondary">Local students helping you navigate your city</CardDescription>
                     </div>
-                    <Button variant="ghost" size="sm" className="dark:text-text-secondary">
-                    Find more
-                    </Button>
+                    <Link href="/dashboard/hosts">
+                      <Button variant="ghost" size="sm" className="dark:text-text-secondary">
+                        Find more
+                        <ChevronRightIcon className="ml-1 h-4 w-4" />
+                      </Button>
+                    </Link>
                 </CardHeader>
                 <CardContent>
+                  {dashboardHosts.length > 0 ? (
                     <div className="space-y-4">
-                    <HostCard
-                        name="Maria Rodriguez"
-                        university="Universitat de Barcelona"
-                        languages={["Spanish", "English", "Catalan"]}
-                        lastActive="Online"
-                    />
-                    <HostCard
-                        name="Jordi Puig"
-                        university="Universitat Pompeu Fabra"
-                        languages={["Spanish", "English", "French"]}
-                        lastActive="2 hours ago"
-                    />
-                    <HostCard
-                        name="Anna Costa"
-                        university="Universitat Autònoma de Barcelona"
-                        languages={["Spanish", "English", "Italian"]}
-                        lastActive="Yesterday"
-                    />
+                      {dashboardHosts.map((host) => (
+                        <HostCard key={host.id} host={host} />
+                      ))}
                     </div>
+                  ) : (
+                    <div className="text-center text-md text-text py-4">
+                      <SearchX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+                      No local hosts found yet in{" "}
+                      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span>.
+                    </div>
+                  )}
                 </CardContent>
                 </Card>
             </div>

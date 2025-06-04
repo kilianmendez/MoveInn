@@ -31,12 +31,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { API_HOST_POST_REQUEST, API_GET_HOSTS } from "@/utils/endpoints/config";
+import { API_HOST_CITIES, API_HOST_COUNTRIES, API_HOST_POST_REQUEST, API_HOST_SEARCH_HOSTS } from "@/utils/endpoints/config";
 import axios from "axios";
 import { useAuth } from "@/context/authcontext";
+import { getCookie } from "cookies-next";
+import HostCard from "@/components/hosts/host-card";
+import Flag from 'react-world-flags'
+import countries from 'i18n-iso-countries'
+import enLocale from 'i18n-iso-countries/langs/en.json'
 
-
-
+countries.registerLocale(enLocale)
 
 
 export default function HostsPage() {
@@ -48,40 +52,113 @@ export default function HostsPage() {
   const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
   const [feedbackType, setFeedbackType] = useState<"success" | "error" | null>(null);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const [citiesFromApi, setCitiesFromApi] = useState<string[]>([])
+  const [selectedCity, setSelectedCity] = useState<string | null>(null)
 
   const { user } = useAuth()
-
-
   const [hosts, setHosts] = useState<any[]>([])
 
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const uniqueSpecialties: string[] = Array.from(
+    new Set(
+      hosts.flatMap((host) =>
+        host?.specialties?.map((s: { id: string; name: string }) => s.name) || []
+      )
+    )
+  ).filter(Boolean).sort();
+  
+  
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(6);
+ 
+
+
+
+  const getCountryCode = (countryName: string) => {
+    return countries.getAlpha2Code(countryName, 'en') || 'UN'
+  }
+
+  const [availableCountries, setAvailableCountries] = useState<string[]>([])
+const [countrySearch, setCountrySearch] = useState("")
+const filteredCountries = availableCountries
+  .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
+  .map(name => ({
+    name,
+    code: getCountryCode(name)
+  }))
+  .filter(c => c.code !== "UN")
+
 useEffect(() => {
-  const fetchHosts = async () => {
-    const token = localStorage.getItem("token")
+  const fetchHostCountries = async () => {
     try {
-      const res = await axios.get(API_GET_HOSTS, {
+      const token = getCookie("token")
+      const res = await axios.get(API_HOST_COUNTRIES, {
         headers: { Authorization: `Bearer ${token}` },
       })
-      setHosts(res.data)
-    } catch (error) {
-      console.error("Error fetching hosts:", error)
+      setAvailableCountries(res.data)
+    } catch (err) {
+      console.error("Error fetching host countries:", err)
     }
   }
 
-  fetchHosts()
+  fetchHostCountries()
 }, [])
-   
 
-  // Sample cities
-  const cities = [
-    { name: "Barcelona", country: "Spain", count: 42 },
-    { name: "Prague", country: "Czech Republic", count: 31 },
-    { name: "Paris", country: "France", count: 38 },
-    { name: "Rome", country: "Italy", count: 29 },
-    { name: "Berlin", country: "Germany", count: 35 },
-    { name: "Lisbon", country: "Portugal", count: 27 },
-    { name: "Amsterdam", country: "Netherlands", count: 24 },
-    { name: "Vienna", country: "Austria", count: 21 },
-  ]
+useEffect(() => {
+  const fetchCities = async () => {
+    if (!availableCountries.includes(activeFilter || "")) {
+      setCitiesFromApi([])
+      setSelectedCity(null)
+      return
+    }
+
+    try {
+      const token = getCookie("token")
+      const res = await axios.get(API_HOST_CITIES(activeFilter), {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setCitiesFromApi(res.data)
+    } catch (err) {
+      console.error("Error fetching cities:", err)
+      setCitiesFromApi([])
+    }
+  }
+
+  fetchCities()
+}, [activeFilter, availableCountries])
+
+
+
+useEffect(() => {
+  const fetchHosts = async () => {
+    const token = getCookie("token");
+    try {
+      const res = await axios.post(
+        API_HOST_SEARCH_HOSTS,
+        {
+          query: searchQuery,
+          country: availableCountries.includes(activeFilter || "") ? activeFilter : "",
+          city: selectedCity || "",
+          page: currentPage,
+          limit: limit,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setHosts(res.data.items || []);
+      setTotalPages(res.data.totalPages || 1);
+    } catch (error) {
+      console.error("Error fetching hosts:", error);
+    }
+  };
+
+  fetchHosts();
+}, [activeFilter, selectedCity, currentPage, searchQuery]);
+
 
   // Sample languages
   const languages = [
@@ -95,31 +172,41 @@ useEffect(() => {
     { name: "Dutch", count: 28 },
   ]
 
-  // Sample expertise areas
-  const expertiseAreas = [
-    { name: "Housing", count: 124 },
-    { name: "Academic Support", count: 98 },
-    { name: "Local Culture", count: 87 },
-    { name: "Nightlife", count: 76 },
-    { name: "City Navigation", count: 68 },
-    { name: "Weekend Trips", count: 62 },
-    { name: "Student Jobs", count: 54 },
-    { name: "Administrative Help", count: 47 },
-  ]
-
   // Filter hosts by active filter
-  const filteredHosts = activeFilter
-    ? hosts.filter(
-        (host) =>
-          host.location.includes(activeFilter) ||
-          host.languages.includes(activeFilter) ||
-          host.expertise.includes(activeFilter),
-      )
-  : hosts
+  const filteredHosts = hosts.filter((host) => {
+    const matchesBackendFilters = activeFilter
+      ? host.erasmusCountry?.toLowerCase().includes(activeFilter.toLowerCase()) ||
+        host.city?.toLowerCase().includes(activeFilter.toLowerCase()) ||
+        host.school?.toLowerCase().includes(activeFilter.toLowerCase()) ||
+        (Array.isArray(host.specialties) &&
+          host.specialties.some((s: any) =>
+            typeof s === "string"
+              ? s.toLowerCase().includes(activeFilter.toLowerCase())
+              : s.name?.toLowerCase().includes(activeFilter.toLowerCase())
+          ))
+      : true;
+  
+    const matchesSpecialties =
+      selectedSpecialties.length === 0
+        ? true
+        : Array.isArray(host.specialties) &&
+          selectedSpecialties.every((selected) =>
+            host.specialties.some((s: any) =>
+              typeof s === "string"
+                ? s === selected
+                : s.name === selected
+            )
+          );
+  
+    return matchesBackendFilters && matchesSpecialties;
+  });
+  
+
+
 
     const handleHostRequestSubmit = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = getCookie("token");
       
         const body = {
           userId: user?.id,
@@ -194,48 +281,57 @@ useEffect(() => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search for hosts by name, university, or expertise..."
+                    placeholder="Search for hosts by name or university / school..."
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1); // reset página cuando cambie
+                    }}
                     className="pl-10 bg-white/10 border-white/20 text-white placeholder:text-white/60 focus:bg-white/20"
                   />
-                </div>
 
-                <div className="flex gap-2">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="border-white/20 dark:border-gray-800 text-white hover:bg-white/5 bg-white/10">
-                        <Filter className="mr-2 h-4 w-4" />
-                        Filter
-                        <ChevronDown className="ml-2 h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 text-text bg-foreground dark:border-gray-800">
-                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Filter By</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>All Hosts</DropdownMenuItem>
-                      <DropdownMenuItem>Super Hosts</DropdownMenuItem>
-                      <DropdownMenuItem>Online Now</DropdownMenuItem>
-                      <DropdownMenuItem>Highest Rated</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Languages</DropdownMenuLabel>
-                      <DropdownMenuItem>English</DropdownMenuItem>
-                      <DropdownMenuItem>Spanish</DropdownMenuItem>
-                      <DropdownMenuItem>French</DropdownMenuItem>
-                      <DropdownMenuItem>German</DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="text-primary dark:text-text-secondary font-bold">Expertise</DropdownMenuLabel>
-                      <DropdownMenuItem>Housing</DropdownMenuItem>
-                      <DropdownMenuItem>Academic Support</DropdownMenuItem>
-                      <DropdownMenuItem>Local Culture</DropdownMenuItem>
-                      <DropdownMenuItem>Nightlife</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  
                 </div>
               </div>
             </div>
           </div>
         </section>
+
+        <section className="mb-6">
+  <div className="bg-foreground p-4 rounded-lg shadow-sm">
+    <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
+
+    <Input
+      placeholder="Search countries..."
+      value={countrySearch}
+      onChange={(e) => setCountrySearch(e.target.value)}
+      className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
+    />
+
+    <div className={`flex flex-wrap gap-2 ${filteredCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
+      {filteredCountries.map((country) => (
+        <Button
+          key={country.name}
+          variant="outline"
+          className={`
+            flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
+            ${activeFilter === country.name
+              ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
+              : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
+          `}
+          onClick={() => {
+            const newFilter = activeFilter === country.name ? "" : country.name
+            setActiveFilter(newFilter)
+            setCurrentPage(1)
+          }}
+        >
+          <Flag code={country.code} style={{ width: 20, height: 14 }} />
+          {country.name}
+        </Button>
+      ))}
+    </div>
+  </div>
+</section>
+
 
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
           {/* Sidebar Filters */}
@@ -246,30 +342,26 @@ useEffect(() => {
               <CardContent className="p-4">
                 <h2 className="font-semibold text-text-secondary mb-3">Popular Cities</h2>
                 <div className="space-y-2">
-                  {cities.map((city) => (
-                    <Button
-                      key={city.name}
-                      variant="outline"
-                      className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
-                        activeFilter === city.name ? "bg-[#4C69DD] text-white" : ""
-                      }`}
-                      onClick={() => setActiveFilter(activeFilter === city.name ? null : city.name)}
-                    >
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        <span>
-                          {city.name}, {city.country}
-                        </span>
-                      </div>
-                      <Badge
-                        className={`${
-                          activeFilter === city.name ? "bg-white text-[#4C69DD]" : "bg-foreground text-[#4C69DD] dark:text-text-secondary"
-                        }`}
-                      >
-                        {city.count}
-                      </Badge>
-                    </Button>
-                  ))}
+                {citiesFromApi.length === 0 && (
+  <p className="text-sm text-gray-400">Select a country to see cities</p>
+)}
+
+{citiesFromApi.map((city) => (
+  <Button
+    key={city}
+    variant="outline"
+    className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+      selectedCity === city ? "bg-[#4C69DD] text-white" : ""
+    }`}
+    onClick={() => {setSelectedCity(selectedCity === city ? null : city); setCurrentPage(1);}}
+  >
+    <div className="flex items-center">
+      <MapPin className="h-4 w-4 mr-2" />
+      <span>{city}</span>
+    </div>
+  </Button>
+))}
+
                 </div>
                 <Button variant="ghost" className="w-full mt-2 text-primary dark:text-text-secondary">
                   View All Cities
@@ -277,56 +369,40 @@ useEffect(() => {
               </CardContent>
             </Card>
 
-            {/* Languages Filter */}
-            <Card className="border-none shadow-md bg-foreground py-0">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Languages</h2>
-                <div className="flex flex-wrap gap-2">
-                  {languages.map((language) => (
-                    <Badge
-                      key={language.name}
-                      variant="outline"
-                      className={`cursor-pointer px-3 py-1 text-primary-dark ${
-                        activeFilter === language.name
-                          ? "bg-[#FFBF00] text-[#0E1E40] border-[#FFBF00]"
-                          : "hover:bg-[#E7ECF0] border-gray-200"
-                      }`}
-                      onClick={() => setActiveFilter(activeFilter === language.name ? null : language.name)}
-                    >
-                      <Globe className="h-3 w-3 mr-1" />
-                      {language.name} ({language.count})
-                    </Badge>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Expertise Filter */}
             <Card className="border-none shadow-md bg-foreground py-0">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
-                <div className="space-y-2">
-                  {expertiseAreas.map((area) => (
-                    <div
-                      key={area.name}
-                      className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${
-                        activeFilter === area.name ? "bg-background text-primary-dark" : "bg-background hover:bg-background/50"
-                      }`}
-                      onClick={() => setActiveFilter(activeFilter === area.name ? null : area.name)}
-                    >
-                      <span className="text-primary-dark">{area.name}</span>
-                      <Badge
-                        className={`${
-                          activeFilter === area.name ? "bg-white text-[#0E1E40]" : "bg-[#E7ECF0] text-[#4C69DD]"
-                        }`}
-                      >
-                        {area.count}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+  <CardContent className="p-4">
+    <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
+    <div className="space-y-2">
+      {uniqueSpecialties.map((specialty) => (
+        <Button
+        key={specialty}
+        variant="outline"
+        className={`w-full justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+          selectedSpecialties.includes(specialty)
+            ? "bg-[#4C69DD] text-white"
+            : "bg-background/50 hover:bg-[#4C69DD]/10"
+        }`}
+        onClick={() => {
+          const isSelected = selectedSpecialties.includes(specialty);
+          const updated = isSelected
+            ? selectedSpecialties.filter((s) => s !== specialty)
+            : [...selectedSpecialties, specialty];
+          setSelectedSpecialties(updated);
+          setCurrentPage(1);
+        }}
+      >
+        <div className="flex items-center">
+          <GraduationCap className="h-4 w-4 mr-2" />
+          <span>{specialty}</span>
+        </div>
+      </Button>
+      
+      ))}
+    </div>
+  </CardContent>
+</Card>
+
 
             {/* Become a Host */}
             <Card className="border-none shadow-md bg-gradient-to-br from-[#FFBF00]/20 to-foreground">
@@ -363,68 +439,36 @@ useEffect(() => {
           {/* Main Content */}
           <div className="order-1 lg:order-1 lg:col-span-3">
             {/* Active Filters */}
-            {activeFilter && (
-              <div className="mb-4 flex items-center">
-                <span className="text-sm text-gray-500 mr-2">Active filter:</span>
-                <Badge
-                  className="bg-[#4C69DD]/10 text-[#4C69DD] hover:bg-[#4C69DD]/20 px-3 py-1"
-                  onClick={() => setActiveFilter(null)}
-                >
-                  {activeFilter}
-                  <X className="ml-1 h-3 w-3" />
-                </Badge>
+            {(activeFilter || selectedCity) && (
+              <div className="mb-4 flex flex-wrap gap-2 items-center">
+                {activeFilter && (
+                  <Badge
+                    className="bg-[#4C69DD]/10 text-[#4C69DD] hover:bg-[#4C69DD]/20 px-3 py-1"
+                    onClick={() => {setActiveFilter(null); setCurrentPage(1);}}
+                  >
+                    {activeFilter}
+                    <X className="ml-1 h-3 w-3" />
+                  </Badge>
+                )}
+                {selectedCity && (
+                  <Badge
+                    className="bg-[#FFBF00]/10 text-[#FFBF00] hover:bg-[#FFBF00]/20 px-3 py-1"
+                    onClick={() => {setSelectedCity(null); setCurrentPage(1);}}
+                  >
+                    {selectedCity}
+                    <X className="ml-1 h-3 w-3" />
+                  </Badge>
+                )}
               </div>
             )}
+
 
             {/* View Mode: Grid or Map */}
             {viewMode === "grid" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredHosts.map((host) => (
-  <Link href={`/dashboard/hosts/${host.hostId}`} key={host.hostId}>
-    <Card className="border-none shadow-md hover:shadow-lg transition-all h-full w-full rounded-md py-0 bg-foreground">
-      <div className="relative">
-        <div className="h-48 bg-gradient-to-br from-[#4C69DD]/20 to-[#62C3BA]/20 rounded-t-md flex items-center justify-center">
-          <Avatar className="h-32 w-32 border-4 border-white">
-            <AvatarImage
-              src={host.avatarUrl !== "default-avatar-url" ? host.avatarUrl : undefined}
-              alt={host.userName}
-            />
-            <AvatarFallback className="bg-[#4C69DD] text-white text-2xl">
-              {(host?.userName || "U").charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      </div>
-
-      <CardContent className="p-4">
-        <div className="text-center mb-3">
-          <h3 className="font-semibold text-text text-lg">{host.userName}</h3>
-        </div>
-
-        <div className="flex items-center justify-center text-xs text-gray-500 mb-2">
-          <Clock className="h-3 w-3 text-[#4C69DD] mr-1" />
-          <p>Host since: {new Date(host.hostSince).toLocaleDateString()}</p>
-        </div>
-
-        <div className="flex flex-wrap gap-1 justify-center mb-3">
-          {host.specialties?.slice(0, 3).map((area: string) => (
-            <Badge key={area} className="bg-background text-text text-xs">
-              {area}
-            </Badge>
-          ))}
-        </div>
-      </CardContent>
-
-      <CardFooter className="p-3 pt-0">
-        <Button className="w-full bg-primary text-white hover:bg-primary/70">
-          <MessageCircle className="mr-2 h-4 w-4" />
-          Contact Host
-        </Button>
-      </CardFooter>
-    </Card>
-  </Link>
-))}
-
+                  <HostCard key={host.id} host={host} />
+                ))}
               </div>
             ) : (
               // Map View
@@ -552,7 +596,6 @@ useEffect(() => {
                 >
                   Submit Request
                 </Button>
-
               </div>
             </form>
             <button
@@ -564,9 +607,21 @@ useEffect(() => {
           </div>
         </div>
       )}
-
+      {totalPages > 1 && (
+  <div className="mt-6 flex justify-center gap-2 flex-wrap">
+    {Array.from({ length: totalPages }, (_, i) => (
+      <Button
+        key={i}
+        onClick={() => setCurrentPage(i + 1)}
+        variant={i + 1 === currentPage ? "default" : "outline"}
+        className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === currentPage ? "bg-primary text-white" : ""}`}
+      >
+        {i + 1}
+      </Button>
+    ))}
+  </div>
+)}
 
     </div>
-    
   )
 }

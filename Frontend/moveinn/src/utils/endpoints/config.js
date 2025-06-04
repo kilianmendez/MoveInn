@@ -91,6 +91,8 @@ export const API_HOST_GET_REQUESTS = `${API_HOSTS}/requests`;
 export const API_HOST_REQUEST_ACCEPT = (id) => `${API_HOSTS}/${id}/approve`;
 export const API_HOST_REQUEST_REJECT = (id) => `${API_HOSTS}/${id}/reject`;
 export const API_HOST_SEARCH_HOSTS = `${API_HOSTS}/SearchHosts`;
+export const API_HOST_COUNTRIES = `${API_HOSTS}/countries`;
+export const API_HOST_CITIES = (country) => `${API_HOSTS}/cities/${country}`;
 
 const API_ADMIN = `${API_BASE_URL}/Admin`;
 export const API_ADMIN_MODIFY_ROLE_USER = (id, role) => `${API_ADMIN}/user/${id}?newRole=${role}`;
