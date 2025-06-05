@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, JSX } from "react"
 import {
   Search, Filter, Calendar, List, ChevronDown, ChevronUp, Plus, Users, X,
   Music, Utensils, GraduationCap, Plane, Globe, Coffee, BookOpen, MapPin, Upload,
@@ -21,10 +21,21 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import axios from "axios"
-import { API_EVENTS, API_CREATE_EVENT, API_GET_USER_EVENTS, API_SEARCH_EVENTS } from "@/utils/endpoints/config"
+import { API_EVENTS, API_CREATE_EVENT, API_GET_USER_EVENTS, API_SEARCH_EVENTS, API_EVENTS_COUNTRIES, API_EVENTS_CITIES } from "@/utils/endpoints/config"
 import { v4 as uuidv4 } from "uuid"
 import { useAuth } from "@/context/authcontext"
 import { toast } from "sonner"
+import { getCookie } from "cookies-next"
+import countries from "i18n-iso-countries"
+import enLocale from "i18n-iso-countries/langs/en.json"
+import Flag from "react-world-flags"
+import { CountrySearch, CitySearch } from "@/components/ui/country-city-search"
+
+countries.registerLocale(enLocale)
+
+const getCountryCode = (countryName: string) => {
+  return countries.getAlpha2Code(countryName, "en") || "UN"
+}
 
 
 export default function EventsPage() {
@@ -32,6 +43,8 @@ export default function EventsPage() {
   const [viewMode, setViewMode] = useState<"list" | "calendar">("list")
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [showCreateEvent, setShowCreateEvent] = useState(false)
+  const [userClickedDate, setUserClickedDate] = useState(false)
+
 
   // Form state
   const [title, setTitle] = useState("")
@@ -39,6 +52,8 @@ export default function EventsPage() {
   const [date, setDate] = useState("")
   const [time, setTime] = useState("")
   const [location, setLocation] = useState("")
+  const [city, setCity] = useState("")
+  const [country, setCountry] = useState("")
   const [address, setAddress] = useState("")
   const [category, setCategory] = useState("")
   const [capacity, setCapacity] = useState("")
@@ -56,30 +71,112 @@ export default function EventsPage() {
   const [sortField, setSortField] = useState("")
   const [sortOrder, setSortOrder] = useState("")
   const [page, setPage] = useState(1)
-  const [limit] = useState(6)
+  const [limit, setLimit] = useState(5)
   const [totalPages, setTotalPages] = useState(1)
 
-
+  const [availableCountries, setAvailableCountries] = useState<string[]>([])
+  const [availableCities, setAvailableCities] = useState<string[]>([])
+  const [selectedCountry, setSelectedCountry] = useState("")
+  const [selectedCity, setSelectedCity] = useState("")
+  const [countrySearch, setCountrySearch] = useState("")
 
   const { user } = useAuth()
+
+  const filteredCountries = availableCountries
+  .filter(name => name.toLowerCase().includes(countrySearch.toLowerCase()))
+  .map(name => ({
+    name,
+    code: getCountryCode(name)
+  }))
+  .filter(c => c.code !== "UN")
+
+  useEffect(() => {
+    // Si el usuario cambia a la vista de calendario, levantamos el límite (por ejemplo, 9999)
+    // Si vuelve a lista, lo bajamos a 5
+    if (viewMode === "calendar") {
+      setLimit(9999)
+      setPage(1) // opcional: para asegurar que obtienes todo desde el principio
+    } else {
+      setLimit(5)
+    }
+  }, [viewMode])
+  
+
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const token = getCookie("token")
+        const res = await axios.get(API_EVENTS_COUNTRIES, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setAvailableCountries(res.data)
+      } catch (error) {
+        console.error("Error loading countries:", error)
+      }
+    }
+  
+    fetchCountries()
+  }, [])
+
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!selectedCountry) {
+        setAvailableCities([])
+        setSelectedCity("")
+        return
+      }
+  
+      try {
+        const token = getCookie("token")
+        const res = await axios.get(API_EVENTS_CITIES(selectedCountry), {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setAvailableCities(res.data)
+      } catch (error) {
+        console.error("Error loading cities:", error)
+        setAvailableCities([])
+      }
+    }
+  
+    fetchCities()
+  }, [selectedCountry])
+  
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        const token = getCookie("token")
+        const res = await axios.get(API_EVENTS_COUNTRIES, {
+          headers: { Authorization: `Bearer ${token}` }
+        })
+        setAvailableCountries(res.data)
+      } catch (err) {
+        console.error("Error fetching countries:", err)
+      }
+    }
+  
+    fetchCountries()
+  }, [])
+  
 
   useEffect(() => {
     const fetchFilteredEvents = async () => {
       try {
         setIsLoadingEvents(true)
-        const token = localStorage.getItem("token")
+        const token = getCookie("token")
   
         const payload = {
-          page,
-          limit,
-          query,
-          location: locationFilter,
-          category: categoryFilter,
-          tags: tagFilter,
-          sortField,
-          sortOrder
+          page: page,
+          limit: limit,
+          query: query || "",
+          location: locationFilter || "",
+          category: categoryFilter || "",
+          city: selectedCity || "",
+          country: selectedCountry || "",
+          tags: tagFilter.length ? tagFilter : [],
+          sortField: sortField || "",
+          sortOrder: sortOrder || ""
         }
-  
+        
         console.log("payload events", payload)
         const res = await axios.post(API_SEARCH_EVENTS, payload, {
           headers: {
@@ -110,14 +207,15 @@ export default function EventsPage() {
     if (user?.id) {
       fetchFilteredEvents()
     }
-  }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, user?.id])
-  
-  
+  }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, selectedCountry, selectedCity, user?.id])
 
-  const filteredEvents = events.filter(event =>
-    isSameDay(event.date, selectedDate) &&
-    (activeFilters.length === 0 || activeFilters.includes(event.category))
-  )
+  const filteredEvents = events.filter(event => {
+    const matchDate = userClickedDate ? isSameDay(event.date, selectedDate) : true;
+    const matchCategory = activeFilters.length === 0 || activeFilters.includes(event.category);
+    return matchDate && matchCategory;
+  })
+  
+  
 
   const toggleFilter = (filter: string) =>
     setActiveFilters(prev =>
@@ -166,6 +264,8 @@ export default function EventsPage() {
       formData.append("Date", datetime.toISOString())
       formData.append("Location", location)
       formData.append("Address", address)
+      formData.append("Country", country)
+      formData.append("City", city)
       formData.append("MaxAttendees", String(Number(capacity)))
       formData.append("Category", category)
       formData.append("Description", description)
@@ -232,17 +332,16 @@ export default function EventsPage() {
                 </p>
               </div>
               <Button
-  className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold"
-  onClick={() => setShowCreateEvent(prev => !prev)}
->
-  {showCreateEvent ? (
-    <X className="mr-2 h-4 w-4" />
-  ) : (
-    <Plus className="mr-2 h-4 w-4" />
-  )}
-  {showCreateEvent ? "Close Form" : "Create Event"}
-</Button>
-
+                className="bg-[#B7F8C8] text-[#0E1E40] hover:bg-[#B7F8C8]/90 font-semibold"
+                onClick={() => setShowCreateEvent(prev => !prev)}
+              >
+                {showCreateEvent ? (
+                  <X className="mr-2 h-4 w-4" />
+                ) : (
+                  <Plus className="mr-2 h-4 w-4" />
+                )}
+                {showCreateEvent ? "Close Form" : "Create Event"}
+              </Button>
             </div>
 
             {/* Filters & Tabs */}
@@ -251,6 +350,11 @@ export default function EventsPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-white/50" />
                 <Input
                   placeholder="Search events..."
+                  value={query}
+                  onChange={(e) => {
+                    setQuery(e.target.value)
+                    setPage(1)
+                  }}
                   className="pl-10 bg-white/10 text-white border-white/20 placeholder:text-white/60 focus:bg-white/20"
                 />
               </div>
@@ -373,6 +477,29 @@ export default function EventsPage() {
           </div>
         </div>
 
+        <div className="grid md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Country</label>
+            <CountrySearch
+              value={country}
+              onChange={(val) => {
+                setCountry(val)
+                setCity("") // Resetear ciudad si cambia país
+              }}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">City</label>
+            <CitySearch
+              value={city}
+              onChange={setCity}
+              country={country}
+            />
+          </div>
+        </div>
+
+
         <div className="mb-4">
           <label className="block text-sm font-medium text-text-secondary mb-1">Category</label>
           <Select value={category} onValueChange={setCategory}>
@@ -469,7 +596,65 @@ export default function EventsPage() {
   )}
 </AnimatePresence>
 
+{/* Bloque de países con banderas y búsqueda */}
+<section className="mb-6">
+  <div className="bg-foreground p-4 rounded-lg shadow-sm">
+    <h2 className="text-lg font-semibold mb-2 text-text">Filter by Country</h2>
+
+    <Input
+      placeholder="Search countries..."
+      value={countrySearch}
+      onChange={(e) => setCountrySearch(e.target.value)}
+      className="mb-4 text-sm border-primary dark:border-text-secondary text-text"
+    />
+
+    <div className={`flex flex-wrap gap-2 ${filteredCountries.length > 12 ? 'max-h-48 overflow-y-auto pr-2' : ''}`}>
+      {filteredCountries.map((country) => (
+        <Button
+          key={country.name}
+          variant="outline"
+          className={`
+            flex items-center gap-2 px-3 py-2 text-sm rounded-md transition-all
+            ${selectedCountry === country.name
+              ? "bg-[#4C69DD]/10 text-text border-2 border-primary dark:border-text-secondary font-semibold"
+              : "bg-gray-100 dark:bg-background border-none text-text hover:border-[#4C69DD]"}
+          `}
+          onClick={() => {
+            const newCountry = selectedCountry === country.name ? "" : country.name
+            setSelectedCountry(newCountry)
+            setPage(1)
+          }}
+        >
+          <Flag code={getCountryCode(country.name)} style={{ width: 20, height: 14 }} />
+          {country.name}
+        </Button>
+      ))}
+    </div>
+  </div>
+</section>
+
+
 <section className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+  <div>
+    <label className="block text-sm font-medium text-text mb-1">City</label>
+    <select
+      className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
+      value={selectedCity}
+      onChange={(e) => {
+        setSelectedCity(e.target.value)
+        setPage(1)
+      }}
+      disabled={availableCities.length === 0}
+    >
+      <option value="">All Cities</option>
+      {availableCities.map((city) => (
+        <option key={city} value={city}>
+          {city}
+        </option>
+      ))}
+    </select>
+  </div>
+
   <div>
     <label className="block text-sm font-medium text-text mb-1">Category</label>
     <select
@@ -491,21 +676,24 @@ export default function EventsPage() {
       <option value="food">Food</option>
     </select>
   </div>
-
-  <div>
-    <label className="block text-sm font-medium text-text mb-1">Location</label>
-    <Input
-      placeholder="e.g. Barcelona"
-      value={locationFilter}
-      onChange={(e) => {
-        setLocationFilter(e.target.value)
-        setPage(1)
-      }}
-      className="w-full border rounded-md p-2 border-primary dark:border-text-secondary text-text bg-foreground"
-    />
-  </div>
 </section>
 
+
+{userClickedDate && (
+  <div className="mb-2">
+    <Button
+      variant="outline"
+      onClick={() => {
+        setUserClickedDate(false)
+        setSelectedDate(new Date(0)) // una fecha "neutral" que nunca estará en next7Days
+        setPage(1)
+      }}
+      className="text-sm bg-background border border-primary text-primary hover:bg-primary hover:text-white transition"
+    >
+      Clear selected date
+    </Button>
+  </div>
+)}
 
 
         {/* Selector de fecha */}
@@ -519,7 +707,10 @@ export default function EventsPage() {
                   ? "bg-[#4C69DD] text-white"
                   : "bg-foreground text-primary-dark hover:bg-background dark:border-gray-800"
               }`}
-              onClick={() => setSelectedDate(date)}
+              onClick={() => {
+                setSelectedDate(date)
+                setUserClickedDate(true)
+              }}
             >
               <div className="flex flex-col items-center">
                 <span>{isSameDay(date, new Date()) ? "Today" : format(date, "EEE")}</span>
@@ -551,18 +742,21 @@ export default function EventsPage() {
     )}
   </div>
 ) : (
-          <EventCalendarView
-            events={events}
-            selectedDate={selectedDate}
-            setSelectedDate={(date) => {
-              setSelectedDate(date)
-              setViewMode("list")
-            }}
-            activeFilters={activeFilters}
-          />
+  <EventCalendarView
+  events={events}
+  selectedDate={selectedDate}
+  setSelectedDate={(date) => {
+    setSelectedDate(date)
+    setUserClickedDate(true)
+    setPage(1)
+    setViewMode("list")
+  }}
+  activeFilters={activeFilters}
+/>
+
         )}
       </main>
-      {totalPages > 1 && (
+      {!userClickedDate && totalPages > 1 && (
   <div className="mt-6 flex justify-center gap-2 flex-wrap">
     {Array.from({ length: totalPages }, (_, i) => (
       <Button
@@ -576,6 +770,7 @@ export default function EventsPage() {
     ))}
   </div>
 )}
+
 
     </div>
   )

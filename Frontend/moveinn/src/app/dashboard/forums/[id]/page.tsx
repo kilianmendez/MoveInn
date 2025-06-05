@@ -242,7 +242,7 @@ export default function ForumDetailPage() {
     const nested = responses.filter((r) => r.parentMessageId === parentId)
     return nested.map((msg) => (
       <div key={msg.id} className={`ml-${depth * 6} mt-2 border-l pl-4`}>
-        <div className="flex items-center gap-2 mb-1">
+        <div className="flex items-center gap-2 mb-1 text-text  ">
           <Avatar className="h-6 w-6">
             <AvatarImage src={msg.creatorAvatar} />
             <AvatarFallback>{msg.creatorName?.charAt(0)}</AvatarFallback>
@@ -339,12 +339,12 @@ export default function ForumDetailPage() {
             
                   {/* Contenido del hilo */}
                   <div className="p-4">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-2 text-text">
                       <Avatar className="h-8 w-8">
                         <AvatarImage src={thread.creatorAvatar} />
                         <AvatarFallback>{thread.creatorName?.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <div className="text-sm font-medium text-primary-dark">{thread.creatorName}</div>
+                      <div className="text-sm font-medium text-text">{thread.creatorName}</div>
                       <span className="text-xs text-gray-600 dark:text-gray-300 ml-auto">
                         {format(new Date(thread.createdAt), 'PPPp')}
                       </span>
@@ -362,7 +362,7 @@ export default function ForumDetailPage() {
             
                     {rootReplies.slice(0, 5).map((msg: any) => (
                       <div key={msg.id} className="ml-6 mt-2 pl-4 border-l">
-                        <div className="flex items-center gap-2 mb-1">
+                        <div className="flex items-center gap-2 mb-1 text-text">
                           <Avatar className="h-6 w-6">
                             <AvatarImage src={msg.creatorAvatar} />
                             <AvatarFallback>{msg.creatorName?.charAt(0)}</AvatarFallback>

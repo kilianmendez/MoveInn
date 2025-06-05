@@ -36,6 +36,8 @@ export const API_JOIN_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/joi
 export const API_LEAVE_EVENT = (eventId, userId) => `${API_EVENTS}/${eventId}/leave?userId=${userId}`;
 export const API_GET_USER_EVENTS = (userId) => `${API_EVENTS}/user/${userId}`;
 export const API_SEARCH_EVENTS = `${API_EVENTS}/SearchEvents`;
+export const API_EVENTS_COUNTRIES = `${API_EVENTS}/countries`;
+export const API_EVENTS_CITIES = (country) => `${API_EVENTS}/cities/${country}`;
 
 const API_RESERVATION = `${API_BASE_URL}/Reservation`;
 export const API_GET_RESERVATION = (id) => `${API_RESERVATION}/${id}`;
