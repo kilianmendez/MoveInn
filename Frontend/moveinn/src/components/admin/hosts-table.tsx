@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import axios from "axios";
-import { API_HOST_REQUEST_REJECT } from "@/utils/endpoints/config";
+import { API_BASE_IMAGE_URL, API_HOST_REQUEST_REJECT } from "@/utils/endpoints/config";
 import { getCookie } from "cookies-next"
 
 
@@ -67,11 +67,20 @@ export function HostsTable({ hosts, setHosts }: HostsTableProps) {
             className="border-b border-gray-200 dark:border-gray-800 hover:bg-accent/10"
           >
             <TableCell className="flex items-center gap-2 text-text">
-              <img
-                src={host.avatarUrl}
-                alt={host.userName}
-                className="w-8 h-8 rounded-full object-cover"
-              />
+            <TableCell className="flex items-center gap-2 text-text">
+  {host.avatarUrl === "default-avatar-url" || !host.avatarUrl ? (
+    <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-medium text-sm">
+      {host.userName?.charAt(0).toUpperCase()}
+    </div>
+  ) : (
+    <img
+      src={`${API_BASE_IMAGE_URL}/${host.avatarUrl}`}
+      alt={host.userName}
+      className="w-8 h-8 rounded-full object-cover"
+    />
+  )}
+</TableCell>
+
               {host.userName}
             </TableCell>
             <TableCell className="text-text">
