@@ -31,6 +31,7 @@ import Flag from 'react-world-flags'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
 import Link from "next/link"
+import { CountrySearch, CitySearch } from "@/components/ui/country-city-search"
 
 countries.registerLocale(enLocale)
 
@@ -366,8 +367,6 @@ export default function RecommendationsPage() {
             { label: "Title", name: "title", placeholder: "e.g. Chill place with good food" },
             { label: "Tags (comma separated)", name: "tags", placeholder: "e.g. cozy,cheap,vegan" },
             { label: "Address", name: "address", placeholder: "e.g. Calle de la Paz 14" },
-            { label: "City", name: "city", placeholder: "e.g. Valencia" },
-            { label: "Country", name: "country", placeholder: "e.g. Spain" },
           ].map(({ label, name, placeholder }) => (
             <div key={name}>
               <label className="block text-sm font-medium text-text-secondary mb-1">{label}</label>
@@ -381,7 +380,7 @@ export default function RecommendationsPage() {
             </div>
           ))}
 
-          <div>
+<div>
             <label className="block text-sm font-medium text-text-secondary mb-1">Rating (1–5)</label>
             <Input
               name="rating"
@@ -399,6 +398,35 @@ export default function RecommendationsPage() {
               className="text-primary-dark text-sm border border-[#4C69DD] focus:ring-2 focus:ring-[#4C69DD] focus:outline-none"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Country</label>
+            <CountrySearch
+              value={formData.country}
+              onChange={(val) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  country: val,
+                  city: "", // reset city if country changes
+                }))
+              }}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-text-secondary mb-1">City</label>
+            <CitySearch
+              value={formData.city}
+              onChange={(val) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  city: val,
+                }))
+              }
+              country={formData.country}
+            />
+          </div>
+
         </div>
 
         <div className="mb-4">

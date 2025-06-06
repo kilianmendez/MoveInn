@@ -167,16 +167,7 @@ export function DetailedRecommendationCard({
       </CardContent>
 
       <CardFooter className="p-3 pt-0 flex justify-between">
-        <Button variant="outline" size="sm" className="text-[#4C69DD] border-[#4C69DD]/30 hover:bg-[#4C69DD]/10">
-          <Share2 className="h-3.5 w-3.5 mr-1" />
-          Share
-        </Button>
-        <Link href={`/dashboard/recommendations/${recommendation.id}`}>
-          <Button size="sm" className="text-white bg-[#4C69DD] hover:bg-[#4C69DD]/90">
-            <ExternalLink className="h-3.5 w-3.5 mr-1" />
-            View Details
-          </Button>
-        </Link>
+        
       </CardFooter>
     </Card>
   )

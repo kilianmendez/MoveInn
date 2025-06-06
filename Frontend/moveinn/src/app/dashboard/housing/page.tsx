@@ -15,6 +15,7 @@ import { useAuth } from "@/context/authcontext"
 import Flag from 'react-world-flags'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
+import { CountrySearch, CitySearch } from "@/components/ui/country-city-search"
 
 countries.registerLocale(enLocale)
 
@@ -66,6 +67,7 @@ export default function AcommodationsPage() {
   const [totalPages, setTotalPages] = useState(1)
   const [limit] = useState(6)
   const [isLoadingAcommodations, setIsLoadingAcommodations] = useState(false)
+  
 
 
   const [availableCountries, setAvailableCountries] = useState<string[]>([])
@@ -295,8 +297,6 @@ const filteredCountries = availableCountries
                 {[
                   { label: "Title", name: "title", value: newAcommodation.title },
                   { label: "Address", name: "address", value: newAcommodation.address },
-                  { label: "City", name: "city", value: newAcommodation.city },
-                  { label: "Country", name: "country", value: newAcommodation.country },
                   { label: "Price Per Month", name: "pricePerMonth", type: "number", value: newAcommodation.pricePerMonth },
                   { label: "Number of Rooms", name: "numberOfRooms", type: "number", value: newAcommodation.numberOfRooms },
                   { label: "Bathrooms", name: "bathrooms", type: "number", value: newAcommodation.bathrooms },
@@ -315,6 +315,34 @@ const filteredCountries = availableCountries
                     />
                   </div>
                 ))}
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Country</label>
+                  <CountrySearch
+                    value={newAcommodation.country}
+                    onChange={(val) => {
+                      setNewAcommodation((prev) => ({
+                        ...prev,
+                        country: val,
+                        city: "", // reset city when country changes
+                      }))
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">City</label>
+                  <CitySearch
+                    value={newAcommodation.city}
+                    onChange={(val) => {
+                      setNewAcommodation((prev) => ({
+                        ...prev,
+                        city: val
+                      }))
+                    }}
+                    country={newAcommodation.country}
+                  />
+                </div>
+
 
 
                 <div>

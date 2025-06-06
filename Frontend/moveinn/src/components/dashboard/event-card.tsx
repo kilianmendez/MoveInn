@@ -82,6 +82,8 @@ export function EventCard({ eventId, title, date, location, attendeesCount, cate
         return "from-yellow-100 to-foreground dark:from-yellow-200/50"
       case "party":
         return "from-[#0E1E40]/30 to-foreground dark:from-[#0E1E40]/50"
+      case "food":
+        return "from-green-100 to-foreground dark:from-green-200/50"
       case "other":
         return "from-gray-200 to-foreground dark:from-gray-400/20"
       default:
@@ -105,6 +107,8 @@ export function EventCard({ eventId, title, date, location, attendeesCount, cate
         return "bg-yellow-200 text-yellow-900"
       case "party":
         return "bg-[#0E1E40] text-white"
+      case "food":
+        return "bg-green-200 text-green-900"
       case "other":
         return "bg-gray-300 text-gray-800"
       default:
@@ -121,6 +125,7 @@ export function EventCard({ eventId, title, date, location, attendeesCount, cate
       case "sports": return "border-purple-500"
       case "workshop": return "border-yellow-500"
       case "party": return "border-[#0E1E40]"
+      case "food": return "border-green-500"
       case "other": return "border-gray-500"
       default: return "border-gray-500"
     }

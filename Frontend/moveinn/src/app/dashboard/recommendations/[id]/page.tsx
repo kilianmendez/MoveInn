@@ -256,10 +256,7 @@ export default function RecommendationDetailPage() {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-primary border-gray-200 dark:border-gray-800 hover:bg-primary hover:text-white">
-                <Share2 className="h-4 w-4 mr-1" />
-                Share
-              </Button>
+              
             </div>
           </div>
 

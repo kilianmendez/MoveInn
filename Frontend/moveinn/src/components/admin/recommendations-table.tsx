@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import axios from "axios"
-import { API_ALL_RECOMMENDATION, API_DELETE_RECOMMENDATION } from "@/utils/endpoints/config"
+import { API_ADMIN_DELETE_RECOMMENDATION, API_ALL_RECOMMENDATION, API_DELETE_RECOMMENDATION } from "@/utils/endpoints/config"
 import {
   Table,
   TableBody,
@@ -123,7 +123,7 @@ export function RecommendationsTable() {
     if (!selected) return
     try {
       const token = getCookie("token")
-      await axios.delete(API_DELETE_RECOMMENDATION(selected.id), {
+      await axios.delete(API_ADMIN_DELETE_RECOMMENDATION(selected.id), {
         headers: { Authorization: `Bearer ${token}` },
       })
       setRecommendations(prev => prev.filter(r => r.id !== selected.id))

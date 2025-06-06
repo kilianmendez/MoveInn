@@ -60,6 +60,14 @@ const typeMap: Record<number, { label: string; badgeColor: string; bgColor: stri
   4: { label: "Other", badgeColor: "bg-gray-300 text-gray-800", bgColor: "from-gray-200 dark:from-gray-400 to-foreground" },
 }
 
+const typeMapBorder: Record<number, { label: string; borderColor: string;}> = {
+  0: { label: "Room", borderColor: "border-pink-500" },
+  1: { label: "House", borderColor: "border-yellow-500" },
+  2: { label: "Apartment", borderColor: "border-primary" },
+  3: { label: "Rural", borderColor: "border-secondary-greenblue" },
+  4: { label: "Other", borderColor: "border-gray-500" },
+}
+
 export default function AccommodationDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -218,7 +226,7 @@ export default function AccommodationDetailsPage() {
         Back to Housing
       </Link>
 
-      <div className={`rounded-t-lg bg-gradient-to-br ${type.bgColor} px-4 py-3`}>
+      <div className={`rounded-t-lg bg-gradient-to-br border-b-3 ${typeMapBorder[accommodation.acommodationType].borderColor} ${type.bgColor} px-4 py-3`}>
         <div className="flex items-center justify-between mb-2">
           <h1 className="text-2xl font-bold text-text dark:text-text">{accommodation.title}</h1>
           <Badge className={`text-xs font-semibold px-2 py-1 ${type.badgeColor}`}>

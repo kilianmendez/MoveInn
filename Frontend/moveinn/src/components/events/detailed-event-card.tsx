@@ -167,7 +167,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
           </div>
         </div>
 
-        <div className={`flex-1 bg-gradient-to-br ${getCategoryColor()} border-l-4 border-1 ${getCategoryColorBorder()}`}>
+        <div className={`flex-1 bg-gradient-to-br ${getCategoryColor()} border-l-4 ${getCategoryColorBorder()}`}>
           <CardContent className="p-4 md:p-6">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
               <div className="flex-1">

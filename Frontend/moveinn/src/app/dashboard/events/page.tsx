@@ -164,18 +164,21 @@ export default function EventsPage() {
         setIsLoadingEvents(true)
         const token = getCookie("token")
   
-        const payload = {
-          page: page,
-          limit: limit,
+        const payload: any = {
+          page,
+          limit,
           query: query || "",
           location: locationFilter || "",
           category: categoryFilter || "",
-          city: selectedCity || "",
-          country: selectedCountry || "",
           tags: tagFilter.length ? tagFilter : [],
           sortField: sortField || "",
-          sortOrder: sortOrder || ""
+          sortOrder: sortOrder || "",
         }
+        
+        // Solo incluir ciudad/país si están seleccionados
+        if (selectedCity.trim()) payload.city = selectedCity
+        if (selectedCountry.trim()) payload.country = selectedCountry
+        
         
         console.log("payload events", payload)
         const res = await axios.post(API_SEARCH_EVENTS, payload, {

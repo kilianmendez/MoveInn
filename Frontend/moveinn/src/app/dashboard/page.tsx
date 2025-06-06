@@ -22,6 +22,7 @@ import {
     Map,
     CalendarX,
     SearchX,
+    UserX,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -208,6 +209,8 @@ export default function DashboardPage() {
             tags: [],
             sortField: "",
             sortOrder: "",
+            country: user?.erasmusCountry || "",
+            city: user?.city || "",
           },
           {
             headers: {
@@ -551,20 +554,24 @@ export default function DashboardPage() {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                  {dashboardHosts.length > 0 ? (
-                    <div className="space-y-4">
-                      {dashboardHosts.map((host) => (
-                        <HostCard key={host.id} host={host} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center text-md text-text py-4">
-                      <SearchX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
-                      No local hosts found yet in{" "}
-                      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span>.
-                    </div>
-                  )}
-                </CardContent>
+  {dashboardHosts.filter((host) => host.id !== user?.id).length > 0 ? (
+    <div className="space-y-4">
+      {dashboardHosts
+        .filter((host) => host.id !== user?.id)
+        .map((host) => (
+          <HostCard key={host.id} host={host} />
+        ))}
+    </div>
+  ) : (
+    <div className="text-center text-md text-text py-4">
+      <UserX className="mx-auto h-20 w-20 text-text-secondary mb-2" />
+      No hosts available in{" "}
+      <span className="font-semibold text-primary dark:text-text-secondary">{user?.city}</span>{" "}
+      right now. If you're a host, go help someone!
+    </div>
+  )}
+</CardContent>
+
                 </Card>
             </div>
             </div>

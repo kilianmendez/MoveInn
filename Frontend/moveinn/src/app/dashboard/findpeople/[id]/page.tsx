@@ -252,17 +252,26 @@ export default function UserDetailPage() {
       ) : (
         <ul className="space-y-2">
           {list.map((u: any, i: number) => (
-            <li key={u.id || `${u.name}-${i}`} className="flex items-center gap-3">
-              <Image
-                src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
-                alt={u.name}
-                width={36}
-                height={36}
-                className="rounded-full"
-                unoptimized
-              />
-              <span className="text-text">{u.name} {u.lastName}</span>
-            </li>
+            <li key={u.id} className="flex items-center gap-3">
+                              {u.avatarUrl === "default-avatar-url" ? (
+                                <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm">
+                                  {u.name?.charAt(0).toUpperCase()}
+                                </div>
+                              ) : (
+                                <Image
+                                  src={API_BASE_IMAGE_URL + u.avatarUrl}
+                                  alt={u.name}
+                                  width={36}
+                                  height={36}
+                                  className="rounded-full"
+                                  unoptimized
+                                />
+                              )}
+                              <div>
+                                <p className="text-text font-medium">{u.name}</p>
+                                <p className="text-sm text-gray-600 dark:text-text-secondary">{u.city} · {u.erasmusCountry}</p>
+                              </div>
+                            </li>
           ))}
         </ul>
       )}
@@ -286,14 +295,21 @@ export default function UserDetailPage() {
           : "border-green-400"
       }`}
     >
-      <Image
-        src={userAvatar}
-        alt={`${user.name} ${user.lastName || ""}`}
-        fill
-        className="object-cover"
-        unoptimized
-        priority
-      />
+      {user.avatarUrl === "default-avatar-url" || !user.avatarUrl ? (
+        <div className="absolute inset-0 flex items-center justify-center bg-primary text-white text-6xl font-bold uppercase">
+          {user.name?.charAt(0)}
+        </div>
+      ) : (
+        <Image
+          src={userAvatar}
+          alt={`${user.name} ${user.lastName || ""}`}
+          fill
+          className="object-cover"
+          unoptimized
+          priority
+        />
+      )}
+
     </div>
 
     <div className="text-center md:text-left">

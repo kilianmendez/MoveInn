@@ -242,12 +242,10 @@ const removeLanguage = (index: number) => {
         countryFlag: data.countryFlag,
         erasmusCountryFlag: data.erasmusCountryFlag,
         socialMedias: [], 
-        languages: data.languages || [],
       };
 
       // First update the user profile
       await updateUserProfile(formData);
-      setUser((prev) => prev ? { ...prev, languages: data.languages } : prev);
 
       // Then update social media separately using the new endpoint
       if (data.socialMedias && data.socialMedias.length > 0) {
@@ -501,7 +499,7 @@ const removeLanguage = (index: number) => {
         </div>
 
         {/* Erasmus Information */}
-        <div className="space-y-4 pt-4 border-t">
+        <div className="space-y-4 pt-4 border-t dark:border-gray-700">
           <h3 className="text-lg font-semibold text-text-secondary">
             Erasmus Information
           </h3>
@@ -574,7 +572,7 @@ const removeLanguage = (index: number) => {
         </div>
 
         {/* Social Media */}
-        <div className="space-y-4 pt-4 border-t">
+        <div className="space-y-4 pt-4 border-t dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold text-text-secondary">
               Social Media
@@ -662,94 +660,129 @@ const removeLanguage = (index: number) => {
           ))}
         </div>
 
-        {/* Languages */}
-<div className="space-y-4 pt-4 border-t">
-  <div className="flex justify-between items-center">
-    <h3 className="text-lg font-semibold text-text-secondary">Languages</h3>
-    <Button
-      type="button"
-      variant="outline"
-      size="sm"
-      onClick={addLanguage}
-      className="flex items-center gap-1 bg-secondary/50 text-primary-dark hover:bg-secondary"
-    >
-      <Plus className="h-4 w-4" />
-      <span>Add</span>
-    </Button>
-  </div>
-
-  {watchedLanguages.map((lang, index) => (
-    <div key={`lang-${index}`} className="flex gap-3 items-start">
-      <FormField
-        control={form.control}
-        name={`languages.${index}.language`}
-        render={({ field }) => (
-          <FormItem className="flex-1">
-            <FormLabel className="text-gray-500">Language</FormLabel>
-            <FormControl>
-              <Input placeholder="e.g. English" {...field} className="text-text border-primary dark:border-text-secondary" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
-        name={`languages.${index}.level`}
-        render={({ field }) => (
-          <FormItem className="w-32">
-            <FormLabel className="text-gray-500">Level</FormLabel>
-            <Select
-              value={field.value.toString()}
-              onValueChange={(value) => field.onChange(Number(value))}
-            >
-              <FormControl>
-                <SelectTrigger className="text-text border-primary dark:border-text-secondary">
-                  <SelectValue />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                <SelectItem value="0">A1</SelectItem>
-                <SelectItem value="1">A2</SelectItem>
-                <SelectItem value="2">B1</SelectItem>
-                <SelectItem value="3">B2</SelectItem>
-                <SelectItem value="4">C1</SelectItem>
-                <SelectItem value="5">C2</SelectItem>
-                <SelectItem value="6">Native</SelectItem>
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
+        {/* Languages Card */}
+<div className="pt-4 border-t dark:border-gray-700">
+  <div className="bg-card border dark:border-gray-700 rounded-lg p-4 space-y-4 shadow-sm">
+    <div className="flex justify-between items-center">
+      <h3 className="text-lg font-semibold text-text-secondary">Languages</h3>
       <Button
         type="button"
-        variant="ghost"
-        size="icon"
-        className="mt-8"
-        onClick={() => removeLanguage(index)}
+        variant="outline"
+        size="sm"
+        onClick={addLanguage}
+        className="flex items-center gap-1 bg-secondary/50 text-primary-dark hover:bg-secondary"
       >
-        <Trash2 className="h-4 w-4 text-red-500" />
+        <Plus className="h-4 w-4" />
+        <span>Add</span>
       </Button>
     </div>
-  ))}
+
+    {watchedLanguages.map((lang, index) => (
+      <div key={`lang-${index}`} className="flex gap-3 items-start">
+        <FormField
+          control={form.control}
+          name={`languages.${index}.language`}
+          render={({ field }) => (
+            <FormItem className="flex-1">
+              <FormLabel className="text-gray-500">Language</FormLabel>
+              <FormControl>
+                <Input placeholder="e.g. English" {...field} className="text-text border-primary dark:border-text-secondary" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name={`languages.${index}.level`}
+          render={({ field }) => (
+            <FormItem className="w-32">
+              <FormLabel className="text-gray-500">Level</FormLabel>
+              <Select
+                value={field.value.toString()}
+                onValueChange={(value) => field.onChange(Number(value))}
+              >
+                <FormControl>
+                  <SelectTrigger className="text-text border-primary dark:border-text-secondary">
+                    <SelectValue />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem className="text-text" value="0">A1</SelectItem>
+                  <SelectItem className="text-text" value="1">A2</SelectItem>
+                  <SelectItem className="text-text" value="2">B1</SelectItem>
+                  <SelectItem className="text-text" value="3">B2</SelectItem>
+                  <SelectItem className="text-text" value="4">C1</SelectItem>
+                  <SelectItem className="text-text" value="5">C2</SelectItem>
+                  <SelectItem className="text-text" value="6">Native</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="mt-8"
+          onClick={() => removeLanguage(index)}
+        >
+          <Trash2 className="h-4 w-4 text-red-500" />
+        </Button>
+      </div>
+    ))}
+
+    <div className="flex justify-end pt-2">
+      <Button
+        className="bg-secondary/50 text-primary-dark hover:bg-secondary/70"
+        type="button"
+        onClick={async () => {
+          try {
+            setIsSubmitting(true)
+            await updateLanguages(form.getValues("languages"))
+            setUser((prev) =>
+              prev ? { ...prev, languages: form.getValues("languages") } : prev
+            )
+            toast.success("Languages updated successfully")
+          } catch (err) {
+            console.error("Error updating languages", err)
+            toast.error("Failed to update languages")
+          } finally {
+            setIsSubmitting(false)
+          }
+        }}
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Saving...
+          </>
+        ) : (
+          "Save Languages"
+        )}
+      </Button>
+    </div>
+  </div>
 </div>
+
 
 
         {/* Action Buttons */}
         <div className="flex justify-end space-x-4 pt-4">
           <Button
             type="button"
-            variant="outline"
+            variant="default"
             onClick={onSuccess}
             disabled={isSubmitting}
-            className="text-gray-800 bg-red-400 hover:bg-red-500 border-primary dark:border-text-secondary"
+            className="text-white bg-red-400 hover:bg-red-500 border-none dark:border-text-secondary"
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isSubmitting}>
+          <Button variant="default" className="bg-accent text-accent-dark hover:bg-accent/90" type="submit" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

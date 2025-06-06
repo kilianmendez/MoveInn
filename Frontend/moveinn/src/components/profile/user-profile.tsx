@@ -15,6 +15,7 @@ import axios from "axios"
 import { getCookie } from "cookies-next"
 import { API_USER_FOLLOWERS, API_USER_FOLLOWING } from "@/utils/endpoints/config"
 import { useWebsocket } from "@/context/WebSocketContext"
+import Link from "next/link"
 
 
 export function UserProfile() {
@@ -105,6 +106,7 @@ export function UserProfile() {
         const res = await axios.get(API_USER_FOLLOWERS(user.id), {
           headers: { Authorization: `Bearer ${token}` },
         })
+        console.log("res followers", res.data)
         setFetchedFollowers(res.data || [])
       } catch (err) {
         console.error("❌ Error fetching followers list:", err)
@@ -193,14 +195,21 @@ export function UserProfile() {
                     : "border-primary"
           }`}
         >
-          <Image
-            src={userAvatar || "/placeholder.svg"}
-            alt={`${user.name} ${user.lastName || ""}`}
-            fill
-            className="object-cover"
-            priority
-            unoptimized
-          />
+          {user.avatarUrl === "default-avatar-url" || !user.avatarUrl ? (
+            <div className="absolute inset-0 flex items-center justify-center bg-primary text-white text-6xl font-bold uppercase">
+              {user.name?.charAt(0)}
+            </div>
+          ) : (
+            <Image
+              src={userAvatar}
+              alt={`${user.name} ${user.lastName || ""}`}
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
+          )}
+
         </div>
 
         <div className="text-center md:text-left">
@@ -326,9 +335,9 @@ export function UserProfile() {
 
         <TabsContent value="info" className="mt-6">
           <Card className="border-none shadow-sm bg-foreground">
-            <CardHeader className="border-b border-gray-200">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700">
               <CardTitle className="text-text">Personal Information</CardTitle>
-              <CardDescription className="text-gray-500">Details of your user profile</CardDescription>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Details of your user profile</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <ProfileInfo />
@@ -338,9 +347,9 @@ export function UserProfile() {
 
         <TabsContent value="edit" className="mt-6">
           <Card className="border-none shadow-sm bg-foreground">
-            <CardHeader className="border-b border-gray-200">
+            <CardHeader className="border-b border-gray-200 dark:border-gray-700">
               <CardTitle className="text-text">Edit Profile</CardTitle>
-              <CardDescription className="text-gray-500">Update your personal information</CardDescription>
+              <CardDescription className="text-gray-500 dark:text-gray-400">Update your personal information</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <ProfileEdit onSuccess={() => setActiveTab("info")} />
@@ -366,29 +375,41 @@ export function UserProfile() {
       </button>
 
       {showFollowersModal && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Followers</h2>
-          {fetchedFollowers.length === 0 ? (
-            <p className="text-gray-500">No followers yet.</p>
-          ) : (
-            <ul className="space-y-3">
-              {fetchedFollowers.map((u: any) => (
-                <li key={u.id} className="flex items-center gap-3">
-                  <Image
-                    src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
-                    alt={u.name}
-                    width={36}
-                    height={36}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                  <span className="text-text">{u.name} {u.lastName}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+  <div>
+    <h2 className="text-xl font-semibold mb-4">Followers</h2>
+    {fetchedFollowers.length === 0 ? (
+      <p className="text-gray-500">No followers yet.</p>
+    ) : (
+      <ul className="space-y-3">
+        {fetchedFollowers.map((u: any) => (
+          <Link href={`/dashboard/findpeople/${u.id}`} key={u.id}>
+          <li key={u.id} className="flex items-center gap-3 cursor-pointer hover:bg-accent/20 rounded-md px-1 transition-all duration-200">
+            {u.avatarUrl === "default-avatar-url" ? (
+              <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm">
+                {u.name?.charAt(0).toUpperCase()}
+              </div>
+            ) : (
+              <Image
+                src={API_BASE_IMAGE_URL + u.avatarUrl}
+                alt={u.name}
+                width={36}
+                height={36}
+                className="rounded-full"
+                unoptimized
+              />
+            )}
+
+            <div>
+              <p className="text-text font-medium text-lg">{u.name}</p>
+              <p className="text-sm text-gray-600 dark:text-text-secondary">{u.city} · {u.erasmusCountry}</p>
+            </div>
+          </li>
+          </Link>
+        ))}
+      </ul>
+    )}
+  </div>
+)}
 
       {showFollowingModal && (
         <div>
@@ -398,17 +419,28 @@ export function UserProfile() {
           ) : (
             <ul className="space-y-3">
               {fetchedFollowing.map((u: any) => (
-                <li key={u.id} className="flex items-center gap-3">
-                  <Image
-                    src={API_BASE_IMAGE_URL + u.avatarUrl || "/default-avatar.svg"}
-                    alt={u.name}
-                    width={36}
-                    height={36}
-                    className="rounded-full"
-                    unoptimized
-                  />
-                  <span className="text-text">{u.name} {u.lastName}</span>
+                <Link href={`/dashboard/findpeople/${u.id}`} key={u.id} className="my-2">
+                <li key={u.id} className="flex items-center gap-3 cursor-pointer hover:bg-accent/20 rounded-md px-1 transition-all duration-200">
+                  {u.avatarUrl === "default-avatar-url" ? (
+                    <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm">
+                      {u.name?.charAt(0).toUpperCase()}
+                    </div>
+                  ) : (
+                    <Image
+                      src={API_BASE_IMAGE_URL + u.avatarUrl}
+                      alt={u.name}
+                      width={36}
+                      height={36}
+                      className="rounded-full"
+                      unoptimized
+                    />
+                  )}
+                  <div>
+                    <p className="text-text font-medium">{u.name}</p>
+                    <p className="text-sm text-gray-600 dark:text-text-secondary">{u.city} · {u.erasmusCountry}</p>
+                  </div>
                 </li>
+                </Link>
               ))}
             </ul>
           )}
