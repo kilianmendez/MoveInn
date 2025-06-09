@@ -1,4 +1,3 @@
-// Mantener todas las importaciones y tipos
 "use client"
 import Image from "next/image"
 import type { Contact } from "@/components/messages/UseContact"
@@ -10,7 +9,6 @@ interface ContactsListProps {
 }
 
 export function ContactsList({ contacts, selectedContactId, onSelect }: ContactsListProps) {
-  if (!contacts.length) return <div className="p-4">No tienes contactos aún.</div>
 
   return (
     <div className="flex-1 overflow-y-auto">

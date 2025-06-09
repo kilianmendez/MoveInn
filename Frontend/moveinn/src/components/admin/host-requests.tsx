@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import axios from "axios"
 import {
+  API_GET_HOSTS,
   API_HOST_GET_REQUESTS,
   API_HOST_REQUEST_ACCEPT,
   API_HOST_REQUEST_REJECT
@@ -22,7 +23,12 @@ interface HostRequest {
   specialties: string[]
 }
 
-export function HostRequests() {
+interface HostRequestProps {
+  setHosts: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+export function HostRequests({ setHosts }: HostRequestProps) {
+
   const [requests, setRequests] = useState<HostRequest[]>([])
   const [selected, setSelected] = useState<HostRequest | null>(null)
   const [feedback, setFeedback] = useState<string | null>(null)
@@ -50,22 +56,31 @@ export function HostRequests() {
         ? API_HOST_REQUEST_ACCEPT(id)
         : API_HOST_REQUEST_REJECT(id)
 
-    try {
-      await axios.post(url, {}, { headers: { Authorization: `Bearer ${token}` } })
-      setFeedback(
-        action === "accept"
-          ? "Request accepted successfully"
-          : "Request rejected successfully"
-      )
-      setSelected(null)
-      fetchRequests()
-
-      setTimeout(() => setFeedback(null), 3000)
-    } catch (err) {
-      console.error("Error performing action:", err)
-      setFeedback("Something went wrong. Try again.")
-      setTimeout(() => setFeedback(null), 3000)
-    }
+        try {
+          await axios.post(url, {}, { headers: { Authorization: `Bearer ${token}` } });
+        
+          // 🆕 Si fue aceptado, refrescamos la lista de hosts
+          if (action === "accept") {
+            const hostsRes = await axios.get(API_GET_HOSTS, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setHosts(hostsRes.data);
+          }
+        
+          setFeedback(
+            action === "accept"
+              ? "Request accepted successfully"
+              : "Request rejected successfully"
+          );
+          setSelected(null);
+          fetchRequests();
+        
+          setTimeout(() => setFeedback(null), 3000);
+        } catch (err) {
+          console.error("Error performing action:", err);
+          setFeedback("Something went wrong. Try again.");
+          setTimeout(() => setFeedback(null), 3000);
+        }
   }
 
   return (

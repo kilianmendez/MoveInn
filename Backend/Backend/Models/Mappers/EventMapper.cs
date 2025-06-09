@@ -12,6 +12,8 @@ namespace Backend.Services
             Date = e.Date,
             Location = e.Location,
             Address = e.Address,
+            City = e.City,
+            Country = e.Country,
             AttendeesCount = e.AttendeesCount,
             MaxAttendees = e.MaxAttendees,
             Category = e.Category,
@@ -29,6 +31,8 @@ namespace Backend.Services
             Date = dto.Date,
             Location = dto.Location,
             Address = dto.Address,
+            City = dto.City,
+            Country = dto.Country,
             MaxAttendees = dto.MaxAttendees,
             Category = dto.Category,
             Description = dto.Description,
@@ -43,6 +47,8 @@ namespace Backend.Services
             e.Date = dto.Date;
             e.Location = dto.Location;
             e.Address = dto.Address;
+            e.City = dto.City;
+            e.Country = dto.Country;
             e.MaxAttendees = dto.MaxAttendees;
             e.Category = dto.Category;
             e.Description = dto.Description;

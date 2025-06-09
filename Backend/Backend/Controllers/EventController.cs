@@ -1,5 +1,6 @@
 ﻿using Backend.Models.Database.Entities;
 using Backend.Models.Dtos;
+using Backend.Models.Interfaces;
 using Backend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ public class EventController : ControllerBase
     private readonly EventService _eventService;
     private readonly SmartSearchService _smartSearchService;
 
-    public EventController(EventService eventService, SmartSearchService smartSearchService )
+    public EventController(EventService eventService, SmartSearchService smartSearchService)
     {
         _eventService = eventService;
         _smartSearchService = smartSearchService;
@@ -142,6 +143,16 @@ public class EventController : ControllerBase
                 .Where(e => e.Location.Equals(request.Location, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
+        if (!string.IsNullOrWhiteSpace(request.City))
+            events = events
+                .Where(e => e.City.Equals(request.City, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        if (!string.IsNullOrWhiteSpace(request.Country))
+            events = events
+                .Where(e => e.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
         if (!string.IsNullOrWhiteSpace(request.Category))
             events = events
                 .Where(e => !string.IsNullOrWhiteSpace(e.Category)
@@ -183,6 +194,20 @@ public class EventController : ControllerBase
             totalItems,
             items = pagedEvents
         });
+    }
+
+    [HttpGet("countries")]
+    public async Task<IActionResult> GetCountries()
+    {
+        var countries = await _eventService.GetAllCountriesAsync();
+        return Ok(countries);
+    }
+
+    [HttpGet("cities/{country}")]
+    public async Task<IActionResult> GetCitiesByCountry(string country)
+    {
+        var cities = await _eventService.GetCitiesByCountryAsync(country);
+        return Ok(cities);
     }
 
 }
