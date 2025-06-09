@@ -15,5 +15,7 @@ public class SearchEventDTO
     public List<string>? Tags { get; set; }
     public string? SortField { get; set; }
     public string? SortOrder { get; set; }
+    public Guid? CurrentUserId { get; set; }
+
 }
 
