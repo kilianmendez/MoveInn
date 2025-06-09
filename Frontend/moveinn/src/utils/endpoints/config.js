@@ -1,5 +1,5 @@
-export const API_BASE = process.env.MOVEINN_PUBLIC_API_BASE || "localhost:7023";
-export const API_BASE_SOCKET_URL = process.env.MOVEINN_PUBLIC_API_BASE || `wss://${API_BASE}`;
+export const API_BASE = "api-moveinn.duckdns.org"|| "localhost:7023";
+export const API_BASE_SOCKET_URL = "wss://api-moveinn.duckdns.org" || `wss://${API_BASE}`;
 
 export const API_BASE_URL = `https://${API_BASE}/api`;
 export const API_BASE_IMAGE_URL = `https://${API_BASE}/`;
