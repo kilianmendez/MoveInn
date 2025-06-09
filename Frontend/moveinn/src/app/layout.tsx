@@ -9,6 +9,9 @@ import { ThemeProvider } from "next-themes"
 export const metadata: Metadata = {
   title: "MoveInn",
   description: "Connect with Erasmus students worldwide",
+  icons: {
+    icon: "/travel-bag-svgrepo-com.svg",
+  },
 }
 
 export default function RootLayout({

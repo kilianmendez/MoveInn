@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import {
   MenuIcon,
@@ -36,15 +36,43 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
   const { user, logout } = useAuth()
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
-  // const { closeSocket } = useWebsocket()
+
+  const [unreadMessages, setUnreadMessages] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("unreadMessages")
+      return saved ? parseInt(saved, 10) : 0
+    }
+    return 0
+  })
+
+  const { lastMessage } = useWebsocket()
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("unreadMessages", unreadMessages.toString())
+    }
+  }, [unreadMessages])
+
+  useEffect(() => {
+    if (lastMessage?.action === "new_message") {
+      setUnreadMessages((prev) => prev + 1)
+    }
+  }, [lastMessage])
+
+  useEffect(() => {
+    if (pathname === "/dashboard/messages" && unreadMessages > 0) {
+      setUnreadMessages(0)
+      localStorage.removeItem("unreadMessages")
+    }
+  }, [pathname])
 
   const baseNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
     { label: "Housing", href: "/dashboard/housing", icon: SofaIcon },
     { label: "Events", href: "/dashboard/events", icon: CalendarIcon },
-    { label: "Messages", href: "/dashboard/messages", icon: MessageCircleIcon, badge: 12 },
+    { label: "Messages", href: "/dashboard/messages", icon: MessageCircleIcon, badge: unreadMessages },
     { label: "Forums", href: "/dashboard/forums", icon: BookmarkIcon },
-    { label: "Recommendations", href: "/dashboard/recommendations", icon: MapPinIcon, badge: "New" },
+    { label: "Recommendations", href: "/dashboard/recommendations", icon: MapPinIcon },
     { label: "Hosts", href: "/dashboard/hosts", icon: UsersIcon },
     { label: "Find People", href: "/dashboard/findpeople", icon: BookUserIcon },
   ]
@@ -254,6 +282,8 @@ function SidebarItem({
   label: string
   badge?: string | number
 }) {
+  const showBadge = badge !== undefined && badge !== null && badge !== 0
+
   return (
     <Link href={href} className="block">
       <Button
@@ -266,7 +296,7 @@ function SidebarItem({
           {icon}
           <span className="ml-3">{label}</span>
         </span>
-        {badge && (
+        {showBadge && (
           <span
             className={cn(
               "ml-auto rounded-full px-2 py-0.5 text-xs font-medium",

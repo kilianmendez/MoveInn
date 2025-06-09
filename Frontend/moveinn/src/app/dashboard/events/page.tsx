@@ -189,13 +189,9 @@ export default function EventsPage() {
 
         console.log("res events", res.data)
   
-        const joinedRes = await axios.get(API_GET_USER_EVENTS(user?.id))
-        const joinedIds = new Set(joinedRes.data.map((e: any) => e.id))
-  
         const formattedEvents = res.data.items.map((event: any) => ({
           ...event,
-          date: new Date(event.date),
-          joined: joinedIds.has(event.id)
+          date: new Date(event.date)
         }))
   
         setEvents(formattedEvents)
@@ -286,7 +282,6 @@ export default function EventsPage() {
       const newEvent = {
         ...response.data,
         date: new Date(response.data.date),
-        joined: true,
       }
   
       // 1. Añadir el nuevo evento al principio
