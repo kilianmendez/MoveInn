@@ -28,7 +28,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card"
 import { getCookie } from "cookies-next"
 import { toast } from "sonner"
-//
+
 interface Accommodation {
   id: string
   title: string
