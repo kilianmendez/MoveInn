@@ -158,29 +158,33 @@ public class SmartSearchService
         return dtos;
     }
 
-    public async Task<IEnumerable<EventDto>> SearchEventsAsync(string query)
+    public async Task<IEnumerable<EventDto>> SearchEventsAsync(
+    string query,
+    Guid? currentUserId = null)
     {
-        List<Event> result;
+        var allEvents = await _context.Events
+            .AsNoTracking()
+            .Include(e => e.Creator)
+            .Include(e => e.Participants)
+            .ToListAsync();
 
+        var filtered = new List<Event>();
         if (string.IsNullOrWhiteSpace(query))
         {
-            result = await _context.Events.ToListAsync();
+            filtered = allEvents;
         }
         else
         {
             var queryKeys = GetKeys(ClearText(query));
-            result = new List<Event>();
-            var events = await _context.Events.ToListAsync();
-
-            foreach (var ev in events)
+            foreach (var ev in allEvents)
             {
                 var itemKeys = GetKeys(ClearText(ev.Title + " " + ev.Description));
                 if (IsMatch(queryKeys, itemKeys))
-                    result.Add(ev);
+                    filtered.Add(ev);
             }
         }
 
-        return result.Select(e => new EventDto
+        return filtered.Select(e => new EventDto
         {
             Id = e.Id,
             Title = e.Title,
@@ -194,9 +198,18 @@ public class SmartSearchService
             Category = e.Category,
             Description = e.Description,
             ImageUrl = e.ImageUrl,
-            Tags = e.Tags.ToList()
+            Tags = e.Tags.ToList(),
+
+            CreatorId = e.CreatorId,
+            CreatorName = e.Creator?.Name ?? string.Empty,
+            CreatorLastName = e.Creator?.LastName ?? string.Empty,
+            CreatorAvatarUrl = e.Creator?.AvatarUrl ?? string.Empty,
+
+            Joined = currentUserId.HasValue
+                               && e.Participants.Any(u => u.Id == currentUserId.Value)
         });
     }
+
 
     public async Task<IEnumerable<UserSearchDto>> SearchUsersAsync(string query)
     {

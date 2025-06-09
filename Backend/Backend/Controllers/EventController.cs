@@ -210,4 +210,18 @@ public class EventController : ControllerBase
         return Ok(cities);
     }
 
+    [HttpGet("participating")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetParticipatingEvents(Guid userId)
+    {
+        try
+        {
+            var dtos = await _eventService.GetParticipatingEventsAsync(userId);
+            return Ok(dtos);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"No existe usuario con Id = {userId}");
+        }
+    }
+
 }
