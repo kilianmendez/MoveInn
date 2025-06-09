@@ -20,7 +20,12 @@ namespace Backend.Services
             Description = e.Description,
             ImageUrl = e.ImageUrl,
             Tags = e.Tags.ToList(),
-            
+
+            CreatorId = e.CreatorId,
+            CreatorName = e.Creator?.Name ?? string.Empty,
+            CreatorLastName = e.Creator?.LastName ?? string.Empty,
+            CreatorAvatarUrl = e.Creator?.AvatarUrl ?? string.Empty,
+            Joined = joined
         };
 
         public static Event FromCreateDto(EventCreateDto dto) => new()
@@ -51,7 +56,8 @@ namespace Backend.Services
             e.Description = dto.Description;
 
             e.Tags.Clear();
-            foreach (var t in dto.Tags) e.Tags.Add(t);
+            foreach (var t in dto.Tags)
+                e.Tags.Add(t);
         }
     }
 }

@@ -15,5 +15,12 @@
         public string Description { get; set; }
         public string ImageUrl { get; set; }
         public List<string> Tags { get; set; }
+
+        public Guid CreatorId { get; set; }
+        public string CreatorName { get; set; }
+        public string CreatorLastName { get; set; }
+        public string CreatorAvatarUrl { get; set; }
+
+        public bool Joined { get; set; }
     }
 }
