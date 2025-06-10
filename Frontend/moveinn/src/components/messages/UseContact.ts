@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '@/context/authcontext';
+import { API_BASE, API_BASE_URL } from '@/utils/endpoints/config';
 
 export interface Contact {
   otherUserId: string;
@@ -24,7 +25,7 @@ export const useContacts = () => {
       setError(null);
       try {
         const { data } = await axios.get<Contact[]>(
-          `https://localhost:7023/api/Chat/${user.id}`,
+          `${API_BASE_URL}/Chat/${user.id}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setContacts(data);
