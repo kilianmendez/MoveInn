@@ -141,7 +141,7 @@ public class Program
             options.AddDefaultPolicy(policy =>
             {
                 policy
-                      .AllowAnyOrigin()
+                      .WithOrigins("https://moveinn-backend.duckdns.org", "https://moveinn.duckdns.org", "https://localhost:7023", "http://localhost:3000")
                       .AllowAnyHeader()
                       .AllowAnyMethod()
                       .AllowCredentials();
