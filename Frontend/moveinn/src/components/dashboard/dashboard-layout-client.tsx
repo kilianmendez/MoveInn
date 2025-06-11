@@ -167,7 +167,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
               </div>
             ) : (
               <img
-                src={`${API_BASE_IMAGE_URL}${user.avatarUrl}?v=${user.updatedAt || Date.now()}`}
+                src={`${API_BASE_IMAGE_URL}${user.avatarUrl}`}
                 alt="User Avatar"
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
