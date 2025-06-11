@@ -166,7 +166,6 @@ public class Program
 
         app.UseWebSockets();
 
-        // Mapear ruta WebSocket antes de MapControllers
         app.Map("/api/WebSocket/ws", subApp =>
         {
             subApp.Use(async (ctx, next) =>
