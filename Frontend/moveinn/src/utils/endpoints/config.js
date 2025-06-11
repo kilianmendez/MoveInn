@@ -117,3 +117,6 @@ export const API_FORUMS_USER = (id) => `${API_FORUMS}/user/${id}`;
 
 export const API_USER_FOLLOWERS = (id) => `${API_USER}/${id}/followers`;
 export const API_USER_FOLLOWING = (id) => `${API_USER}/${id}/followings`;
+
+export const API_CHAT_GET_CONTACTS = (id) => `${API_BASE_URL}/Chat/${id}`;
+

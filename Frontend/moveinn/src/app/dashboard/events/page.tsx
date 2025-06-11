@@ -188,6 +188,8 @@ export default function EventsPage() {
           ...event,
           date: new Date(event.date)
         }))
+
+        console.log("Events encontrados:", formattedEvents)
   
         setEvents(formattedEvents)
         setTotalPages(res.data.totalPages)

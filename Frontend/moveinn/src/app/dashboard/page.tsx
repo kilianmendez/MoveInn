@@ -287,6 +287,7 @@ export default function DashboardPage() {
             sortOrder: "",
             country: user?.erasmusCountry || "",
             city: user?.city || "",
+            currentUserId: user?.id || ""
           },
           {
             headers: {

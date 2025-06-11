@@ -1,7 +1,7 @@
 import { CalendarIcon, MapPinIcon, Users2Icon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 import { useAuth } from "@/context/authcontext"
 import { API_JOIN_EVENT, API_LEAVE_EVENT } from "@/utils/endpoints/config"
@@ -32,6 +32,11 @@ export function EventCard({
   const [isJoining, setIsJoining] = useState(false)
   const [isJoined, setIsJoined] = useState(joined)
   const [currentAttendees, setCurrentAttendees] = useState(attendeesCount)
+
+  useEffect(() => {
+    setIsJoined(joined)
+    setCurrentAttendees(attendeesCount)
+  }, [joined, attendeesCount])
 
   const handleJoinLeave = async () => {
     if (!user?.id) return

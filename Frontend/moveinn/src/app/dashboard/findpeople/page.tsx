@@ -98,7 +98,7 @@ export default function UsersExplorePage() {
           },
           { headers: { Authorization: `Bearer ${token}` } }
         )
-
+        console.log("data", res.data)
         const data = res.data
         setUsers(data.items.filter((u: any) => u.id !== user?.id))
         setTotalPages(data.totalPages)
