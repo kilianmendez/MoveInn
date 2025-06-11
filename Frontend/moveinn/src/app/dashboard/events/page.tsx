@@ -169,25 +169,20 @@ export default function EventsPage() {
           limit,
           query: query || "",
           location: locationFilter || "",
+          city: selectedCity || "",
+          country: selectedCountry || "",
           category: categoryFilter || "",
-          tags: tagFilter.length ? tagFilter : [],
+          tags: tagFilter,
           sortField: sortField || "",
           sortOrder: sortOrder || "",
+          currentUserId: user?.id || ""
         }
-        
-        // Solo incluir ciudad/país si están seleccionados
-        if (selectedCity.trim()) payload.city = selectedCity
-        if (selectedCountry.trim()) payload.country = selectedCountry
-        
-        
-        console.log("payload events", payload)
+  
         const res = await axios.post(API_SEARCH_EVENTS, payload, {
           headers: {
             Authorization: `Bearer ${token}`
           }
         })
-
-        console.log("res events", res.data)
   
         const formattedEvents = res.data.items.map((event: any) => ({
           ...event,
@@ -207,7 +202,8 @@ export default function EventsPage() {
       fetchFilteredEvents()
     }
   }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, selectedCountry, selectedCity, user?.id])
-
+  
+  
   const filteredEvents = events.filter(event => {
     const matchDate = userClickedDate ? isSameDay(event.date, selectedDate) : true;
     const matchCategory = activeFilters.length === 0 || activeFilters.includes(event.category);
@@ -683,7 +679,7 @@ export default function EventsPage() {
       variant="outline"
       onClick={() => {
         setUserClickedDate(false)
-        setSelectedDate(new Date(0)) // una fecha "neutral" que nunca estará en next7Days
+        setSelectedDate(new Date(0))
         setPage(1)
       }}
       className="text-sm bg-background border border-primary text-primary hover:bg-primary hover:text-white transition"
@@ -721,55 +717,52 @@ export default function EventsPage() {
 
         {/* Lista o calendario */}
         {viewMode === "list" ? (
-  <div className="space-y-6">
-    {isLoadingEvents ? (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
-      </div>
-    ) : filteredEvents.length > 0 ? (
-      filteredEvents.map(event => (
-        <DetailedEventCard key={event.id} event={event} categoryIcon={getCategoryIcon(event.category)} />
-      ))
-    ) : (
-      <div className="text-center py-12 bg-foreground rounded-lg">
-        <CalendarOff className="h-12 w-12 mx-auto mb-4 text-text-secondary" />
-        <h3 className="text-xl font-medium text-text-secondary mb-2">No events found</h3>
-        <p className="text-text max-w-md mx-auto mb-6">Try changing your filters or date.</p>
-        <Button onClick={clearFilters} className="text-white">Clear filters</Button>
-      </div>
-    )}
-  </div>
-) : (
-  <EventCalendarView
-  events={events}
-  selectedDate={selectedDate}
-  setSelectedDate={(date) => {
-    setSelectedDate(date)
-    setUserClickedDate(true)
-    setPage(1)
-    setViewMode("list")
-  }}
-  activeFilters={activeFilters}
-/>
-
-        )}
-      </main>
-      {!userClickedDate && totalPages > 1 && (
-  <div className="mt-6 flex justify-center gap-2 flex-wrap">
-    {Array.from({ length: totalPages }, (_, i) => (
-      <Button
-        key={i}
-        onClick={() => setPage(i + 1)}
-        variant={i + 1 === page ? "default" : "outline"}
-        className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === page ? "bg-primary text-white" : ""}`}
-      >
-        {i + 1}
-      </Button>
-    ))}
-  </div>
-)}
-
-
+          <div className="space-y-6">
+            {isLoadingEvents ? (
+              <div className="flex justify-center items-center min-h-[200px]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+              </div>
+            ) : filteredEvents.length > 0 ? (
+              filteredEvents.map(event => (
+                <DetailedEventCard key={event.id} event={event} categoryIcon={getCategoryIcon(event.category)} />
+              ))
+            ) : (
+              <div className="text-center py-12 bg-foreground rounded-lg">
+                <CalendarOff className="h-12 w-12 mx-auto mb-4 text-text-secondary" />
+                <h3 className="text-xl font-medium text-text-secondary mb-2">No events found</h3>
+                <p className="text-text max-w-md mx-auto mb-6">Try changing your filters or date.</p>
+                <Button onClick={clearFilters} className="text-white">Clear filters</Button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <EventCalendarView
+          events={events}
+          selectedDate={selectedDate}
+          setSelectedDate={(date) => {
+            setSelectedDate(date)
+            setUserClickedDate(true)
+            setPage(1)
+            setViewMode("list")
+          }}
+          activeFilters={activeFilters}
+        />
+              )}
+            </main>
+            {!userClickedDate && totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2 flex-wrap">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <Button
+              key={i}
+              onClick={() => setPage(i + 1)}
+              variant={i + 1 === page ? "default" : "outline"}
+              className={`border-primary dark:border-text-secondary text-primary dark:text-text min-w-[36px] h-9 px-3 py-1 text-sm ${i + 1 === page ? "bg-primary text-white" : ""}`}
+            >
+              {i + 1}
+            </Button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

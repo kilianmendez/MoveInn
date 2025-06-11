@@ -55,14 +55,19 @@ export default function HostsPage() {
   const [citiesFromApi, setCitiesFromApi] = useState<string[]>([])
   const [selectedCity, setSelectedCity] = useState<string | null>(null)
   const [isLoadingHosts, setIsLoadingHosts] = useState(false);
+  const [expertiseSearch, setExpertiseSearch] = useState("");
+  const [citySearch, setCitySearch] = useState("");
 
   const { user } = useAuth()
   const [hosts, setHosts] = useState<any[]>([])
 
+  const visibleHosts = hosts.filter(host => host.id !== user?.id)
+
+
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const uniqueSpecialties: string[] = Array.from(
     new Set(
-      hosts.flatMap((host) =>
+      visibleHosts.flatMap((host) =>
         host?.specialties?.map((s: { id: string; name: string }) => s.name) || []
       )
     )
@@ -159,7 +164,7 @@ export default function HostsPage() {
   }, [activeFilter, selectedCity, currentPage, searchQuery]);
 
   // Filter hosts by active filter
-  const filteredHosts = hosts.filter((host) => {
+  const filteredHosts = visibleHosts.filter((host) => {
     const matchesBackendFilters = activeFilter
       ? host.erasmusCountry?.toLowerCase().includes(activeFilter.toLowerCase()) ||
         host.city?.toLowerCase().includes(activeFilter.toLowerCase()) ||
@@ -322,68 +327,106 @@ export default function HostsPage() {
 
             {/* Cities Filter */}
             <Card className="border-none shadow-md bg-foreground py-0">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Popular Cities</h2>
-                <div className="space-y-2">
-                {citiesFromApi.length === 0 && (
-                  <p className="text-sm text-gray-400">Select a country to see cities</p>
-                )}
+  <CardContent className="p-4">
+    <h2 className="font-semibold text-text-secondary mb-3">Popular Cities</h2>
 
-                {citiesFromApi.map((city) => (
-                  <Button
-                    key={city}
-                    variant="outline"
-                    className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
-                      selectedCity === city ? "bg-[#4C69DD] text-white" : ""
-                    }`}
-                    onClick={() => {setSelectedCity(selectedCity === city ? null : city); setCurrentPage(1);}}
-                  >
-                    <div className="flex items-center">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      <span>{city}</span>
-                    </div>
-                  </Button>
-                ))}
+    <Input
+      placeholder="Search cities..."
+      value={citySearch}
+      onChange={(e) => setCitySearch(e.target.value)}
+      className="mb-3 text-sm border-primary dark:border-text-secondary text-text"
+    />
 
-                </div>
-                <Button variant="ghost" className="w-full mt-2 text-primary dark:text-text-secondary">
-                  View All Cities
-                </Button>
-              </CardContent>
-            </Card>
+    <div
+      className={`space-y-2 ${
+        citiesFromApi.length > 10 ? "max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted/40" : ""
+      }`}
+    >
+      {citiesFromApi.length === 0 && (
+        <p className="text-sm text-gray-400">Select a country to see cities</p>
+      )}
+
+      {citiesFromApi
+        .filter((city) =>
+          city.toLowerCase().includes(citySearch.toLowerCase())
+        )
+        .map((city) => (
+          <Button
+            key={city}
+            variant="outline"
+            className={`w-full bg-background/50 justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+              selectedCity === city ? "bg-[#4C69DD] text-white" : ""
+            }`}
+            onClick={() => {
+              setSelectedCity(selectedCity === city ? null : city)
+              setCurrentPage(1)
+            }}
+          >
+            <div className="flex items-center">
+              <MapPin className="h-4 w-4 mr-2" />
+              <span>{city}</span>
+            </div>
+          </Button>
+        ))}
+    </div>
+  </CardContent>
+</Card>
+
 
             {/* Expertise Filter */}
             <Card className="border-none shadow-md bg-foreground py-0">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
-                <div className="space-y-2">
-                  {uniqueSpecialties.map((specialty) => (
-                    <Button
-                    key={specialty}
-                    variant="outline"
-                    className={`w-full justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
-                      selectedSpecialties.includes(specialty)
-                        ? "bg-[#4C69DD] text-white"
-                        : "bg-background/50 hover:bg-[#4C69DD]/10"
-                    }`}
-                    onClick={() => {
-                      const isSelected = selectedSpecialties.includes(specialty);
-                      const updated = isSelected
-                        ? selectedSpecialties.filter((s) => s !== specialty)
-                        : [...selectedSpecialties, specialty];
-                      setSelectedSpecialties(updated);
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <div className="flex items-center">
-                      <GraduationCap className="h-4 w-4 mr-2" />
-                      <span>{specialty}</span>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+  <CardContent className="p-4">
+    <h2 className="font-semibold text-text-secondary mb-3">Areas of Expertise</h2>
+
+    {/* Search bar */}
+    <Input
+      placeholder="Search expertise..."
+      className="mb-3 text-sm border-primary dark:border-text-secondary text-text"
+      value={expertiseSearch}
+      onChange={(e) => setExpertiseSearch(e.target.value)}
+    />
+
+    {/* Scrollable list if needed */}
+    <div
+      className={`space-y-2 ${
+        uniqueSpecialties.length > 10
+          ? "max-h-60 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-muted/40"
+          : ""
+      }`}
+    >
+      {uniqueSpecialties
+        .filter((spec) =>
+          spec.toLowerCase().includes(expertiseSearch.toLowerCase())
+        )
+        .map((specialty) => (
+          <Button
+            key={specialty}
+            variant="outline"
+            className={`w-full justify-between h-auto py-2 border-none text-gray-800 dark:text-gray-200 ${
+              selectedSpecialties.includes(specialty)
+                ? "bg-[#4C69DD] text-white"
+                : "bg-background/50 hover:bg-[#4C69DD]/10"
+            }`}
+            onClick={() => {
+              const isSelected = selectedSpecialties.includes(specialty);
+              const updated = isSelected
+                ? selectedSpecialties.filter((s) => s !== specialty)
+                : [...selectedSpecialties, specialty];
+              setSelectedSpecialties(updated);
+              setCurrentPage(1);
+            }}
+          >
+            <div className="flex items-center">
+              <GraduationCap className="h-4 w-4 mr-2" />
+              <span>{specialty}</span>
+            </div>
+          </Button>
+        ))}
+    </div>
+  </CardContent>
+</Card>
+
+
 
 
             {/* Become a Host */}
@@ -457,39 +500,15 @@ export default function HostsPage() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-white/50 rounded-lg border border-gray-100">
-                <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="h-8 w-8 text-gray-400" />
+              <div className="text-center py-12 bg-foreground/50 rounded-lg border border-background/10">
+                <div className="bg-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <AlertCircle className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No hosts found</h3>
-                <p className="text-gray-500 max-w-md mx-auto mb-6">
+                <h3 className="text-xl font-medium text-text mb-2">No hosts found</h3>
+                <p className="text-text-secondary max-w-md mx-auto mb-6">
                   We couldn't find any hosts matching your filter criteria. Try adjusting your filters or search for a
                   different location.
                 </p>
-                <Button onClick={() => setActiveFilter(null)}>Clear Filter</Button>
-              </div>
-            )}
-
-
-            {filteredHosts.length === 0 && (
-              <div className="text-center py-12 bg-white/50 rounded-lg border border-gray-100">
-                <div className="bg-[#E7ECF0]/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <AlertCircle className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="text-xl font-medium text-gray-700 mb-2">No hosts found</h3>
-                <p className="text-gray-500 max-w-md mx-auto mb-6">
-                  We couldn't find any hosts matching your filter criteria. Try adjusting your filters or search for a
-                  different location.
-                </p>
-                <Button onClick={() => setActiveFilter(null)}>Clear Filter</Button>
-              </div>
-            )}
-
-            {filteredHosts.length > 0 && filteredHosts.length < hosts.length && (
-              <div className="mt-6 text-center">
-                <Button variant="outline" className="border-[#4C69DD] text-[#4C69DD]">
-                  Load More Hosts
-                </Button>
               </div>
             )}
           </div>

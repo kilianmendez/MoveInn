@@ -28,11 +28,14 @@ interface Event {
   category: string
   joined: boolean
   description: string
-  organizer: string
   imageUrl: string
   tags: string[]
   city: string
   country: string
+  creatorId: string
+  creatorName: string
+  creatorLastName: string
+  creatorAvatarUrl: string
 }
 
 interface DetailedEventCardProps {
@@ -269,7 +272,28 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
 
                 <div className="text-xs text-text bg-background/70 dark:bg-foreground px-2 py-1 rounded-full">
                   Organized by{" "}
-                  <span className="font-medium text-primary dark:text-text-secondary">{event.organizer}</span>
+                  <span className="font-medium text-primary dark:text-text-secondary">
+                    {event.creatorName} {event.creatorLastName}
+                  </span>
+                  {event.creatorAvatarUrl && !event.creatorAvatarUrl.includes("default-avatar-url") ? (
+                    <Image
+                      src={API_BASE_IMAGE_URL + event.creatorAvatarUrl}
+                      alt={`${event.creatorName} ${event.creatorLastName}`}
+                      width={24}
+                      height={24}
+                      className="inline-block rounded-full ml-2 object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <div
+                      className="inline-flex items-center justify-center w-6 h-6 rounded-full ml-2 bg-primary text-white text-[10px] font-semibold leading-none"
+                      title={`${event.creatorName} ${event.creatorLastName}`}
+                    >
+                      {event.creatorName?.charAt(0).toUpperCase() ?? "?"}
+                    </div>
+
+                  )}
+
                 </div>
               </div>
 
