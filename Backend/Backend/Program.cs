@@ -92,7 +92,6 @@ public class Program
         builder.Services.AddSingleton<IMessagesService, MessagesService>();
         builder.Services.AddSingleton<middleware>();
 
-        //Swagger
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
         builder.Services.AddSwaggerGen(options =>
