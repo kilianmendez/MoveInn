@@ -26,6 +26,8 @@ import { useAuth } from "@/context/authcontext"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { useTheme } from "next-themes"
 import { usePathname } from "next/navigation"
+import { useWebsocket } from "@/context/WebSocketContext"
+
 
 export function DashboardLayoutClient({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -34,6 +36,7 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
   const { user, logout } = useAuth()
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
+  // const { closeSocket } = useWebsocket()
 
   const baseNav = [
     { label: "Dashboard", href: "/dashboard", icon: HomeIcon },
@@ -158,11 +161,19 @@ export function DashboardLayoutClient({ children }: { children: React.ReactNode 
         <div className="absolute bottom-0 left-0 w-full px-3 py-4 border-t border-gray-200 dark:border-gray-700 bg-none">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+            {user?.avatarUrl === "default-avatar-url" || !user?.avatarUrl ? (
+              <div className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm uppercase border border-gray-300">
+                {user?.name?.charAt(0)}
+              </div>
+            ) : (
               <img
-                src={`${API_BASE_IMAGE_URL}${user?.avatarUrl}`}
+                src={`${API_BASE_IMAGE_URL}${user.avatarUrl}?v=${user.updatedAt || Date.now()}`}
                 alt="User Avatar"
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
+            )}
+
+
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-text">{user?.name}</span>
                 <span className="text-xs text-text-secondary">{getRoleBadge(user?.role)}</span>

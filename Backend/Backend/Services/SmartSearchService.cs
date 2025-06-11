@@ -59,6 +59,7 @@ public class SmartSearchService
             Address = a.Address,
             City = a.City,
             Country = a.Country,
+            Category = a.AcommodationType,
             PricePerMonth = a.PricePerMonth,
             NumberOfRooms = a.NumberOfRooms,
             Bathrooms = a.Bathrooms,
