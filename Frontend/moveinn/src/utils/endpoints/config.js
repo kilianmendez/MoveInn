@@ -1,4 +1,4 @@
-export const API_BASE = "api-moveinn.duckdns.org";
+export const API_BASE = "moveinn-backend.duckdns.org";
 export const API_BASE_SOCKET_URL =`wss://${API_BASE}`;
 
 export const API_BASE_URL = `https://${API_BASE}/api`;

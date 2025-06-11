@@ -1,4 +1,4 @@
-using System.Text;
+ï»¿using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
 using Backend.Models.Database.Entities;
@@ -7,13 +7,14 @@ using Backend.Models.Interfaces;
 using Backend.Services;
 using Backend.WebSockets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Stripe;
 using Swashbuckle.AspNetCore.Filters;
-using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+
 namespace Backend;
 public class Program
 {
@@ -25,20 +26,14 @@ public class Program
 
         builder.Services.Configure<Settings>(builder.Configuration.GetSection(Settings.SECTION_NAME));
 
-        builder.Services.AddControllers();
-        builder.Services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        });
+        builder.Services.AddControllers()
+            .AddJsonOptions(options =>
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
+            );
 
         builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
         StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
         builder.Services.AddScoped<PaymentService>();
-
-        // Repositorios y servicios de BD
-
-        builder.Services.AddScoped<UserRepository>();
-        builder.Services.AddScoped<RecommendationRepository>();
 
         builder.Services.AddDbContext<DataContext>(options =>
         {
@@ -52,8 +47,9 @@ public class Program
                 {
                     mySqlOpts.SchemaBehavior(MySqlSchemaBehavior.Ignore);
                 });
-        });
-
+        }); 
+        builder.Services.AddScoped<UserRepository>();
+        builder.Services.AddScoped<RecommendationRepository>();
         builder.Services.AddScoped<UnitOfWork>();
         builder.Services.AddScoped<IAccommodationRepository, AccommodationRepository>();
         builder.Services.AddScoped<ReservationRepository>();
@@ -64,7 +60,6 @@ public class Program
         builder.Services.AddScoped<IHostRepository, HostRepository>();
         builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
-        // Servicios de aplicación
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<IAccommodationService, AccommodationService>();
@@ -84,7 +79,6 @@ public class Program
         builder.Services.AddScoped<IHostService, HostService>();
         builder.Services.AddScoped<IAdminService, AdminService>();
 
-        // WebSocket handler y dependencias
         builder.Services.AddSingleton<WebsocketHandler>();
         builder.Services.AddSingleton<IFollowRepository, FollowRepository>();
         builder.Services.AddSingleton<IFollowService, FollowService>();
@@ -93,7 +87,6 @@ public class Program
         builder.Services.AddSingleton<middleware>();
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
         builder.Services.AddSwaggerGen(options =>
         {
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -108,13 +101,11 @@ public class Program
             options.OperationFilter<SecurityRequirementsOperationFilter>(true, JwtBearerDefaults.AuthenticationScheme);
         });
 
-        // Autenticación JWT
-        builder.Services.AddAuthentication()
+        builder.Services
+            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                Settings settings = builder.Configuration.GetSection(Settings.SECTION_NAME).Get<Settings>()!;
                 string key = Environment.GetEnvironmentVariable("JWT_KEY")!;
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = false,
@@ -125,12 +116,17 @@ public class Program
                 {
                     OnMessageReceived = ctx =>
                     {
-                        // Extraer token JWT de la query string ?token=...
                         var token = ctx.Request.Query["token"];
                         if (!string.IsNullOrEmpty(token))
                         {
                             ctx.Token = token;
                         }
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = ctx =>
+                    {
+                        Console.WriteLine("âœ“ JWT vÃ¡lido para userId=" +
+                            ctx.Principal.FindFirst("id")?.Value);
                         return Task.CompletedTask;
                     }
                 };
@@ -141,10 +137,10 @@ public class Program
             options.AddDefaultPolicy(policy =>
             {
                 policy
-                      .WithOrigins("https://moveinn-backend.duckdns.org", "https://moveinn.duckdns.org", "https://localhost:7023", "http://localhost:3000")
-                      .AllowAnyHeader()
-                      .AllowAnyMethod()
-                      .AllowCredentials();
+                  .WithOrigins("https://moveinn-backend.duckdns.org", "https://moveinn.duckdns.org", "https://localhost:7023", "http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
             });
         });
 
@@ -157,7 +153,6 @@ public class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseCors();
 
         app.UseAuthentication();
@@ -194,7 +189,17 @@ public class Program
         app.MapControllers();
 
         //await SeedDatabase(app.Services);
-
         app.Run();
     }
+
+    //static async Task SeedDatabase(IServiceProvider serviceProvider)
+    //{
+    //    using var scope = serviceProvider.CreateScope();
+    //    using var dbContext = scope.ServiceProvider.GetService<DataContext>()!;
+    //    if (dbContext.Database.EnsureCreated())
+    //    {
+    //        var seeder = new Seeder(dbContext);
+    //        await seeder.SeedAsync();
+    //    }
+    //}
 }
