@@ -136,7 +136,6 @@ public class Program
                 };
             });
 
-        // CORS (solo origen http://localhost:3000 y permitir credentials)
         builder.Services.AddCors(options =>
         {
             options.AddDefaultPolicy(policy =>
