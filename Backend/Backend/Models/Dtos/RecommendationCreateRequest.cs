@@ -10,7 +10,7 @@ namespace Backend.Models.Dtos
 
         public string? Description { get; set; }
         public Category? Category { get; set; }
-        public ICollection<String> Tags { get; set; } = new List<String>();
+        public IList<String> Tags { get; set; } = new List<String>();
 
         public string Address { get; set; }
         public string City { get; set; }

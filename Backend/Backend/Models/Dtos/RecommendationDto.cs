@@ -15,8 +15,8 @@ namespace Backend.Models.Dtos
         public Rating? Rating { get; set; }
         public DateTime CreatedAt { get; set; }
         public Guid UserId { get; set; }
-        public ICollection<String> Tags { get; set; } = new List<String>();
-        public ICollection<Image> RecommendationImages { get; set; } = new List<Image>();
+        public IList<String> Tags { get; set; } = new List<String>();
+        public IList<Image> RecommendationImages { get; set; } = new List<Image>();
 
 
     }
