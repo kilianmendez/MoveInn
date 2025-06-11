@@ -63,6 +63,8 @@ export default function HostsPage() {
 
   const visibleHosts = hosts.filter(host => host.id !== user?.id)
 
+  console.log(user)
+
 
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const uniqueSpecialties: string[] = Array.from(
@@ -241,7 +243,7 @@ export default function HostsPage() {
         {/* Header Section */}
         <section className="mb-8">
           <div className="bg-gradient-to-r from-[#0E1E40] via-[#4C69DD] to-[#62C3BA] dark:to-foreground rounded-xl p-6 md:p-8 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
+            {/* <div className="absolute top-0 right-0 w-64 h-64 bg-[#B7F8C8]/20 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div> */}
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#62C3BA]/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('/placeholder.svg?height=100&width=100')] opacity-5 bg-repeat"></div>
 
@@ -255,13 +257,15 @@ export default function HostsPage() {
                 </div>
 
                 <div className="mt-4 md:mt-0">
-                <Button
-                  className="bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90 font-semibold"
-                  onClick={() => setShowHostModal(true)}
-                >
-                  <Users className="mr-2 h-4 w-4" />
-                  Become a Host
-                </Button>
+                {!user?.isHost && (
+                  <Button
+                    className="bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90 font-semibold"
+                    onClick={() => setShowHostModal(true)}
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Become a Host
+                  </Button>
+                )}
                 </div>
               </div>
 
@@ -430,35 +434,38 @@ export default function HostsPage() {
 
 
             {/* Become a Host */}
-            <Card className="border-none shadow-md bg-gradient-to-br from-[#FFBF00]/20 to-foreground">
-              <CardContent className="p-4">
-                <h2 className="font-semibold text-text-secondary mb-3">Become a Host</h2>
-                <p className="text-sm text-text mb-4">
-                  Help incoming Erasmus students navigate your city and university. Share your knowledge and make new
-                  international friends!
-                </p>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-500 dark:text-gray-300">Earn recognition in your university</span>
+            {!user?.isHost && (
+              <Card className="border-none shadow-md bg-gradient-to-br from-[#FFBF00]/20 to-foreground">
+                <CardContent className="p-4">
+                  <h2 className="font-semibold text-text-secondary mb-3">Become a Host</h2>
+                  <p className="text-sm text-text mb-4">
+                    Help incoming Erasmus students navigate your city and university. Share your knowledge and make new
+                    international friends!
+                  </p>
+                  <div className="space-y-2 mb-4">
+                    <div className="flex items-start">
+                      <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-500 dark:text-gray-300">Earn recognition in your university</span>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-500 dark:text-gray-300">Build your international network</span>
+                    </div>
+                    <div className="flex items-start">
+                      <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
+                      <span className="text-sm text-gray-500 dark:text-gray-300">Gain intercultural experience</span>
+                    </div>
                   </div>
-                  <div className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-500 dark:text-gray-300">Build your international network</span>
-                  </div>
-                  <div className="flex items-start">
-                    <CheckCircle className="h-4 w-4 text-[#FFBF00] mt-0.5 mr-2" />
-                    <span className="text-sm text-gray-500 dark:text-gray-300">Gain intercultural experience</span>
-                  </div>
-                </div>
-                <Button
-                  className="w-full bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90"
-                  onClick={() => setShowHostModal(true)}
-                >
-                  Apply to Become a Host
-                </Button>
-              </CardContent>
-            </Card>
+                  <Button
+                    className="w-full bg-[#FFBF00] text-[#0E1E40] hover:bg-[#FFBF00]/90"
+                    onClick={() => setShowHostModal(true)}
+                  >
+                    Apply to Become a Host
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
           </div>
 
           {/* Main Content */}

@@ -52,9 +52,6 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState(false)
 
-  console.log("event", event)
-
-
   const confirmLeaveEvent = async () => {
     if (!user?.id) return
   
@@ -148,7 +145,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
   const isToday = new Date().toDateString() === event.date.toDateString()
 
   return (
-    <Card className={`overflow-hidden shadow-md hover:shadow-lg border-none transition-all duration-300 bg-foreground py-0 ${showFullDescription ? "min-h-[auto]" : "min-h-[370px]"}`}>
+    <Card className={`overflow-hidden shadow-md hover:shadow-lg border-none transition-all duration-300 bg-foreground py-0 ${showFullDescription ? "min-h-[auto]" : "min-h-[270px]"}`}>
       <div className="flex flex-col md:flex-row h-full">
         <div className="relative h-48 md:h-auto md:w-1/3">
           <Image
@@ -242,7 +239,7 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
                   {event.description.length > 160 && (
                     <button
                       onClick={() => setShowFullDescription(!showFullDescription)}
-                      className="mt-1 text-sm text-primary flex items-center hover:underline focus:outline-none"
+                      className="mt-1 text-sm text-primary dark:text-text-secondary flex items-center hover:underline focus:outline-none"
                     >
                       {showFullDescription ? (
                         <>

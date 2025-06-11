@@ -262,7 +262,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col lg:ml-64">
         {/* Topbar (mobile only) */}
         <div className="p-4 bg-background dark:bg-foreground shadow lg:hidden flex items-center justify-between">
-          <Button variant="ghost" onClick={() => setSidebarOpen(true)}>
+          <Button variant="ghost" onClick={() => setSidebarOpen(true)} aria-label="Toggle sidebar">
             <MenuIcon className="h-6 w-6 text-text" />
           </Button>
           <div className="flex items-center gap-2">
