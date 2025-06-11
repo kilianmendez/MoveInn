@@ -1,7 +1,23 @@
+"use client"
+
+import { useAuth } from "@/context/authcontext"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import LoginForm from "@/components/login/login-form"
 import { ThemeToggle } from "@/components/landing/theme-toggle-btn"
 
-export default function Home() {
+export default function LoginPage() {
+
+  const { isAuthenticated, isLoading } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      window.location.href = "/dashboard"
+    }
+  }, [isLoading, isAuthenticated])
+
+
   return (
     <main className="min-h-screen relative">
       {/* Botón de cambio de tema en la esquina superior derecha */}
