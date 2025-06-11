@@ -12,7 +12,7 @@ public class AdminService : IAdminService
     {
         _unitOfWork = unitOfWork;
     }
-
+//
     public async Task<bool> DeleteForumAsync(Guid forumId)
     {
         try
