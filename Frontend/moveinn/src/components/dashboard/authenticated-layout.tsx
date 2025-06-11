@@ -206,7 +206,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
             )}
-
+{/*  */}
 
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-text">{user?.name}</span>
