@@ -72,5 +72,12 @@ namespace Backend.Models.Database.Repositories
                 .Distinct()
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Event>> GetEventsWhereUserIsParticipatingAsync(Guid userId)
+        {
+            return await _context.Events
+                .Where(e => e.Participants.Any(p => p.Id == userId))
+                .ToListAsync();
+        }
     }
 }

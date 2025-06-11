@@ -131,39 +131,29 @@ public class EventController : ControllerBase
         if (request.Page < 1 || request.Limit < 1)
             return BadRequest("La página y el límite deben ser mayores que 0.");
 
+        Guid? currentUserId = request.CurrentUserId;
+
         var events = string.IsNullOrWhiteSpace(request.Query)
-            ? (await _eventService.GetAllAsync()).ToList()
-            : (await _smartSearchService.SearchEventsAsync(request.Query)).ToList();
+            ? (await _eventService.GetAllAsync(currentUserId)).ToList()
+            : (await _smartSearchService.SearchEventsAsync(request.Query, currentUserId)).ToList();
 
         if (!events.Any())
             return NotFound("No se han encontrado eventos.");
 
         if (!string.IsNullOrWhiteSpace(request.Location))
-            events = events
-                .Where(e => e.Location.Equals(request.Location, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            events = events.Where(e => e.Location.Equals(request.Location, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrWhiteSpace(request.City))
-            events = events
-                .Where(e => e.City.Equals(request.City, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            events = events.Where(e => e.City.Equals(request.City, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrWhiteSpace(request.Country))
-            events = events
-                .Where(e => e.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            events = events.Where(e => e.Country.Equals(request.Country, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (!string.IsNullOrWhiteSpace(request.Category))
-            events = events
-                .Where(e => !string.IsNullOrWhiteSpace(e.Category)
-                            && e.Category.Equals(request.Category, StringComparison.OrdinalIgnoreCase))
-                .ToList();
+            events = events.Where(e => !string.IsNullOrWhiteSpace(e.Category) && e.Category.Equals(request.Category, StringComparison.OrdinalIgnoreCase)).ToList();
 
         if (request.Tags != null && request.Tags.Any())
-            events = events
-                .Where(e => request.Tags.All(tag =>
-                    e.Tags.Any(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase))))
-                .ToList();
+            events = events.Where(e => request.Tags.All(tag => e.Tags.Any(t => t.Equals(tag, StringComparison.OrdinalIgnoreCase)))).ToList();
 
         if (!string.IsNullOrWhiteSpace(request.SortField))
         {
@@ -171,21 +161,14 @@ public class EventController : ControllerBase
             var asc = string.Equals(request.SortOrder, "asc", StringComparison.OrdinalIgnoreCase);
 
             if (field == "date")
-                events = asc
-                    ? events.OrderBy(e => e.Date).ToList()
-                    : events.OrderByDescending(e => e.Date).ToList();
+                events = asc ? events.OrderBy(e => e.Date).ToList() : events.OrderByDescending(e => e.Date).ToList();
             else if (field == "name")
-                events = asc
-                    ? events.OrderBy(e => e.Title).ToList()
-                    : events.OrderByDescending(e => e.Title).ToList();
+                events = asc ? events.OrderBy(e => e.Title).ToList() : events.OrderByDescending(e => e.Title).ToList();
         }
 
         var totalItems = events.Count;
         var totalPages = (int)Math.Ceiling(totalItems / (double)request.Limit);
-        var pagedEvents = events
-            .Skip((request.Page - 1) * request.Limit)
-            .Take(request.Limit)
-            .ToList();
+        var pagedEvents = events.Skip((request.Page - 1) * request.Limit).Take(request.Limit).ToList();
 
         return Ok(new
         {
@@ -195,6 +178,7 @@ public class EventController : ControllerBase
             items = pagedEvents
         });
     }
+
 
     [HttpGet("countries")]
     public async Task<IActionResult> GetCountries()
@@ -208,6 +192,20 @@ public class EventController : ControllerBase
     {
         var cities = await _eventService.GetCitiesByCountryAsync(country);
         return Ok(cities);
+    }
+
+    [HttpGet("participating")]
+    public async Task<ActionResult<IEnumerable<EventDto>>> GetParticipatingEvents(Guid userId)
+    {
+        try
+        {
+            var dtos = await _eventService.GetParticipatingEventsAsync(userId);
+            return Ok(dtos);
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound($"No existe usuario con Id = {userId}");
+        }
     }
 
 }

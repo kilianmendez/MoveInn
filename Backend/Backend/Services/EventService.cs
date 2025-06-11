@@ -157,5 +157,14 @@ namespace Backend.Services
         {
             return await _unitOfWork.EventRepository.GetCitiesByCountryAsync(country);
         }
+
+        public async Task<IEnumerable<EventDto>> GetParticipatingEventsAsync(Guid userId)
+        {
+            var events = await _unitOfWork.EventRepository.GetEventsWhereUserIsParticipatingAsync(userId);
+
+            return events
+                .Select(e => EventMapper.ToDto(e, joined: true))
+                .ToList();
+        }
     }
 }

@@ -20,8 +20,12 @@ namespace Backend.Services
             Description = e.Description,
             ImageUrl = e.ImageUrl,
             Tags = e.Tags.ToList(),
-            CreatorId = e.CreatorId
-            
+
+            CreatorId = e.CreatorId,
+            CreatorName = e.Creator?.Name ?? string.Empty,
+            CreatorLastName = e.Creator?.LastName ?? string.Empty,
+            CreatorAvatarUrl = e.Creator?.AvatarUrl ?? string.Empty,
+            Joined = joined
         };
 
         public static Event FromCreateDto(EventCreateDto dto) => new()
@@ -36,11 +40,9 @@ namespace Backend.Services
             MaxAttendees = dto.MaxAttendees,
             Category = dto.Category,
             Description = dto.Description,
-            Tags = dto.Tags.ToList(),
-            
-            
+            Tags = dto.Tags.ToList()
         };
-//
+
         public static void UpdateEntity(Event e, EventUpdateDto dto)
         {
             e.Title = dto.Title;
@@ -54,7 +56,8 @@ namespace Backend.Services
             e.Description = dto.Description;
 
             e.Tags.Clear();
-            foreach (var t in dto.Tags) e.Tags.Add(t);
+            foreach (var t in dto.Tags)
+                e.Tags.Add(t);
         }
     }
 }
