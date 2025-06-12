@@ -257,13 +257,21 @@ export const AuthProvider = ({
       const { accessToken } = response.data
       if (!accessToken) throw new Error("No se recibió accessToken")
   
+      // ✅ Guardar también como cookie
+      setCookie("token", accessToken, {
+        maxAge: 60 * 60 * 2, // 2 horas
+        path: "/",
+        sameSite: "lax",
+      })
+  
+      // Guardar en localStorage por si acaso
       localStorage.setItem("accessToken", accessToken)
       setToken(accessToken)
   
-      // Importante: actualiza usuario completo
+      // Intentar obtener el usuario
       await updateUserFromToken(accessToken)
   
-      // Redirige después de que esté todo cargado
+      // Redirige al dashboard
       router.push("/dashboard")
     } catch (err: any) {
       setError(err.response?.data || "Error en el registro")
@@ -272,6 +280,7 @@ export const AuthProvider = ({
       setIsLoading(false)
     }
   }
+  
   
 
   const logout = () => {

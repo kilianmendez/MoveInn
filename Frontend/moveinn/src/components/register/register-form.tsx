@@ -36,7 +36,6 @@ export default function RegisterForm() {
 
     try {
       await register(name, mail, password, phone)
-        router.push("/dashboard")
     } catch (err) {
       console.error("Error en registro:", err)
     }
