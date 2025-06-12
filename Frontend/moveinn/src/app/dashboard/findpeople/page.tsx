@@ -27,7 +27,7 @@ export default function UsersExplorePage() {
   const [selectedCity, setSelectedCity] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const [limit] = useState(9)
+  const [limit] = useState(8)
   const [isLoadingUsers, setIsLoadingUsers] = useState(false)
 
   const [availableCountries, setAvailableCountries] = useState<string[]>([])

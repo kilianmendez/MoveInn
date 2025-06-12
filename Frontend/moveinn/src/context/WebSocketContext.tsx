@@ -13,6 +13,21 @@ export interface IWebsocketContext {
   lastMessage: any
 }
 
+const translateMessageToEnglish = (message: string): string => {
+  const lower = message.toLowerCase()
+
+  if (lower.includes("ha dejado de seguirte")) return "Someone has unfollowed you."
+  if (lower.includes("te ha empezado a seguir")) return "Someone started following you."
+  if (lower.includes("te ha enviado un mensaje")) return "Someone sent you a message."
+  if (lower.includes("nueva recomendación")) return "New recommendation received."
+  if (lower.includes("nuevo evento")) return "New event created."
+  if (lower.includes("nueva notificación")) return "You have a new notification."
+  if (lower.includes("ha marcado como leído")) return "Your message was marked as read."
+
+  return message
+}
+
+
 const WebsocketContext = createContext<IWebsocketContext | undefined>(undefined)
 
 export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
@@ -71,14 +86,16 @@ export const WebsocketProvider = ({ children }: { children: ReactNode }) => {
     
         // Mostrar toast si es una notificación
         if (parsed.action === 'notification' && parsed.message) {
+          const translated = translateMessageToEnglish(parsed.message)
           const msg = parsed.message.toLowerCase()
         
           if (msg.includes('ha dejado de seguirte')) {
-            toast.error(parsed.message, { duration: 4000 })
+            toast.error(translated, { duration: 4000 })
           } else {
-            toast.success(parsed.message, { duration: 4000 })
+            toast.success(translated, { duration: 4000 })
           }
         }
+        
         
     
       } catch (e) {

@@ -141,21 +141,22 @@ export default function EventsPage() {
     fetchCities()
   }, [selectedCountry])
   
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const token = getCookie("token")
-        const res = await axios.get(API_EVENTS_COUNTRIES, {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        setAvailableCountries(res.data)
-      } catch (err) {
-        console.error("Error fetching countries:", err)
-      }
+  const fetchCountries = async () => {
+    try {
+      const token = getCookie("token")
+      const res = await axios.get(API_EVENTS_COUNTRIES, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setAvailableCountries(res.data)
+    } catch (error) {
+      console.error("Error loading countries:", error)
     }
+  }
   
+  useEffect(() => {
     fetchCountries()
   }, [])
+  
   
   const fetchFilteredEvents = async () => {
     try {
@@ -322,6 +323,7 @@ export default function EventsPage() {
   
       toast.success("Event created successfully!")
       await fetchFilteredEvents()
+      await fetchCountries()
 
     } catch (error: any) {
       console.error("Error creating event:", error)

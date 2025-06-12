@@ -176,6 +176,7 @@ export default function RecommendationsPage() {
   
       toast.success("Recommendation created successfully!")
       await fetchRecommendations()
+      await fetchCountries()
   
       // Reset form
       setFormData({
