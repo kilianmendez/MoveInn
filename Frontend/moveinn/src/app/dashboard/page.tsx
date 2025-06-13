@@ -157,32 +157,11 @@ export default function DashboardPage() {
     const [isLoadingDashboard, setIsLoadingDashboard] = useState(true)
     const [dashboardHosts, setDashboardHosts] = useState<any[]>([])
     const [notifications, setNotifications] = useState<
-  { message: string; timestamp: number; type: "message" | "event" | "group" | "recommendation" | "system" }[]
-  >(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("notifications")
-        return saved ? JSON.parse(saved) : []
-      } catch {
-        return []
-      }
-    }
-    return []
-  })
-
-    
+    { message: string; timestamp: number; type: "message" | "event" | "group" | "recommendation" | "system" }[]
+    >([])
 
     const { lastMessage } = useWebsocket()
-
-    useEffect(() => {
-      try {
-        localStorage.setItem("notifications", JSON.stringify(notifications))
-      } catch (e) {
-        console.error("Error saving notifications to localStorage", e)
-      }
-    }, [notifications]) 
-    
-
+     
     useEffect(() => {
       const fetchSenderNameAndNotify = async (senderId: string, content: string) => {
         try {
@@ -605,11 +584,11 @@ export default function DashboardPage() {
                       className="dark:text-text-secondary"
                       onClick={() => {
                         setNotifications([])
-                        localStorage.removeItem("notifications")
                       }}
                     >
                       Mark all as read
                     </Button>
+
 
                   </CardHeader>
 

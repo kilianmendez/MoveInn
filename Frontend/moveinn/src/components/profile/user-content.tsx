@@ -29,6 +29,7 @@ import { ReservationCard } from "@/components/reservations/reservation-card"
 import { ReviewCard } from "@/components/reviews/review-card"
 import { getCookie } from "cookies-next"
 import { Button } from "@/components/ui/button"
+import { toast } from "sonner"
 
 
 
@@ -49,7 +50,6 @@ export function UserContentOverview() {
   const fetchReviews = async () => {
     try {
       const res = await axios.get(API_REVIEWS_USER(user?.id))
-      console.log("REVIEWS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching reviews", err)
@@ -60,7 +60,6 @@ export function UserContentOverview() {
   const fetchReservations = async () => {
     try {
       const res = await axios.get(API_RESERVATIONS_USER(user?.id))
-      console.log("RESERVATIONS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching reservations", err)
@@ -71,7 +70,6 @@ export function UserContentOverview() {
   const fetchRecommendations = async () => {
     try {
       const res = await axios.get(API_RECOMMENDATIONS_USER(user?.id))
-      console.log("RECOMMENDATIONS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching recommendations", err)
@@ -82,7 +80,6 @@ export function UserContentOverview() {
   const fetchAccommodations = async () => {
     try {
       const res = await axios.get(API_ACCOMMODATIONS_USER(user?.id))
-      console.log("ACCOMMODATIONS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching accommodations", err)
@@ -93,7 +90,6 @@ export function UserContentOverview() {
   const fetchEvents = async () => {
     try {
       const res = await axios.get(API_EVENTS_USER(user?.id))
-      console.log("EVENTS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching events", err)
@@ -104,7 +100,6 @@ export function UserContentOverview() {
   const fetchForums = async () => {
     try {
       const res = await axios.get(API_FORUMS_USER(user?.id))
-      console.log("FORUMS:", res.data)
       return res.data
     } catch (err) {
       console.error("Error fetching forums", err)
@@ -396,8 +391,10 @@ export function UserContentOverview() {
                 ...prev,
                 [type]: (prev as any)[type].filter((el: any) => el.id !== id),
               }))
+              toast.success(`${type.slice(0, -1)} deleted successfully`)
             } catch (err) {
               console.error("Error deleting", type, err)
+              toast.error(`Failed to delete ${type.slice(0, -1)}`)
             } finally {
               setItemToDelete(null)
             }
