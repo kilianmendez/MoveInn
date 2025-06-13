@@ -27,12 +27,12 @@ export function Navbar() {
 
             <div className="flex items-center space-x-4">
             <Link href="/login">
-                <Button variant="outline" className="border-[#4C69DD] dark:bg-foreground text-[#4C69DD] hover:bg-primary/10 dark:hover:bg-primary/30">
+                <Button variant="outline" className="border-primary dark:border-text-secondary dark:bg-foreground text-primary dark:text-text-secondary hover:bg-primary/10 dark:hover:bg-primary/30">
                 Log In
                 </Button>
             </Link>
             <Link href="/register" className="hidden md:inline-flex">
-                <Button className="bg-[#4C69DD] text-white hover:bg-[#4C69DD]/90">Sign Up</Button>
+                <Button className="bg-primary text-white hover:bg-primary/90">Sign Up</Button>
             </Link>
             <ThemeToggle />
             </div>

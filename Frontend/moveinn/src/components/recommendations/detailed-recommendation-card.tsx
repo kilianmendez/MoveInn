@@ -5,7 +5,7 @@ import { MapPin, Star, ExternalLink, Share2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { API_BASE, API_GET_USER } from "@/utils/endpoints/config"
+import { API_BASE, API_GET_USER, API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
 import { DetailedRecommendationCardProps } from "@/types/recommendation"
 import axios from "axios"
 import { getCookie } from "cookies-next"
@@ -31,7 +31,7 @@ export function DetailedRecommendationCard({
   const [recommenderName, setRecommenderName] = useState<string>("")
 
   const mainImage = recommendation.recommendationImages?.[0]?.url
-    ? `/uploads/${recommendation.recommendationImages[0].url}`
+    ? `${API_BASE_IMAGE_URL}${recommendation.recommendationImages[0].url}`
     : "/placeholder.svg"
 
   const getCategoryColor = () => {
@@ -110,13 +110,14 @@ export function DetailedRecommendationCard({
       {/* Imagen + info superior + fondo de color */}
       <div className="relative w-full">
         <div className="relative h-48">
-          <Image
-            src={`https://${API_BASE}/` + recommendation.recommendationImages[0].url}
-            alt={recommendation.title}
-            fill
-            unoptimized
-            className="object-cover"
-          />
+        <Image
+          src={mainImage}
+          alt={recommendation.title}
+          fill
+          unoptimized
+          className="object-cover"
+        />
+
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 to-transparent"></div>
           <div className="absolute top-3 left-3">
             <Badge className={getCategoryBadgeColor()}>

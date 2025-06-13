@@ -197,6 +197,7 @@ export default function ForumsPage() {
         setNewForumDescription('')
         setNewForumCategory(9)
         getForums()
+        loadForumCountries()
       } catch (err: any) {
         console.error("Error creating forum:", err)
         toast.error("Failed to create forum.")

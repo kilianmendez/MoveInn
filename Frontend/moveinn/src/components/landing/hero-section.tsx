@@ -1,6 +1,9 @@
+"use client"
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
 export function HeroSection() {
+    const router = useRouter()
     return (
         <section className="relative overflow-hidden bg-background">
         <div className="absolute inset-0 bg-gradient-to-r from-background via-foreground/50 to-background z-0"></div>
@@ -19,14 +22,8 @@ export function HeroSection() {
                 hosts, join events, and more!
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="bg-[#4C69DD] hover:bg-[#4C69DD]/90 text-white font-bold px-8 py-6 text-lg">
+                <Button className="bg-[#4C69DD] hover:bg-[#4C69DD]/90 text-white font-bold px-8 py-6 text-lg" onClick={() => router.push("/login")}>
                     Get Started
-                </Button>
-                <Button
-                    variant="outline"
-                    className="border-[#FFBF00] text-[#FFBF00] hover:bg-[#FFBF00]/10 px-8 py-6 text-lg"
-                >
-                    How It Works
                 </Button>
                 </div>
                 <div className="mt-8 flex items-center">

@@ -73,8 +73,6 @@ export interface Forum {
 
 
 export default function ForumCard({ forum }: { forum: Forum }) {
-  console.log("Forum creator info:", forum)
-
   return (
     <Link href={`/dashboard/forums/${forum.id}`}>
       <Card className="flex flex-col bg-none py-0 px-0 justify-between border border-none shadow-md transition-all hover:shadow-lg rounded-md min-h-[280px] lg:min-h-[320px]">

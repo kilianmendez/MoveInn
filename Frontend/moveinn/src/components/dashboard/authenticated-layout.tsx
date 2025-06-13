@@ -43,21 +43,10 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   const { theme, setTheme } = useTheme()
   const pathname = usePathname()
 
-  const [unreadMessages, setUnreadMessages] = useState(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("unreadMessages")
-      return saved ? parseInt(saved, 10) : 0
-    }
-    return 0
-  })
+  const [unreadMessages, setUnreadMessages] = useState(0)
+
 
   const { lastMessage } = useWebsocket()
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("unreadMessages", unreadMessages.toString())
-    }
-  }, [unreadMessages])
 
   useEffect(() => {
     if (lastMessage?.action === "new_message") {
@@ -68,7 +57,6 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
   useEffect(() => {
     if (pathname === "/dashboard/messages" && unreadMessages > 0) {
       setUnreadMessages(0)
-      localStorage.removeItem("unreadMessages")
     }
   }, [pathname])
 
@@ -206,7 +194,7 @@ export function AuthenticatedLayout({ children }: { children: React.ReactNode })
                 className="w-9 h-9 rounded-full object-cover border border-gray-300"
               />
             )}
-{/*  */}
+
 
               <div className="flex flex-col gap-2">
                 <span className="text-sm font-medium text-text">{user?.name}</span>

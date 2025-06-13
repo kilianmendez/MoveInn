@@ -176,6 +176,7 @@ export default function RecommendationsPage() {
   
       toast.success("Recommendation created successfully!")
       await fetchRecommendations()
+      await fetchCountries()
   
       // Reset form
       setFormData({
@@ -255,6 +256,7 @@ export default function RecommendationsPage() {
         ? response.data.items
         : response.data.recommendations ?? []
   
+      console.log("Recommendations:", data)
       setRecommendations(data)
       setTotalPages(response.data.totalPages || 1)
     } catch (error) {

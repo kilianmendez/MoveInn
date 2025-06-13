@@ -6,7 +6,6 @@ import { useAuth } from "@/context/authcontext"
 import { useWebsocket } from "@/context/WebSocketContext"
 import type { Contact } from "@/components/messages/UseContact"
 import { Check, CheckCheck, Send, Paperclip, Smile, MessageCircleDashed } from "lucide-react"
-import { API_BASE, API_BASE_URL } from "@/utils/endpoints/config"
 
 interface ChatMessage {
   id: string
@@ -47,7 +46,7 @@ export function ChatWindow({ contact, onSend }: ChatWindowProps) {
     if (!contact || !user?.id || !token) return
     ;(async () => {
       try {
-        const { data } = await axios.get<ChatMessage[]>(`${API_BASE_URL}/Chat/history`, {
+        const { data } = await axios.get<ChatMessage[]>("https://localhost:7023/api/Chat/history", {
           params: { userId: user.id, contactId: contact.otherUserId },
           headers: { Authorization: `Bearer ${token}` },
         })

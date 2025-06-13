@@ -134,6 +134,21 @@ interface Recommendation {
     }
   }
 
+  const translateMessageToEnglish = (message: string): string => {
+    const lower = message.toLowerCase()
+  
+    if (lower.includes("ha dejado de seguirte")) return "Someone has unfollowed you."
+    if (lower.includes("te ha empezado a seguir")) return "Someone started following you."
+    if (lower.includes("te ha enviado un mensaje")) return "Someone sent you a message."
+    if (lower.includes("nueva recomendación")) return "New recommendation received."
+    if (lower.includes("nuevo evento")) return "New event created."
+    if (lower.includes("nueva notificación")) return "You have a new notification."
+    if (lower.includes("ha marcado como leído")) return "Your message was marked as read."
+  
+    return message
+  }
+  
+
 export default function DashboardPage() {
     const { user } = useAuth()
     const [recommendations, setRecommendations] = useState<Recommendation[]>([])
@@ -142,32 +157,11 @@ export default function DashboardPage() {
     const [isLoadingDashboard, setIsLoadingDashboard] = useState(true)
     const [dashboardHosts, setDashboardHosts] = useState<any[]>([])
     const [notifications, setNotifications] = useState<
-  { message: string; timestamp: number; type: "message" | "event" | "group" | "recommendation" | "system" }[]
-  >(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const saved = localStorage.getItem("notifications")
-        return saved ? JSON.parse(saved) : []
-      } catch {
-        return []
-      }
-    }
-    return []
-  })
-
-    
+    { message: string; timestamp: number; type: "message" | "event" | "group" | "recommendation" | "system" }[]
+    >([])
 
     const { lastMessage } = useWebsocket()
-
-    useEffect(() => {
-      try {
-        localStorage.setItem("notifications", JSON.stringify(notifications))
-      } catch (e) {
-        console.error("Error saving notifications to localStorage", e)
-      }
-    }, [notifications]) 
-    
-
+     
     useEffect(() => {
       const fetchSenderNameAndNotify = async (senderId: string, content: string) => {
         try {
@@ -181,17 +175,18 @@ export default function DashboardPage() {
           setNotifications((prev) => [
             ...prev,
             {
-              message: `${fullName} te ha enviado un mensaje: "${content}"`,
+              message: `${fullName} sent you a message: "${content}"`,
               timestamp: Date.now(),
               type: "message"
             }
           ])
+                    
         } catch (err) {
           console.error("Error fetching sender name:", err)
           setNotifications((prev) => [
             ...prev,
             {
-              message: `Alguien te ha enviado un mensaje: "${content}"`,
+              message: `Someone sent you a message: "${content}"`,
               timestamp: Date.now(),
               type: "message"
             }
@@ -203,7 +198,7 @@ export default function DashboardPage() {
         setNotifications((prev) => [
           ...prev,
           {
-            message: lastMessage.message,
+            message: translateMessageToEnglish(lastMessage.message),
             timestamp: Date.now(),
             type: "system"
           }
@@ -589,11 +584,11 @@ export default function DashboardPage() {
                       className="dark:text-text-secondary"
                       onClick={() => {
                         setNotifications([])
-                        localStorage.removeItem("notifications")
                       }}
                     >
                       Mark all as read
                     </Button>
+
 
                   </CardHeader>
 

@@ -198,9 +198,13 @@ const filteredCountries = availableCountries
       "acommodationType"
     ]
   
-    const missingFields = requiredFields.filter(
-      (field) => !newAcommodation[field as keyof typeof newAcommodation]
-    )
+    const missingFields = requiredFields.filter((field) => {
+      const value = newAcommodation[field as keyof typeof newAcommodation]
+      if (typeof value === "string") return value.trim() === ""
+      if (typeof value === "number") return isNaN(value)
+      return value === null || value === undefined
+    })
+    
   
     if (missingFields.length > 0 || imageFiles.length === 0) {
       toast.error("Please fill in all required fields and upload at least one image.")
@@ -223,6 +227,7 @@ const filteredCountries = availableCountries
       formData.append("Bathrooms", String(newAcommodation.bathrooms))
       formData.append("SquareMeters", String(newAcommodation.squareMeters))
       formData.append("AcommodationType", String(newAcommodation.acommodationType))
+      formData.append("HasWifi", String(newAcommodation.hasWifi)) // 👈 correcto ahora
       formData.append("AvailableFrom", new Date(newAcommodation.availableFrom).toISOString())
       formData.append("AvailableTo", new Date(newAcommodation.availableTo).toISOString())
       formData.append("OwnerId", ownerId)
@@ -232,16 +237,20 @@ const filteredCountries = availableCountries
       })
   
       setIsPosting(true)
+      // DEBUG: Ver contenido de formData
+      for (const pair of formData.entries()) {
+        console.log(`${pair[0]}:`, pair[1])
+      }
       await axios.post(API_CREATE_ACCOMMODATION, formData, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data"
+          Authorization: `Bearer ${token}` // 👈 sin Content-Type
         }
       })
   
       toast.success("Accommodation created successfully")
       setShowCreateForm(false)
       setImageFiles([])
+  
       if (!availableCountries.includes(newAcommodation.country)) {
         setAvailableCountries((prev) => [...prev, newAcommodation.country])
       }
@@ -254,6 +263,7 @@ const filteredCountries = availableCountries
       setIsPosting(false)
     }
   }
+  
   
   
   
@@ -324,6 +334,7 @@ const filteredCountries = availableCountries
                     <label className="block text-sm font-medium text-text-secondary mb-1">{label}</label>
                     <Input
                       type={type}
+                      min={type === "number" ? 0 : undefined}
                       name={name}
                       value={value}
                       onChange={(e) => setNewAcommodation({ ...newAcommodation, [name]: type === "number" ? parseFloat(e.target.value) : e.target.value })}

@@ -340,7 +340,7 @@ export function UserProfile() {
               <CardDescription className="text-gray-500 dark:text-gray-400">Details of your user profile</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              <ProfileInfo user={user} />
+              <ProfileInfo />
             </CardContent>
           </Card>
         </TabsContent>

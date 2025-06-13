@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '@/context/authcontext';
-import { API_BASE, API_BASE_URL } from '@/utils/endpoints/config';
+import { API_CHAT_GET_CONTACTS } from '@/utils/endpoints/config';
 
 export interface Contact {
   otherUserId: string;
@@ -25,13 +25,13 @@ export const useContacts = () => {
       setError(null);
       try {
         const { data } = await axios.get<Contact[]>(
-          `${API_BASE_URL}/Chat/${user.id}`,
+          API_CHAT_GET_CONTACTS(user.id),
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        console.log("data", data)
         setContacts(data);
       } catch (err: any) {
         if (err.response?.status === 404) {
-          // No hay contactos, no es un error real
           setContacts([]);
           setError(null);
         } else {

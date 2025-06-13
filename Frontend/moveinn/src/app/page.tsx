@@ -1,3 +1,4 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -8,8 +9,10 @@ import FeatureCard from "@/components/landing/feature-card"
 import TestimonialCard from "@/components/landing/testimonial-card"
 import { HeroSection } from "@/components/landing/hero-section"
 import { Navbar } from "@/components/landing/navbar"
+import { useRouter } from "next/navigation"
 
 export default function Home() {
+  const router = useRouter()
   return (
     <main className="flex min-h-screen flex-col bg-gradient-to-b from-bacground to-foreground/30">
       {/* Navbar */}
@@ -136,7 +139,7 @@ export default function Home() {
           </div>
 
           <Tabs defaultValue="accommodations" className="w-full text-primary-dark">
-            <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:grid-cols-7 mb-8 bg-[#E7ECF0]/30 dark:bg-[#E7ECF0]/10 p-1 rounded-lg text-primary-dark">
+          <TabsList className="flex w-full overflow-x-auto flex-nowrap justify-start md:justify-center gap-2 p-1 bg-[#E7ECF0]/30 dark:bg-[#E7ECF0]/10 rounded-lg scrollbar-hide">
               <TabsTrigger value="accommodations" className="data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:text-white rounded-full text-text">
                 Accommodations
               </TabsTrigger>
@@ -204,7 +207,7 @@ export default function Home() {
           <p className="text-sm mb-4">
             Cozy shared flat in the Eixample district, ideal for Erasmus students looking to live close to city life and university.
           </p>
-          <Button className="w-full bg-[#4C69DD] hover:bg-[#4C69DD]/90">See More Options</Button>
+          <Button className="w-full bg-primary text-white hover:bg-[#4C69DD]/90">See More Options</Button>
         </div>
       </div>
     </CardContent>
@@ -262,13 +265,13 @@ export default function Home() {
                         accommodation, and showing you the best spots in Barcelona!
                       </p>
                       <div className="flex flex-wrap gap-2 mb-4">
-                        <Badge variant="outline" className="text-[#4C69DD] border-[#4C69DD]">
+                        <Badge variant="outline" className="text-primary border-primary dark:text-text-secondary dark:border-text-secondary">
                           Spanish
                         </Badge>
                         <Badge variant="outline" className="text-[#62C3BA] border-[#62C3BA]">
                           English
                         </Badge>
-                        <Badge variant="outline" className="text-[#0E1E40] border-[#0E1E40] dark:text-accent dark:border-accent">
+                        <Badge variant="outline" className="text-accent-dark border-accent-dark dark:text-accent dark:border-accent">
                           Economics
                         </Badge>
                       </div>
@@ -309,7 +312,7 @@ export default function Home() {
                         <p className="text-sm mb-2 dark:text-gray-300">
                           Join us for a weekend getaway to explore the beautiful city of Porto!
                         </p>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center text-sm text-gray-800 dark:text-gray-100 bg-background/30 rounded-full w-fit p-1 px-2">
                           <CalendarIcon className="h-4 w-4 mr-1 dark:text-gray-200" />
                           <span>March 27, 2025</span>
                         </div>
@@ -322,7 +325,7 @@ export default function Home() {
                         <p className="text-sm mb-2 dark:text-gray-300">
                           Practice languages with other international students in a fun, casual setting.
                         </p>
-                        <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
+                        <div className="flex items-center text-sm text-gray-800 dark:text-gray-100 bg-background/30 rounded-full w-fit p-1 px-2">
                           <CalendarIcon className="h-4 w-4 mr-1 text-gray-600 dark:text-gray-200 rounded-full" />
                           <span>Thursday, 7PM</span>
                         </div>
@@ -380,14 +383,14 @@ export default function Home() {
                       </div>
                       <div className="p-3 h-48 bg-gray-50 dark:bg-foreground flex flex-col">
                         <div className="mb-2">
-                          <p className="text-xs text-gray-500 mb-1">You, 2:34 PM</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-200 mb-1">You, 2:34 PM</p>
                           <div className="bg-secondary/50 rounded-lg p-2 text-sm inline-block dark:text-gray-100">
                             Hi Jan! I&apos;m arriving in Prague next week. Any tips for public transportation from the
                             airport?
                           </div>
                         </div>
                         <div className="mb-2">
-                          <p className="text-xs text-gray-500 mb-1">Jan, 2:36 PM</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-200 mb-1">Jan, 2:36 PM</p>
                           <div className="bg-secondary-greenblue/50 rounded-lg p-2 text-sm inline-block dark:text-gray-100">
                             Welcome! The easiest way is to take Bus 119 to Nádraží Veleslavín and then the Metro line A
                             to the city center. I can meet you at the station if you&apos;d like!
@@ -653,7 +656,7 @@ export default function Home() {
             Join thousands of students who are making the most of their time abroad with MoveInn.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button className="bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#0E1E40] px-8 py-6 text-lg font-bold">
+            <Button onClick={() => router.push("/register")} className="bg-[#FFBF00] hover:bg-[#FFBF00]/90 text-[#0E1E40] px-8 py-6 text-lg font-bold">
               Sign Up Now
             </Button>
           </div>
