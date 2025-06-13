@@ -72,9 +72,8 @@ npm run dev
 ## ⚙️ Uso
 
 Para familiarizarte rápidamente con **MoveInn**, puedes comenzar viendo nuestro vídeo de presentación justo aquí:
-
-[![▶️ Vídeo Explicativo de MoveInn](https://img.youtube.com/vi/K4JG6JG6JG6/0.jpg)](https://www.youtube.com/watch?v=K4JG6JG6JG6)  
-> ▶️ [Ver en YouTube](https://www.youtube.com/watch?v=K4JG6JG6JG6)
+ 
+> ▶️ [Ver en YouTube](https://youtu.be/sUsgN_m38qs?si=CIbmKzDAScnmd86f)
 
 A continuación, sigue estos pasos para empezar a disfrutar de la plataforma:
 
