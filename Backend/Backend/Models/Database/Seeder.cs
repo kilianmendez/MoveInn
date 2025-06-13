@@ -540,7 +540,7 @@ namespace Backend.Models.Database
                     AcommodationType = AcommodationType.Apartment,
                     HasWifi = true,
                     AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableTo = new DateTime(2025, 12, 31),
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
@@ -565,7 +565,7 @@ namespace Backend.Models.Database
                     AcommodationType = AcommodationType.Others,
                     HasWifi = true,
                     AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableTo = new DateTime(2025, 12, 31),
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
@@ -590,7 +590,7 @@ namespace Backend.Models.Database
                     AcommodationType = AcommodationType.Rural,
                     HasWifi = true,
                     AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableTo = new DateTime(2025, 12, 31),
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
@@ -615,7 +615,7 @@ namespace Backend.Models.Database
                     AcommodationType = AcommodationType.House,
                     HasWifi = true,
                     AvailableFrom = new DateTime(2025, 1, 1),
-                    AvailableTo = new DateTime(2025, 5, 31),
+                    AvailableTo = new DateTime(2025, 12, 31),
                     OwnerId = users[2].Id,
                     AccomodationImages = new List<ImageAccommodation>
                     {
@@ -644,7 +644,7 @@ namespace Backend.Models.Database
                     StartDate = new DateTime(2025, 08, 01),
                     EndDate = new DateTime(2025, 08, 05),
                     TotalPrice = 1500.00m,
-                    Status = ReservationStatus.Confirmed,
+                    Status = ReservationStatus.Completed,
                     UserId = users[1].Id,
                     AccommodationId = accommodations[1].Id
                 },
@@ -681,16 +681,16 @@ namespace Backend.Models.Database
                     ReservationId = reservations[3].Id,
                     UserId = reservations[3].UserId
                 },
-                new Review
-                {
-                    Id = Guid.NewGuid(),
-                    Title = "Buena, pero puede mejorar",
-                    Content = "Aunque el lugar es bonito, la limpieza y algunos servicios deben mejorar.",
-                    Rating = Rating.Three,
-                    CreatedAt = DateTime.UtcNow,
-                    ReservationId = reservations[0].Id,
-                    UserId = reservations[0].UserId
-                },
+                //new Review
+                //{
+                //    Id = Guid.NewGuid(),
+                //    Title = "Buena, pero puede mejorar",
+                //    Content = "Aunque el lugar es bonito, la limpieza y algunos servicios deben mejorar.",
+                //    Rating = Rating.Three,
+                //    CreatedAt = DateTime.UtcNow,
+                //    ReservationId = reservations[0].Id,
+                //    UserId = reservations[0].UserId
+                //},
                 new Review
                 {
                     Id = Guid.NewGuid(),
