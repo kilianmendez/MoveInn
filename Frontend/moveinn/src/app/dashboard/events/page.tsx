@@ -30,6 +30,7 @@ import countries from "i18n-iso-countries"
 import enLocale from "i18n-iso-countries/langs/en.json"
 import Flag from "react-world-flags"
 import { CountrySearch, CitySearch } from "@/components/ui/country-city-search"
+import { startOfDay } from "date-fns"
 
 countries.registerLocale(enLocale)
 
@@ -97,7 +98,7 @@ export default function EventsPage() {
       setLimit(9999)
       setPage(1) // opcional: para asegurar que obtienes todo desde el principio
     } else {
-      setLimit(5)
+      setLimit(userClickedDate ? 9999 : 5)
     }
   }, [viewMode])
   
@@ -202,11 +203,11 @@ export default function EventsPage() {
     if (user?.id) {
       fetchFilteredEvents()
     }
-  }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, selectedCountry, selectedCity, user?.id])
+  }, [query, locationFilter, categoryFilter, tagFilter, sortField, sortOrder, page, limit, selectedCountry, selectedCity, user?.id, selectedDate, userClickedDate])
   
   
   const filteredEvents = events.filter(event => {
-    const matchDate = userClickedDate ? isSameDay(event.date, selectedDate) : true;
+    const matchDate = userClickedDate ? isSameDay(startOfDay(event.date), startOfDay(selectedDate)) : true;
     const matchCategory = activeFilters.length === 0 || activeFilters.includes(event.category);
     return matchDate && matchCategory;
   })
@@ -376,7 +377,7 @@ export default function EventsPage() {
                 />
               </div>
               <div className="flex flex-wrap gap-2">
-                <Tabs defaultValue="list">
+                <Tabs value={viewMode} onValueChange={(val) => setViewMode(val as "list" | "calendar")}>
                   <TabsList className="bg-white/10 border border-white/20">
                     <TabsTrigger
                       value="list"
@@ -715,7 +716,7 @@ export default function EventsPage() {
       variant="outline"
       onClick={() => {
         setUserClickedDate(false)
-        setSelectedDate(new Date(0))
+        setSelectedDate(new Date())
         setPage(1)
       }}
       className="text-sm bg-background border border-primary text-primary hover:bg-primary hover:text-white transition"
@@ -778,7 +779,7 @@ export default function EventsPage() {
     events={events}
     selectedDate={selectedDate}
     setSelectedDate={(date) => {
-      setSelectedDate(date)
+      setSelectedDate(startOfDay(date))
       setUserClickedDate(true)
       setPage(1)
       setViewMode("list")
