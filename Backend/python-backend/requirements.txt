@@ -1,0 +1,14 @@
+fastapi==0.104.1
+uvicorn[standard]==0.23.2
+sqlalchemy==2.0.22
+pydantic==2.4.2
+pydantic-settings==2.0.3
+python-dotenv==1.0.0
+PyJWT==2.8.0
+alembic==1.12.0
+httpx==0.25.0
+stripe
+bcrypt==4.0.1
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.25.0

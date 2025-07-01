@@ -1,0 +1,442 @@
+# Product Requirements Document (PRD): Migration from C# Backend to Python FastAPI
+
+## 1. Project Overview
+- **Goal:** Migrate the existing C# backend (ASP.NET Core) to Python using FastAPI, maintaining all current features, endpoints, business logic, and integrations.
+- **Scope:** The migration must cover all API endpoints, data models, business logic, authentication, real-time features (WebSockets), and third-party integrations (e.g., Stripe).
+- **Target:** The new backend must be functionally equivalent, with improved maintainability and Pythonic best practices.
+
+## 2. Architecture & Technology Stack
+- **Current:**
+  - ASP.NET Core Web API
+  - Entity Framework Core (MySQL)
+  - JWT Authentication
+  - WebSockets for real-time features
+  - Stripe for payments
+  - Swagger/OpenAPI for documentation
+- **Target:**
+  - Python 3.10+
+  - FastAPI (for REST API and WebSockets)
+  - SQLAlchemy (ORM) with MySQL
+  - PyJWT or FastAPI JWT Auth for authentication
+  - `websockets` or FastAPI's WebSocket support
+  - Stripe Python SDK
+  - Pydantic for data validation
+  - FastAPI's built-in OpenAPI/Swagger
+
+## 3. API Endpoints & Controllers
+- **All endpoints must be preserved.**
+- **Controllers to migrate:**
+  - AccommodationController
+  - AdminController
+  - AuthController
+  - ChatController
+  - CountryCitiesController
+  - EventController
+  - ForumController
+  - FollowController
+  - MessagesController
+  - HostController
+  - PaymentController
+  - RecommendationController
+  - ReservationController
+  - ReviewController
+  - UserController
+  - WebSocketController
+- **For each controller:**
+  - Replicate all routes, HTTP methods, request/response models, and status codes.
+  - Ensure all business logic and validation is preserved.
+  - Use Pydantic models for request/response schemas.
+
+## 4. Data Models & Database Layer
+- **Entities to migrate:**
+  - User, UserLanguage, Review, SocialMediaLink, Speciality, Messages, Recommendation, Reservation, Hosts, Image, ImageAccommodation, ForumMessages, ForumThread, Forum, Event, Follow, Accommodation, CountryCities, StripeSettings
+- **Requirements:**
+  - Define SQLAlchemy models for each entity, matching all fields, types, and relationships (FKs, many-to-many, etc.).
+  - Migrate all enums (e.g., Role, Rating, Category, etc.) to Python Enums.
+  - Implement repository/service pattern for data access and business logic.
+  - Migrate all DTOs to Pydantic models for input/output validation.
+  - Migrate all migrations/schema changes (see Migrations folder) to Alembic or equivalent.
+
+## 4.1. Model Specifications
+
+Below are the required fields and relationships for each model/entity:
+
+### User
+- Id (Guid, PK)
+- Name (string, required)
+- LastName (string, optional)
+- Mail (string, required, email)
+- Password (string, required)
+- Role (enum: Role, default User)
+- Biography (string, optional)
+- AvatarUrl (string, optional)
+- School, Degree, Nationality (string, optional)
+- City, ErasmusCountry (string, optional)
+- ErasmusDate (DateOnly)
+- Phone (string, required)
+- Relationships: Accommodations, SocialMedias, Recommendations, CreatedEvents, ParticipatingEvents, Host, Languages, Followings, Followers
+
+### UserLanguage
+- Id (Guid, PK)
+- Language (string)
+- Level (enum: LanguageLevel)
+- UserId (Guid, FK)
+- Relationship: User
+
+### Review
+- Id (Guid, PK)
+- Title (string)
+- Content (string)
+- Rating (enum: Rating)
+- CreatedAt (DateTime, default now)
+- ReservationId (Guid, FK)
+- UserId (Guid, FK)
+- Relationships: Reservation, User
+
+### SocialMediaLink
+- Id (int, PK)
+- SocialMedia (enum: SocialMedia)
+- Url (string)
+- UserId (Guid, FK)
+- Relationship: User
+
+### Speciality
+- Id (Guid, PK)
+- Name (string)
+- Relationship: Hosts (many-to-many)
+
+### Messages
+- Id (Guid, PK)
+- SenderId (Guid, FK)
+- ReceiverId (Guid, FK, optional)
+- Content (string)
+- MessageType (string, default "text")
+- SentAt (DateTime, default now)
+- Status (string, default "sent")
+- Relationships: Sender (User), Receiver (User, optional)
+
+### Recommendation
+- Id (Guid, PK)
+- Title (string, required)
+- Description (string, optional)
+- Category (enum: Category, optional)
+- Address, City, Country (string)
+- Rating (enum: Rating, optional)
+- CreatedAt (DateTime, default now)
+- Tags (list of string)
+- RecommendationImages (list of Image)
+- UserId (Guid, FK, optional)
+- Relationship: User
+
+### Reservation
+- Id (Guid, PK)
+- StartDate, EndDate (DateTime)
+- TotalPrice (decimal)
+- Status (enum: ReservationStatus, default Pending)
+- UserId (Guid, FK)
+- AccommodationId (Guid, FK)
+- Relationships: User, Accommodation
+
+### Hosts
+- Id (Guid, PK)
+- UserId (Guid, FK)
+- Reason (string)
+- CreatedAt (DateTime, default now)
+- Status (enum: RequestStatus, default Pending)
+- HostSince (DateTime, optional)
+- UpdatedAt (DateTime, optional)
+- Specialties (list of Speciality)
+- Relationship: User
+
+### Image
+- Id (Guid, PK)
+- Url (string, required)
+- CreatedAt (DateTime, default now)
+- UserId (Guid, FK, optional)
+- RecommendationId (Guid, FK, optional)
+- Relationships: User, Recommendation
+
+### ImageAccommodation
+- Id (Guid, PK)
+- Url (string, required)
+- CreatedAt (DateTime, default now)
+- AccommodationId (Guid, FK)
+- Relationship: Accommodation
+
+### ForumMessages
+- Id (Guid, PK)
+- ThreadId (Guid, FK)
+- Content (string)
+- CreatedAt (DateTime)
+- CreatedBy (Guid)
+- ParentMessageId (Guid, optional)
+- Relationships: Thread (ForumThread), ParentMessage (ForumMessages, optional), Replies (list of ForumMessages)
+
+### ForumThread
+- Id (Guid, PK)
+- ForumId (Guid, FK)
+- Title (string)
+- Content (string)
+- CreatedAt (DateTime)
+- CreatedBy (Guid)
+- Relationships: Forum, Posts (list of ForumMessages)
+
+### Forum
+- Id (Guid, PK)
+- Title (string)
+- Description (string)
+- Country (string)
+- Category (enum: ForumCategory)
+- CreatedAt (DateTime)
+- CreatedBy (Guid)
+- Relationships: Threads (list of ForumThread)
+
+### Event
+- Id (Guid, PK)
+- Title (string, required)
+- Date (DateTime)
+- Location, Address, City, Country (string)
+- AttendeesCount (int, default 0)
+- MaxAttendees (int, optional)
+- Category (string)
+- Description (string)
+- ImageUrl (string)
+- Tags (list of string)
+- CreatorId (Guid, FK)
+- Participants (list of User)
+- Relationship: Creator (User)
+
+### Follow
+- FollowId (Guid, PK)
+- FollowerId (Guid, FK)
+- FollowingId (Guid, FK)
+- CreatedAt (DateTime, default now)
+- Relationships: Follower (User), Following (User)
+
+### Accommodation
+- Id (Guid, PK)
+- Title (string, required)
+- Description (string)
+- Address, City, Country (string, required)
+- PricePerMonth (decimal)
+- NumberOfRooms, Bathrooms, SquareMeters (int)
+- HasWifi (bool)
+- AvailableFrom, AvailableTo (DateTime)
+- OwnerId (Guid, FK)
+- AcommodationType (enum: AcommodationType)
+- AccomodationImages (list of ImageAccommodation)
+- Relationship: Owner (User)
+
+### CountryCities
+- Used for country/city data responses, not a DB entity. Contains:
+  - Name (string)
+  - Flag (string)
+  - For cities: Data (list of string)
+
+### StripeSettings
+- SecretKey (string)
+- PublishableKey (string)
+
+## 4.2. Enum Definitions and Expanded Details
+
+Below are the explicit values for all enums referenced in the models, as well as expanded explanations for all relationships and fields:
+
+### Enum: Role
+- User
+- Administrator
+- Banned
+
+### Enum: LanguageLevel
+- Beginner
+- Intermediate
+- Advanced
+- Native
+
+### Enum: Rating
+- OneStar
+- TwoStars
+- ThreeStars
+- FourStars
+- FiveStars
+
+### Enum: SocialMedia
+- Facebook
+- Instagram
+- Twitter
+- LinkedIn
+- TikTok
+- WhatsApp
+- Telegram
+- Snapchat
+- YouTube
+- Other
+
+### Enum: Category (Recommendation)
+- Food
+- Nightlife
+- Culture
+- Shopping
+- Nature
+- Sports
+- Services
+- Other
+
+### Enum: EventCategory
+- Party
+- Conference
+- Workshop
+- Meetup
+- Festival
+- Sports
+- Other
+
+### Enum: ForumCategory
+- General
+- Accommodation
+- Events
+- Recommendations
+- LanguageExchange
+- Travel
+- Study
+- Work
+- Other
+
+### Enum: RequestStatus
+- Pending
+- Approved
+- Rejected
+
+### Enum: ReservationStatus
+- Pending
+- Confirmed
+- Cancelled
+- Completed
+
+### Enum: AcommodationType
+- Apartment
+- House
+- Room
+- Studio
+- SharedApartment
+- Other
+
+---
+
+#### Expanded Relationships and Field Explanations
+
+- **User.Accommodations**: List of all accommodations owned by the user (one-to-many).
+- **User.SocialMedias**: List of all social media links associated with the user (one-to-many).
+- **User.Recommendations**: List of all recommendations created by the user (one-to-many).
+- **User.CreatedEvents**: List of events where the user is the creator (one-to-many).
+- **User.ParticipatingEvents**: List of events the user is participating in (many-to-many).
+- **User.Host**: Host profile for the user, if they are a host (one-to-one, optional).
+- **User.Languages**: List of languages the user speaks, with proficiency levels (one-to-many).
+- **User.Followings**: List of follow relationships where the user is following others (one-to-many).
+- **User.Followers**: List of follow relationships where the user is being followed (one-to-many).
+
+- **Accommodation.AccomodationImages**: List of images associated with the accommodation (one-to-many).
+- **Accommodation.Owner**: The user who owns the accommodation (many-to-one).
+
+- **Recommendation.RecommendationImages**: List of images associated with the recommendation (one-to-many).
+- **Recommendation.User**: The user who created the recommendation (many-to-one, optional).
+
+- **Reservation.User**: The user who made the reservation (many-to-one).
+- **Reservation.Accommodation**: The accommodation being reserved (many-to-one).
+
+- **Hosts.User**: The user who is the host (one-to-one).
+- **Hosts.Specialties**: List of specialties the host has (many-to-many).
+
+- **Image.User**: The user who uploaded the image (many-to-one, optional).
+- **Image.Recommendation**: The recommendation the image is associated with (many-to-one, optional).
+
+- **ImageAccommodation.Accommodation**: The accommodation the image is associated with (many-to-one).
+
+- **Forum.Threads**: List of threads in the forum (one-to-many).
+- **Forum.CreatedBy**: The user who created the forum (many-to-one).
+
+- **ForumThread.Forum**: The forum this thread belongs to (many-to-one).
+- **ForumThread.Posts**: List of messages in the thread (one-to-many).
+- **ForumThread.CreatedBy**: The user who created the thread (many-to-one).
+
+- **ForumMessages.Thread**: The thread this message belongs to (many-to-one).
+- **ForumMessages.ParentMessage**: The parent message if this is a reply (self-referencing, optional).
+- **ForumMessages.Replies**: List of replies to this message (self-referencing, one-to-many).
+- **ForumMessages.CreatedBy**: The user who created the message (many-to-one).
+
+- **Event.Creator**: The user who created the event (many-to-one).
+- **Event.Participants**: List of users participating in the event (many-to-many).
+
+- **Follow.Follower**: The user who is following (many-to-one).
+- **Follow.Following**: The user being followed (many-to-one).
+
+- **Messages.Sender**: The user who sent the message (many-to-one).
+- **Messages.Receiver**: The user who received the message (many-to-one, optional).
+
+- **CountryCities**: Used for country/city data responses, not a DB entity. Contains:
+  - Name: Name of the country
+  - Flag: URL or identifier for the country's flag
+  - Data: For cities, a list of city names
+
+- **StripeSettings**: Contains Stripe API keys for payment integration.
+  - SecretKey: The secret API key for Stripe
+  - PublishableKey: The public API key for Stripe
+
+---
+
+All relationships are to be implemented using SQLAlchemy's relationship and foreign key mechanisms. All enums must be implemented as Python Enums and referenced in SQLAlchemy and Pydantic models. No field, relationship, or enum value should be omitted or left ambiguous in the migration.
+
+## 5. Business Logic & Services
+- **Services to migrate:**
+  - AccommodationService, AdminService, AuthService, ChatService, CountriesNowService, EventService, FollowService, ForumService, HostService, MessagesService, NotificationService, PaymentService, RecommendationService, ReservationService, ReviewService, SmartSearchService, UserService
+- **Requirements:**
+  - Replicate all business logic, validation, and workflows in Python service classes.
+  - Ensure all dependencies are injected using FastAPI's dependency injection system.
+  - Integrate with external APIs (e.g., CountriesNow, Stripe) as in the original code.
+
+## 6. Authentication & Authorization
+- **JWT-based authentication:**
+  - Use PyJWT or FastAPI JWT Auth for token creation and validation.
+  - Replicate all authentication flows (login, register, role-based access, etc.).
+  - Ensure secure password storage (bcrypt or similar).
+  - Implement role-based access control (RBAC) as per C# enums and attributes.
+
+## 7. Real-Time & WebSocket Features
+- **WebSocket endpoints:**
+  - Replicate all real-time features (chat, notifications, follow/unfollow, etc.) using FastAPI's WebSocket support.
+  - Implement connection management, message routing, and event handling as in WebSocketHandler.cs.
+  - Ensure JWT validation for WebSocket connections.
+  - Implement middleware for WebSocket requests as needed.
+
+## 8. Configuration & Environment
+- **Migrate all configuration settings:**
+  - Logging levels
+  - Stripe API keys
+  - Database connection strings
+  - Allowed hosts/CORS
+  - JWT secret key
+- **Use environment variables and/or config files (e.g., .env, config.py) in Python.**
+
+## 9. Third-Party Integrations
+- **Stripe:**
+  - Migrate all payment logic to use the Stripe Python SDK.
+  - Ensure secure handling of API keys and payment flows.
+- **CountriesNow API:**
+  - Replicate all country/city lookup features using Python HTTP clients (e.g., httpx).
+
+## 10. Testing & Documentation
+- **Testing:**
+  - Write unit and integration tests for all endpoints and business logic.
+  - Use pytest and FastAPI's TestClient.
+- **Documentation:**
+  - Ensure all endpoints are documented via FastAPI's OpenAPI/Swagger UI.
+  - Provide migration notes and mapping tables (C# class → Python class, etc.).
+
+## 11. Migration Notes & Special Considerations
+- **Preserve all business rules, validation, and error handling.**
+- **Ensure all endpoints, models, and workflows are functionally equivalent.**
+- **Document any differences or improvements made during migration.**
+- **Plan for a phased migration and parallel testing if possible.**
+
+---
+
+*This PRD is based on a comprehensive analysis of the current C# backend. All features, endpoints, models, and business logic must be preserved and mapped to Python/FastAPI equivalents. For any ambiguity, refer to the original C# codebase for details.* 
