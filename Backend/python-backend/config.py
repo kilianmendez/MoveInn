@@ -12,6 +12,9 @@ class Settings(BaseSettings):
         env_file_encoding='utf-8'
     )
 
+# JWT secret key for signing tokens (use a secure random value in production)
+JWT_SECRET_KEY = "dev_secret_key_1234567890"
+
 @lru_cache
 def get_settings():
     return Settings()
