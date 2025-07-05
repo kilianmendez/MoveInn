@@ -12,10 +12,13 @@ from models.user import User
 from services.user_service import UserService
 from auth.password_utils import verify_password
 from auth.jwt_utils import create_access_token
+from routers.auth import router as auth_router
 
 settings = get_settings()
 
 app = FastAPI()
+
+app.include_router(auth_router)
 
 @app.get("/")
 def read_root():

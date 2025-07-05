@@ -41,4 +41,10 @@ class UserUpdate(BaseModel):
     phone: Optional[str] = None
     password: Optional[str] = None
     role: Optional[Role] = None
-    languages: Optional[List[LanguageLevel]] = None 
+    languages: Optional[List[LanguageLevel]] = None
+
+class UserLogin(BaseModel):
+    mail: EmailStr
+    password: str
+
+UserResponse = UserRead 

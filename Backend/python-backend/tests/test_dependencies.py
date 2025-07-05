@@ -13,7 +13,7 @@ test_user = User(
     last_name="User",
     mail="test@example.com",
     password="hashed",
-    role="admin"
+    role="Administrator"
 )
 
 @app.get("/protected")

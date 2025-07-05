@@ -12,7 +12,7 @@ admin_data = {
     "last_name": "User",
     "mail": ADMIN_EMAIL,
     "password": hash_password(ADMIN_PASSWORD),
-    "role": "admin",
+    "role": "Administrator",
     "biography": "Superuser account",
     "avatar_url": None,
     "school": None,
@@ -29,7 +29,9 @@ def main():
     repo = UserRepository()
     existing = repo.get_by_mail(db, ADMIN_EMAIL)
     if existing:
-        print(f"Admin user already exists: {existing.mail}")
+        existing.role = "Administrator"
+        db.commit()
+        print(f"Admin user already exists, role updated to Administrator: {existing.mail}")
     else:
         user = repo.create(db, admin_data)
         db.commit()
