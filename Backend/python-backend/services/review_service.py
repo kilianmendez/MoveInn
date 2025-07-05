@@ -24,7 +24,10 @@ class ReviewService:
 
     def delete_review(self, db, review_id, user_id=None):
         """C#: DeleteReviewAsync (user_id for permission checks)"""
-        return self.review_repository.delete(db, review_id)
+        obj = self.review_repository.get_by_id(db, review_id)
+        if obj:
+            return self.review_repository.delete(db, obj)
+        return None
 
     def get_reviews_by_user_id(self, db, user_id):
         """C#: GetReviewsByUserIdAsync (placeholder)"""

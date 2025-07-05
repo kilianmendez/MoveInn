@@ -29,7 +29,10 @@ class RecommendationService:
 
     def update_recommendation(self, db, recommendation_id, update_data: dict):
         """C#: UpdateRecommendationAsync"""
-        return self.recommendation_repository.update(db, recommendation_id, update_data)
+        obj = self.recommendation_repository.get_by_id(db, recommendation_id)
+        if obj:
+            return self.recommendation_repository.update(db, obj, update_data)
+        return None
 
     def store_image(self, file, file_name_prefix: str):
         """C#: StoreImageAsync (placeholder, implement file storage logic)"""
@@ -38,7 +41,10 @@ class RecommendationService:
 
     def delete_recommendation(self, db, recommendation_id, user_id=None):
         """C#: DeleteRecommendationAsync (user_id for permission checks)"""
-        return self.recommendation_repository.delete(db, recommendation_id)
+        obj = self.recommendation_repository.get_by_id(db, recommendation_id)
+        if obj:
+            return self.recommendation_repository.delete(db, obj)
+        return None
 
     def get_recommendations_by_user(self, db, user_id):
         """C#: GetRecommendationsByUserAsync (placeholder)"""

@@ -19,11 +19,17 @@ class EventService:
 
     def update_event(self, db, event_id, update_data: dict):
         """C#: UpdateAsync"""
-        return self.event_repository.update(db, event_id, update_data)
+        obj = self.event_repository.get_by_id(db, event_id)
+        if obj:
+            return self.event_repository.update(db, obj, update_data)
+        return None
 
     def delete_event(self, db, event_id, user_id=None):
         """C#: DeleteEventAsync (user_id for permission checks)"""
-        return self.event_repository.delete(db, event_id)
+        obj = self.event_repository.get_by_id(db, event_id)
+        if obj:
+            return self.event_repository.delete(db, obj)
+        return None
 
     def join_event(self, db, event_id, user_id):
         """C#: JoinAsync (placeholder)"""

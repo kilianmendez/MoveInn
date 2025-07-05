@@ -24,7 +24,10 @@ class AccommodationService:
 
     def update_accommodation(self, db, accommodation_id, update_data: dict, current_user_id=None):
         """C#: UpdateAccommodationAsync (current_user_id for permission checks)"""
-        return self.accommodation_repository.update(db, accommodation_id, update_data)
+        obj = self.accommodation_repository.get_by_id(db, accommodation_id)
+        if obj:
+            return self.accommodation_repository.update(db, obj, update_data)
+        return None
 
     def store_image(self, file, file_name_prefix: str):
         """C#: StoreImageAsync (placeholder, implement file storage logic)"""
@@ -41,9 +44,12 @@ class AccommodationService:
         # Implement city query logic here
         raise NotImplementedError("City query not implemented")
 
-    def delete_accommodation(self, db, forum_id, user_id):
+    def delete_accommodation(self, db, accommodation_id, user_id):
         """C#: DeleteAccommodationAsync (forum_id is likely accommodation_id)"""
-        return self.accommodation_repository.delete(db, forum_id)
+        obj = self.accommodation_repository.get_by_id(db, accommodation_id)
+        if obj:
+            return self.accommodation_repository.delete(db, obj)
+        return None
 
     def get_accommodations_by_user(self, db, user_id):
         """C#: GetAccommodationsByUser (placeholder)"""
