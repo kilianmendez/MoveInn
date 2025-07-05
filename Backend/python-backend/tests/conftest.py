@@ -6,6 +6,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Base
 from models.user import User
+from models.accommodation import Accommodation
+from models.reservation import Reservation
+import uuid
+from datetime import datetime
 
 # Use in-memory SQLite for fast, isolated tests
 test_engine = create_engine('sqlite:///:memory:', connect_args={"check_same_thread": False})
@@ -27,7 +31,6 @@ def db_session(setup_database):
     finally:
         session.close()
 
-import uuid
 @pytest.fixture
 def sample_user():
     unique_mail = f"test_{uuid.uuid4()}@example.com"
@@ -46,4 +49,50 @@ def sample_user():
         "erasmus_country": "Test Country",
         "erasmus_date": None,
         "phone": "123456789"
-    } 
+    }
+
+@pytest.fixture
+def sample_accommodation(sample_user, db_session):
+    user = User(**sample_user)
+    db_session.add(user)
+    db_session.commit()
+    db_session.refresh(user)
+    acc_data = {
+        "title": "Test Accommodation",
+        "address": "123 Test St",
+        "owner_id": user.id,
+        "description": "A nice place",
+        "city": "Test City",
+        "country": "Test Country",
+        "price_per_month": 1000,
+        "number_of_rooms": 2,
+        "bathrooms": 1,
+        "square_meters": 50,
+        "has_wifi": True,
+        "available_from": None,
+        "available_to": None,
+        "accommodation_type": "Apartment"
+    }
+    acc = Accommodation(**acc_data)
+    db_session.add(acc)
+    db_session.commit()
+    db_session.refresh(acc)
+    return acc, user
+
+@pytest.fixture
+def sample_reservation(sample_accommodation, db_session):
+    acc, user = sample_accommodation
+    now = datetime.now()
+    reservation_data = {
+        "start_date": now,
+        "end_date": now,
+        "total_price": 500,
+        "status": "Pending",
+        "user_id": user.id,
+        "accommodation_id": acc.id
+    }
+    reservation = Reservation(**reservation_data)
+    db_session.add(reservation)
+    db_session.commit()
+    db_session.refresh(reservation)
+    return reservation, acc, user 
