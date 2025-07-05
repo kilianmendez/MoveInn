@@ -8,6 +8,9 @@ class UserRepository(BaseRepository[User]):
     def __init__(self):
         super().__init__(User)
 
+    def get_by_mail(self, db: Session, mail: str):
+        return db.query(self.model).filter(self.model.mail == mail).first()
+
     # Add user-specific queries here as needed 
 
 def get_user_repository(db: Session = Depends(get_db)):

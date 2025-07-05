@@ -13,4 +13,6 @@ from .follow import Follow
 from .social_media_link import SocialMediaLink
 from .user_language import UserLanguage
 from .speciality import Speciality
-from .image_accommodation import ImageAccommodation 
+from .image_accommodation import ImageAccommodation
+
+from database import Base 
