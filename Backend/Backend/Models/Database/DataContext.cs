@@ -1,4 +1,4 @@
-﻿using Backend.Models.Database.Entities;
+using Backend.Models.Database.Entities;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -32,12 +32,6 @@ public class DataContext : DbContext
         //optionsBuilder.EnableSensitiveDataLogging();
 
         string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-        string connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING");
-
-#if DEBUG
         optionsBuilder.UseSqlite($"DataSource={baseDir}{DATABASE_PATH}");
-#else
-        optionsBuilder.UseMySql(connectionString,ServerVersion.AutoDetect(connectionString));
-#endif
     }
 }
