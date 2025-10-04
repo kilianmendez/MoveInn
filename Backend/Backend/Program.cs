@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using System.Text.Json.Serialization;
 using Backend.Models.Database;
 using Backend.Models.Database.Entities;
@@ -137,7 +137,7 @@ public class Program
             options.AddDefaultPolicy(policy =>
             {
                 policy
-                  .WithOrigins("https://moveinn-backend.duckdns.org", "https://moveinn.duckdns.org", "https://localhost:7023", "http://localhost:3000")
+                  .AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();
