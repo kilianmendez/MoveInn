@@ -1,5 +1,5 @@
 "use client"
-
+import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config";
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { useParams } from "next/navigation"
@@ -222,7 +222,7 @@ export default function RecommendationDetailPage() {
           <div className="relative h-64 md:h-80">
             <Image
               src={recommendation.recommendationImages?.[0]?.url
-                ? `https://localhost:7023/${recommendation.recommendationImages[0].url}`
+                ? `${API_BASE_IMAGE_URL}${recommendation.recommendationImages[0].url}`
                 : "/placeholder.svg"}
               alt={recommendation.title}
               fill
@@ -328,7 +328,7 @@ export default function RecommendationDetailPage() {
                   {recommendation.recommendationImages.map((photo, index) => (
                     <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
                       <Image
-                        src={`https://localhost:7023/${photo.url}`}
+                        src={`${API_BASE_IMAGE_URL}${photo.url}`}
                         alt={`${recommendation.title} photo ${index + 1}`}
                         fill
                         className="object-cover"
