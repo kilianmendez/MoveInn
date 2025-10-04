@@ -137,7 +137,7 @@ public class Program
             options.AddDefaultPolicy(policy =>
             {
                 policy
-                  .AllowAnyOrigin()
+                  .WithOrigins( "https://localhost:7023", "http://localhost:3000", "https://move-x1ayg3iz1-kilianmendezs-projects.vercel.app")
                   .AllowAnyHeader()
                   .AllowAnyMethod()
                   .AllowCredentials();

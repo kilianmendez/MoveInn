@@ -1,4 +1,4 @@
-﻿using Backend.Models.Database;
+using Backend.Models.Database;
 using Backend.Models.Database.Entities;
 using Backend.Models.Database.Enum;
 using Backend.Models.Dtos;
