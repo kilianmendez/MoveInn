@@ -22,6 +22,25 @@ const categoryByNumber: Record<number, string> = {
   8: "Other",
 }
 
+const recommendationImages = [
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1484659619207-9e2b2b8c8b6f?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17",
+    "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327",
+    "https://images.unsplash.com/photo-1484723050470-6e5883a298a8",
+    "https://images.unsplash.com/photo-1498654896293-37a115421ceb"
+  ];
+
+  const getRandomRecommendationImage = () => {
+    const randomIndex = Math.floor(Math.random() * recommendationImages.length);
+    return recommendationImages[randomIndex];
+  };
+
 export function DetailedRecommendationCard({
   recommendation,
   categoryIcon,
@@ -29,10 +48,11 @@ export function DetailedRecommendationCard({
   const categoryName = categoryByNumber[recommendation.category] || "Other"
   const categorySlug = categoryName.toLowerCase()
   const [recommenderName, setRecommenderName] = useState<string>("")
+  const [imageSrc, setImageSrc] = useState(recommendation.recommendationImages?.[0]?.url ? `${API_BASE_IMAGE_URL}${recommendation.recommendationImages[0].url}` : getRandomRecommendationImage());
 
-  const mainImage = recommendation.recommendationImages?.[0]?.url
-    ? `${API_BASE_IMAGE_URL}${recommendation.recommendationImages[0].url}`
-    : "/placeholder.svg"
+  const handleImageError = () => {
+    setImageSrc(getRandomRecommendationImage());
+  };
 
   const getCategoryColor = () => {
     switch (categorySlug) {
@@ -111,11 +131,12 @@ export function DetailedRecommendationCard({
       <div className="relative w-full">
         <div className="relative h-48">
         <Image
-          src={mainImage}
+          src={imageSrc}
           alt={recommendation.title}
           fill
           unoptimized
           className="object-cover"
+          onError={handleImageError}
         />
 
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 to-transparent"></div>

@@ -43,6 +43,20 @@ interface DetailedEventCardProps {
   categoryIcon: React.ReactNode
 }
 
+const eventImages = [
+    "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1519167758481-83f550bb49b6?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1505236858219-8359eb29e329?q=80&w=2562&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1486427944299-d1955d23e34d?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ];
+
+  const getRandomEventImage = () => {
+    const randomIndex = Math.floor(Math.random() * eventImages.length);
+    return eventImages[randomIndex];
+  };
+
 export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProps) {
   const { user } = useAuth()
 
@@ -51,6 +65,11 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
   const [attendeesCount, setAttendeesCount] = useState(event.attendeesCount)
   const [showLeaveModal, setShowLeaveModal] = useState(false)
   const [showFullDescription, setShowFullDescription] = useState(false)
+  const [imageSrc, setImageSrc] = useState(event.imageUrl ? `${API_BASE_IMAGE_URL}${event.imageUrl}` : getRandomEventImage());
+
+  const handleImageError = () => {
+    setImageSrc(getRandomEventImage());
+  };
 
   const confirmLeaveEvent = async () => {
     if (!user?.id) return
@@ -150,10 +169,11 @@ export function DetailedEventCard({ event, categoryIcon }: DetailedEventCardProp
         <div className="relative h-48 md:h-auto md:w-1/3">
           <Image
             unoptimized
-            src={`${API_BASE_IMAGE_URL}${event.imageUrl}` || "/placeholder.svg"}
+            src={imageSrc}
             alt={event.title}
             fill
             className="object-cover"
+            onError={handleImageError}
           />
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-black/50 to-transparent"></div>
           <div className="absolute top-3 left-3 right-3 flex justify-between items-start">

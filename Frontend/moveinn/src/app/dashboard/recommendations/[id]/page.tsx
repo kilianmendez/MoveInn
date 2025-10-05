@@ -39,6 +39,45 @@ const categoryByNumber: Record<number, CategoryName> = Object.entries(categories
   {} as Record<number, CategoryName>
 )
 
+const recommendationImages = [
+    "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1552566626-52f8b828add9?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1544148103-0773bf10d330?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1484659619207-9e2b2b8c8b6f?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1481833761820-0509d3217039?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4",
+    "https://images.unsplash.com/photo-1466978913421-dad2ebd01d17",
+    "https://images.unsplash.com/photo-1476224203421-9ac39bcb3327",
+    "https://images.unsplash.com/photo-1484723050470-6e5883a298a8",
+    "https://images.unsplash.com/photo-1498654896293-37a115421ceb"
+  ];
+
+  const getRandomRecommendationImage = () => {
+    const randomIndex = Math.floor(Math.random() * recommendationImages.length);
+    return recommendationImages[randomIndex];
+  };
+
+const GalleryImage = ({ src, alt }: { src: string, alt: string }) => {
+  const [imageSrc, setImageSrc] = useState(src);
+  const handleImageError = () => {
+    setImageSrc(getRandomRecommendationImage());
+  };
+
+  return (
+    <div className="relative aspect-square rounded-lg overflow-hidden">
+      <Image
+        src={imageSrc}
+        alt={alt}
+        fill
+        className="object-cover"
+        unoptimized
+        onError={handleImageError}
+      />
+    </div>
+  );
+};
+
 const getCategoryIcon = (categoryId: number) => {
   const category = categoryByNumber[categoryId]?.toLowerCase() || ""
   switch (category) {
@@ -146,6 +185,11 @@ export default function RecommendationDetailPage() {
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState("overview")
   const [recommenderName, setRecommenderName] = useState<string>("")
+  const [imageSrc, setImageSrc] = useState("");
+
+  const handleImageError = () => {
+    setImageSrc(getRandomRecommendationImage());
+  };
 
   useEffect(() => {
     const fetchRecommendation = async () => {
@@ -158,6 +202,7 @@ export default function RecommendationDetailPage() {
         })
         console.log(response.data)
         setRecommendation(response.data)
+        setImageSrc(response.data.recommendationImages?.[0]?.url ? `${API_BASE_IMAGE_URL}${response.data.recommendationImages[0].url}` : getRandomRecommendationImage());
       } catch (error) {
         console.error("Error fetching recommendation:", error)
       } finally {
@@ -221,13 +266,12 @@ export default function RecommendationDetailPage() {
         <div className="bg-foreground rounded-xl shadow-md overflow-hidden">
           <div className="relative h-64 md:h-80">
             <Image
-              src={recommendation.recommendationImages?.[0]?.url
-                ? `${API_BASE_IMAGE_URL}${recommendation.recommendationImages[0].url}`
-                : "/placeholder.svg"}
+              src={imageSrc}
               alt={recommendation.title}
               fill
               className="object-cover"
               unoptimized
+              onError={handleImageError}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
@@ -326,15 +370,11 @@ export default function RecommendationDetailPage() {
                 <h3 className="text-lg font-semibold text-primary-dark mb-2 text-xl bold">Photo Gallery</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {recommendation.recommendationImages.map((photo, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
-                      <Image
-                        src={`${API_BASE_IMAGE_URL}${photo.url}`}
-                        alt={`${recommendation.title} photo ${index + 1}`}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
+                    <GalleryImage
+                      key={index}
+                      src={`${API_BASE_IMAGE_URL}${photo.url}`}
+                      alt={`${recommendation.title} photo ${index + 1}`}
+                    />
                   ))}
                 </div>
               </div>
