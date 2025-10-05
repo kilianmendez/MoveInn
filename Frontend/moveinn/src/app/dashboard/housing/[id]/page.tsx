@@ -68,6 +68,22 @@ const typeMapBorder: Record<number, { label: string; borderColor: string;}> = {
   4: { label: "Other", borderColor: "border-gray-500" },
 }
 
+const houseImages = [
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2675&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ];
+
+  const getRandomHouseImage = () => {
+    const randomIndex = Math.floor(Math.random() * houseImages.length);
+    return houseImages[randomIndex];
+  };
+
 export default function AccommodationDetailsPage() {
   const { id } = useParams()
   const router = useRouter()
@@ -78,6 +94,7 @@ export default function AccommodationDetailsPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
   const [reviews, setReviews] = useState<Review[]>([])
+  const [imageError, setImageError] = useState(false)
 
   const { user } = useAuth()
 
@@ -123,6 +140,10 @@ export default function AccommodationDetailsPage() {
       }))
     }
   }, [reservations, id])
+
+  useEffect(() => {
+    setImageError(false)
+  }, [currentImageIndex])
   
   
 
@@ -214,9 +235,9 @@ export default function AccommodationDetailsPage() {
   const canSubmitReview = completedReservations.length > 0
   const hasUserAlreadyReviewed = Array.isArray(reviews) && reviews.some(r => r.user.name === user?.name && r.user.lastName === user?.lastName)
 
-  const imageUrl = accommodation.accomodationImages?.[currentImageIndex]?.url
+  const imageUrl = accommodation.accomodationImages?.[currentImageIndex]?.url && !imageError
     ? `${API_BASE_IMAGE_URL}${accommodation.accomodationImages[currentImageIndex].url}`
-    : "/placeholder.svg"
+    : getRandomHouseImage()
 
   return (
     <div className="container mx-auto px-4 py-4 max-w-6xl">
@@ -247,6 +268,7 @@ export default function AccommodationDetailsPage() {
           fill
           unoptimized
           className="object-cover"
+          onError={() => setImageError(true)}
         />
         <button
           onClick={handlePrevImage}

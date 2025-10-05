@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { AccommodationData } from "@/types/accommodation"
 import { API_BASE_IMAGE_URL } from "@/utils/endpoints/config"
+import { useState } from "react"
 
 interface AcommodationCardProps {
   acommodation: AccommodationData
@@ -25,6 +26,22 @@ const typeMapBorder: Record<number, { label: string; borderColor: string;}> = {
   4: { label: "Other", borderColor: "border-gray-500" },
 }
 
+const houseImages = [
+    "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1570129477492-45c003edd2be?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1554995207-c18c203602cb?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=2675&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2653&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  ];
+
+  const getRandomHouseImage = () => {
+    const randomIndex = Math.floor(Math.random() * houseImages.length);
+    return houseImages[randomIndex];
+  };
+
 export function AcommodationCard({ acommodation }: AcommodationCardProps) {
   const type = typeMap[acommodation.acommodationType] ?? typeMap[4]
 
@@ -38,7 +55,14 @@ export function AcommodationCard({ acommodation }: AcommodationCardProps) {
 
   const image = acommodation.images?.[0]
     ? `${API_BASE_IMAGE_URL}${acommodation.images[0]}`
-    : "/placeholder.svg"
+    : getRandomHouseImage()
+
+    const [imageSrc, setImageSrc] = useState(image);
+
+  const handleImageError = () => {
+    setImageSrc(getRandomHouseImage());
+  };
+
 
   return (
     <Card className="flex flex-col justify-between min-h-[420px] h-full overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 bg-foreground border-none py-0">
@@ -47,11 +71,12 @@ export function AcommodationCard({ acommodation }: AcommodationCardProps) {
     {/* Imagen */}
     <div className="relative h-48">
       <Image
-        src={image}
+        src={imageSrc}
         alt={acommodation.title}
         fill
         unoptimized
         className="object-cover"
+        onError={handleImageError}
       />
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/50 to-transparent"></div>
       <div className="absolute top-3 left-3">
