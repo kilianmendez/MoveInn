@@ -73,15 +73,11 @@ npm run dev
 <a id="uso"></a>
 ## ⚙️ Uso
 
-Para familiarizarte rápidamente con **MoveInn**, puedes comenzar viendo nuestro vídeo de presentación justo aquí:
- 
-> ▶️ [Ver en YouTube](https://youtu.be/sUsgN_m38qs?si=CIbmKzDAScnmd86f)
-
 A continuación, sigue estos pasos para empezar a disfrutar de la plataforma:
 
 1. **Accede a la aplicación**  
    - **Local**: abre `http://localhost:3000` en tu navegador.  
-   - **Desplegada**: abre `https://moveinn.duckdns.org`.
+   - **Desplegada**: abre `https://move-inn-sepia.vercel.app`.
 
 2. **Regístrate o inicia sesión**  
    - Haz clic en **Registrarse** si eres nuevo usuario.  
