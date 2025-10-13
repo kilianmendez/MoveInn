@@ -17,7 +17,9 @@
 8. [🗃️ Modelos de Datos y Relaciones](#modeloDeDatosYRelaciones)  
 9. [☁️ Despliegue en AWS](#despliegueEnAws)  
 10. [📌 Autores](#autores)  
-11. [📄 Licencia](#licencia) 
+11. [📄 Licencia](#licencia)
+
+##‼️(El proyecto fue desplegado en AWS para la entrega del TFG pero, por motivos de caducidad de la cuenta educativa de AWS, este ha sido desplegado usando vercel.com para el Frontend y docker en render.com para el Backend)
 
 <a id="caracteristicasPrincipales"></a>
 ## 🚀 Características Principales
