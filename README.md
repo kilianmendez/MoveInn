@@ -16,7 +16,7 @@ La plataforma permitirá:
 ✔️ Publicación de habitaciones en alquiler.  
 ✔️ Búsqueda y filtrado de alojamientos según ubicación, precio y comodidades.  
 ✔️ Perfiles de estudiantes.  
-✔️ Sistema de mensajería para la comunicación entre arrendadores e inquilinos.  
+✔️ Sistema de mensajería para la comunicación entre usuarios.  
 ✔️ Foro interactivo para compartir información sobre universidades, trámites, cultura y experiencias Erasmus.  
 
 ## 🎯 Funciones Principales del Proyecto  
